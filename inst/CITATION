@@ -1,0 +1,10 @@
+citHeader("To cite diseq in publications use:")
+
+citEntry(entry = "Unpublished",
+  title        = "Disequilibrium Model Estimation {diseq}",
+  author       = personList(as.person("Pantelis Karapanagiotis")),
+  note         = "In development R package",
+  year         = "2020",
+  textVersion  = paste("Pantelis Karapanagiotis (2020).",
+        "Disequilibrium Model Estimation.")
+)

@@ -1,0 +1,104 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# Models for Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The diseq package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium 
+model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are
+asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. All 
+maximum likelihood models can be estimated both with independent and correlated demand and supply shocks.
+
+## Installation
+
+You can install the released version of diseq from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("diseq")
+```
+
+You can download the source code of the development version from [GitHub](https://github.com/pi-kappa-devel).
+
+
+After you install it, there is a basic-usage example installed with it. To see it type the command
+```
+vignette('basic_usage')
+```
+
+You can find the documentation of the package by typing
+```
+?? diseq
+```
+
+## Example
+
+This is a basic example which shows you how estimate a model. The package is loaded in the standard way.
+```{r example.loading}
+library(diseq)
+```
+
+The example uses simulated data. The diseq package offers a function to simulate data and initialize a model in one
+step. See the documentation of `simulate_model` for details. Models can be initialized with a dataset using a 
+constructor. 
+
+In this example, a basic disequilibrium model is estimated. There are also other models available (see 
+[Design and functionality]).
+
+```{r example.simulation}
+mdl <- simulate_model(
+  "diseq_basic", 10000, 5,
+  -1.9, 4.9, c(2.1, -0.7), c(3.5, 6.25),
+  2.8, 1.2, c(0.65), c(1.15, 4.2),
+  NA, NA, c(NA),
+  seed = 42
+)
+
+```
+
+The model is estimated with default options by a simple call. See the documentation of `estimate` for more 
+details and options.
+```{r example.estimation}
+est <- estimate(mdl)
+summary(est)
+```
+
+# Design and functionality
+
+There are two equilibrium models available, namely
+
+* `eq_2sls` and
+* `eq_fiml`.
+
+In total, there are four disequilibrium models, i.e.
+
+* `diseq_basic`, 
+* `diseq_directional`, 
+* `diseq_deterministic_adjustment`, and
+* `diseq_stochastic_adjustment`.
+
+The package organizes the models in a simple object oriented hierarchy. 
+
+<img src='man/figures/design.png' align="center" />
+
+Concerning post estimation analysis, the package offers functionality to calculate
+
+* shortage probabilities,
+* marginal effects on shortage probabilities,
+* normalized point estimates of shortages,
+* relative point estimates of shortages,
+* aggregate demand and supply,
+* post-estimation classification of observation in demand and supply.
