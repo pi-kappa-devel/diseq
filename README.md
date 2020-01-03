@@ -17,15 +17,16 @@ independent and correlated demand and supply shocks.
 
 ## Installation
 
-You can install the released version of diseq from
-[CRAN](https://CRAN.R-project.org) with:
+<!--
+You can install the released version of diseq from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diseq")
 ```
+-->
 
 You can download the source code of the development version from
-[GitHub](https://github.com/pi-kappa-devel).
+[GitHub](https://github.com/pi-kappa-devel/diseq).
 
 After you install it, there is a basic-usage example installed with it.
 To see it type the command
