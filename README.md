@@ -106,7 +106,7 @@ summary(est)
 #> -2 log L: 138660.1
 ```
 
-# Design and functionality
+## Design and functionality
 
 There are two equilibrium models available, namely
 
@@ -133,3 +133,13 @@ calculate
   - relative point estimates of shortages,
   - aggregate demand and supply,
   - post-estimation classification of observation in demand and supply.
+
+## Contributors
+
+Pantelis Karapanagiotis 
+
+Feel free to join, share, contribute, distribute.
+
+## License
+
+The code is distributed under the MIT License. 
