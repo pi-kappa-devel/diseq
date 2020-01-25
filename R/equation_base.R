@@ -41,7 +41,7 @@ setClass(
     control_matrix = NULL,
 
     alpha_beta = matrix(NA_real_),
-    alpha = NA_real_,
+    alpha = 0,
     beta = matrix(NA_real_),
     var = NA_real_,
     sigma = NA_real_,
@@ -180,7 +180,9 @@ setMethod("get_prefixed_variance_variable", signature(object = "equation_base"),
 
 setMethod("set_parameters", signature(object = "equation_base"), function(object, parameters) {
   object@alpha_beta <- as.matrix(parameters[get_prefixed_independent_variables(object)])
-  object@alpha <- parameters[get_prefixed_price_variable(object)]
+  if (!is.null(get_prefixed_price_variable(object))) {
+    object@alpha <- parameters[get_prefixed_price_variable(object)]
+  }
   object@beta <- as.matrix(parameters[get_prefixed_control_variables(object)])
   object@var <- parameters[get_prefixed_variance_variable(object)]
   if (object@var < 0) {

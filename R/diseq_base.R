@@ -162,7 +162,7 @@ setMethod("estimate", signature(object = "diseq_base"), function(object, use_num
   est <- do.call(bbmle::mle2, va_args)
   est@call.orig <- call("bbmle::mle2", va_args)
 
-  if ((object@model_type_string %in% c("Basic Model", "Directional Model")) && va_args$skip.hessian) {
+  if ((object@model_type_string %in% c("Basic", "Directional")) && va_args$skip.hessian) {
     print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
     est@details$hessian <- hessian(object, est@coef)
     tryCatch(

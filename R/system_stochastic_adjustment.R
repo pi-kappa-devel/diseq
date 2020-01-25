@@ -255,7 +255,7 @@ setMethod("calculate_system_moments", signature(object = "system_stochastic_adju
   object@zeta_SP <- -object@rho_DP * object@rho_DS + object@rho_SP
   object@zeta_PP <- 1 - object@rho_DS ** 2
 
-  object@h_P <- (object@demand@price_vector - object@mu_P) / object@sigma_P
+  object@h_P <- (object@price_vector - object@mu_P) / object@sigma_P
   object@h_D <- (object@quantity_vector - object@mu_D) / object@sigma_D
   object@h_S <- (object@quantity_vector - object@mu_S) / object@sigma_S
 
@@ -355,9 +355,19 @@ setMethod("calculate_system_gradient", signature(object = "system_stochastic_adj
 
   denominator <- c(object@L_D + object@L_S)
 
-  p_dprice <- sum(object@partial_own_price / denominator)
+  if (!is.null(get_prefixed_price_variable(object@demand))) {
+    p_dprice <- sum(object@partial_own_price / denominator)
+  }
+  else {
+    p_dprice <- NULL
+  }
   p_dcontrols <- colSums(object@partial_own_controls / denominator)
-  p_sprice <- sum(object@partial_other_price / denominator)
+  if (!is.null(get_prefixed_price_variable(object@supply))) {
+    p_sprice <- sum(object@partial_other_price / denominator)
+  }
+  else {
+    p_sprice <- NULL
+  }
   p_scontrols <- colSums(object@partial_other_controls / denominator)
   p_pdiff <- sum(object@partial_lagged_price / denominator)
   p_pcontrols <- colSums(object@partial_price_controls / denominator)

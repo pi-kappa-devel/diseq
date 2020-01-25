@@ -66,7 +66,7 @@ setMethod("initialize", "model_base", function(
     all.vars(formula(paste0(quantity_column, " ~ ", demand_specification))),
     all.vars(formula(paste0(quantity_column, " ~ ", supply_specification)))
   ))
-  if (.Object@model_type_string %in% c("Stochastic Adjustment Model")) {
+  if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
     .Object@explanatory_columns <- unique(c(
       .Object@explanatory_columns, all.vars(formula(paste0(price_column, " ~ ", price_specification)))
     ))
@@ -105,7 +105,7 @@ setMethod("initialize", "model_base", function(
 
   ## Do we need to use lags?
   if (.Object@model_type_string %in% c(
-    "Directional Model", "Deterministic Adjustment Model", "Stochastic Adjustment Model"
+    "Directional", "Deterministic Adjustment", "Stochastic Adjustment"
   )) {
     ## Generate lags
     key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns != .Object@time_column])
@@ -126,7 +126,7 @@ setMethod("initialize", "model_base", function(
     print_info(.Object@logger, "Dropping ", sum(drop_rows), " rows by generating '", lagged_price_column, "'.")
 
     ## Do we need to use first differences?
-    if (.Object@model_type_string %in% c("Directional Model", "Deterministic Adjustment Model")) {
+    if (.Object@model_type_string %in% c("Directional", "Deterministic Adjustment")) {
       ## Generate first differences
       diff_column <- paste0(price_column, "_DIFF")
       diff_sym <- rlang::sym(diff_column)
@@ -138,7 +138,7 @@ setMethod("initialize", "model_base", function(
     }
   }
 
-  if (.Object@model_type_string %in% c("Stochastic Adjustment Model")) {
+  if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
     .Object@system <- system_initializer(
       quantity_column, price_column, demand_specification, supply_specification, price_specification,
       .Object@model_tibble, use_correlated_shocks
@@ -313,7 +313,7 @@ setMethod("get_initializing_values", signature(object = "model_base"), function(
   )
   start <- c(start, slm$coefficients[start_names])
 
-  if (object@model_type_string %in% c("Deterministic Adjustment Model", "Stochastic Adjustment Model")) {
+  if (object@model_type_string %in% c("Deterministic Adjustment", "Stochastic Adjustment")) {
     start <- c(start, gamma = 1)
     names(start)[length(start)] <- get_price_differences_variable(object@system)
   }

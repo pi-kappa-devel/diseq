@@ -20,7 +20,7 @@ setMethod("initialize", "diseq_directional", function(
 ) {
   .Object <- callNextMethod(
     .Object,
-    "Directional Model", verbose,
+    "Directional", verbose,
     key_columns, time_column,
     quantity_column, price_column, demand_specification, supply_specification, NULL,
     use_correlated_shocks,

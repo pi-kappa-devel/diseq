@@ -20,7 +20,7 @@ setMethod("initialize", "diseq_deterministic_adjustment", function(
 ) {
   .Object <- callNextMethod(
     .Object,
-    "Deterministic Adjustment Model", verbose,
+    "Deterministic Adjustment", verbose,
     key_columns, time_column,
     quantity_column, price_column, demand_specification, supply_specification, NULL,
     use_correlated_shocks,

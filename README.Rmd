@@ -98,7 +98,7 @@ Concerning post estimation analysis, the package offers functionality to calcula
 
 * shortage probabilities,
 * marginal effects on shortage probabilities,
-* normalized point estimates of shortages,
-* relative point estimates of shortages,
+* point estimates of normalized shortages,
+* point estimates of relative shortages,
 * aggregate demand and supply,
-* post-estimation classification of observation in demand and supply.
+* post-estimation classification of observations in demand and supply.

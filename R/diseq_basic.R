@@ -20,7 +20,7 @@ setMethod("initialize", "diseq_basic", function(
 ) {
   .Object <- callNextMethod(
     .Object,
-    "Basic Model", verbose,
+    "Basic", verbose,
     key_columns, NULL,
     quantity_column, price_column, demand_specification, supply_specification, NULL,
     use_correlated_shocks,

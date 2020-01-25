@@ -86,7 +86,7 @@ setMethod("calculate_system_moments", signature(object = "system_fiml"), functio
   object@sigma_P <- sqrt(object@var_P)
   object@sigma_Q <- sqrt(object@var_Q)
 
-  object@h_P <- (object@demand@price_vector - object@mu_P) / object@sigma_P
+  object@h_P <- (object@price_vector - object@mu_P) / object@sigma_P
   object@h_Q <- (object@quantity_vector - object@mu_Q) / object@sigma_Q
 
   object@rho_QP <- object@cov_QP / (object@sigma_P * object@sigma_Q)

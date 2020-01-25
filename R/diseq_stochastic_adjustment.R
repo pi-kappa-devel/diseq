@@ -20,7 +20,7 @@ setMethod("initialize", "diseq_stochastic_adjustment", function(
 ) {
   .Object <- callNextMethod(
     .Object,
-    "Stochastic Adjustment Model", verbose,
+    "Stochastic Adjustment", verbose,
     key_columns, time_column,
     quantity_column, price_column, demand_specification, supply_specification, price_specification,
     use_correlated_shocks,

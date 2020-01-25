@@ -111,7 +111,7 @@ setMethod("calculate_system_moments", signature(object = "system_deterministic_a
     object@supply@sigma_Q <- sqrt(object@supply@var_Q)
 
     object@h_P <-
-      (object@demand@price_vector - object@mu_P) / object@sigma_P
+      (object@price_vector - object@mu_P) / object@sigma_P
     object@demand@h_Q <-
       (object@quantity_vector - object@demand@mu_Q) / object@demand@sigma_Q
     object@supply@h_Q <-
@@ -248,14 +248,25 @@ setMethod("calculate_system_gradient", signature(object = "system_deterministic_
     object@demand@sigma * object@supply@sigma * (-object@supply@alpha * object@var_P * (object@demand@alpha - object@gamma) * (object@supply@h_Q * object@supply@rho1_PQ * object@supply@z_QP - 1) + object@supply@rho1_PQ * (object@supply@rho_PQ * (object@supply@alpha * object@var_P * (object@demand@alpha - object@gamma) + object@supply@var_Q) - object@sigma_P * object@supply@sigma_Q * (object@demand@alpha + object@supply@alpha - object@gamma)) * (object@h_P * object@supply@h_Q * object@supply@rho1_PQ * (object@supply@rho1_PQ ** 2 + object@supply@rho2_PQ ** 2) - object@supply@rho1_PQ ** 2 * object@supply@rho2_PQ * (object@h_P ** 2 + object@supply@h_Q ** 2) + object@supply@rho2_PQ) - object@supply@var_Q * (object@h_P * object@supply@rho1_PQ * object@supply@z_PQ - 1)) / (object@delta ** 2 * object@var_P * object@supply@var_Q)
   )
 
+  object@gradient <- t(colSums(
+    pd_beta_d * c(object@demand@separation_subset)
+  ) + colSums(
+    ps_beta_d * c(object@supply@separation_subset)
+  ))
+  if (!is.null(get_prefixed_price_variable(object@demand))) {
+    object@gradient <- cbind(
+      sum(pd_alpha_d * object@demand@separation_subset) + sum(ps_alpha_d * object@supply@separation_subset),
+      object@gradient
+    )
+  }
+  if (!is.null(get_prefixed_price_variable(object@supply))) {
+    object@gradient <- cbind(
+      object@gradient,
+      sum(pd_alpha_s * object@demand@separation_subset) + sum(ps_alpha_s * object@supply@separation_subset)
+    )
+  }
   object@gradient <- cbind(
-    sum(pd_alpha_d * object@demand@separation_subset) + sum(ps_alpha_d * object@supply@separation_subset),
-    t(colSums(
-      pd_beta_d * c(object@demand@separation_subset)
-    ) + colSums(
-      ps_beta_d * c(object@supply@separation_subset)
-    )),
-    sum(pd_alpha_s * object@demand@separation_subset) + sum(ps_alpha_s * object@supply@separation_subset),
+    object@gradient,
     t(colSums(
       pd_beta_s * c(object@demand@separation_subset)
     ) + colSums(

@@ -10,6 +10,7 @@ setClass(
     price_variable = "character",
 
     quantity_vector = "matrix",
+    price_vector = "matrix",
 
     rho = "numeric",
     rho1 = "numeric",
@@ -23,6 +24,7 @@ setClass(
     price_variable = NULL,
 
     quantity_vector = matrix(NA_real_),
+    price_vector = matrix(NA_real_),
 
     rho = 0,
     rho1 = 1,
@@ -42,6 +44,7 @@ setMethod("initialize", "system_base", function(
     .Object@price_variable <- price
 
     .Object@quantity_vector <- as.matrix(data[, quantity])
+    .Object@price_vector <- as.matrix(data[, price])
 
     .Object
   }
