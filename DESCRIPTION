@@ -1,6 +1,6 @@
 Package: diseq
 Title: Estimation Methods for Markets in Disequilibrium
-Version: 0.0.4.9012
+Version: 0.0.4.9013
 Authors@R: person(
         "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
         role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908")
@@ -43,9 +43,23 @@ Suggests:
     testthat (>= 2.0.0)
 VignetteBuilder: knitr
 Collate:
-    'diseq.R'
     'equation_base.R'
     'system_base.R'
+    'equation_basic.R'
+    'system_basic.R'
+    'derivatives_basic.R'
+    'equation_deterministic_adjustment.R'
+    'system_deterministic_adjustment.R'
+    'derivatives_deterministic_adjustment.R'
+    'equation_directional.R'
+    'system_directional.R'
+    'derivatives_directional.R'
+    'system_fiml.R'
+    'derivatives_fiml.R'
+    'equation_stochastic_adjustment.R'
+    'system_stochastic_adjustment.R'
+    'derivatives_stochastic_adjustment.R'
+    'diseq.R'
     'model_logger.R'
     'model_base.R'
     'diseq_base.R'
@@ -56,12 +70,3 @@ Collate:
     'eq_base.R'
     'eq_2sls.R'
     'eq_fiml.R'
-    'equation_basic.R'
-    'equation_deterministic_adjustment.R'
-    'equation_directional.R'
-    'equation_stochastic_adjustment.R'
-    'system_basic.R'
-    'system_deterministic_adjustment.R'
-    'system_directonal.R'
-    'system_fiml.R'
-    'system_stochastic_adjustment.R'

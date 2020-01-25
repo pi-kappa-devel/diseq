@@ -1,6 +1,7 @@
 #' Directional disequilibrium model with sample separation.
 #'
 #' @include diseq_base.R
+#' @include derivatives_directional.R
 #' @name diseq_directional-class
 #' @export
 setClass(
@@ -65,13 +66,18 @@ setMethod("gradient", signature(object = "diseq_directional"), function(object, 
   nd <- object@system@demand@separation_subset
   pd <- object@system@supply@separation_subset
 
-  l_pbd <- colSums(partial_beta_d_of_loglh_d(object)[nd, ]) + colSums(partial_beta_d_of_loglh_s(object)[pd, ])
-  l_pbs <- colSums(partial_beta_s_of_loglh_d(object)[nd, ]) + colSums(partial_beta_s_of_loglh_s(object)[pd, ])
-  l_pvard <- sum(partial_var_d_of_loglh_d(object)[nd]) + sum(partial_var_d_of_loglh_s(object)[pd])
-  l_pvars <- sum(partial_var_s_of_loglh_d(object)[nd]) + sum(partial_var_s_of_loglh_s(object)[pd])
+  l_pbd <-
+    colSums(partial_beta_d_of_loglh_d(object@system)[nd, ]) + colSums(partial_beta_d_of_loglh_s(object@system)[pd, ])
+  l_pbs <-
+    colSums(partial_beta_s_of_loglh_d(object@system)[nd, ]) + colSums(partial_beta_s_of_loglh_s(object@system)[pd, ])
+  l_pvard <-
+    sum(partial_var_d_of_loglh_d(object@system)[nd]) + sum(partial_var_d_of_loglh_s(object@system)[pd])
+  l_pvars <-
+    sum(partial_var_s_of_loglh_d(object@system)[nd]) + sum(partial_var_s_of_loglh_s(object@system)[pd])
 
   if (object@system@correlated_shocks) {
-    l_prho <- sum(partial_rho_of_loglh_d(object)[nd]) + sum(partial_rho_of_loglh_s(object)[pd])
+    l_prho <-
+      sum(partial_rho_of_loglh_d(object@system)[nd]) + sum(partial_rho_of_loglh_s(object@system)[pd])
   }
 
   g <- rep(NA, length(get_likelihood_variables(object@system)))
@@ -90,26 +96,26 @@ setMethod("gradient", signature(object = "diseq_directional"), function(object, 
 setMethod("hessian", signature(object = "diseq_directional"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
 
-  l_pbdpbd <- partial_beta_d_partial_beta_d_of_loglh(object)
-  l_pbdpbs <- partial_beta_d_partial_beta_s_of_loglh(object)
-  l_pbdpvard <- partial_beta_d_partial_var_d_of_loglh(object)
-  l_pbdpvars <- partial_beta_d_partial_var_s_of_loglh(object)
+  l_pbdpbd <- partial_beta_d_partial_beta_d_of_loglh(object@system)
+  l_pbdpbs <- partial_beta_d_partial_beta_s_of_loglh(object@system)
+  l_pbdpvard <- partial_beta_d_partial_var_d_of_loglh(object@system)
+  l_pbdpvars <- partial_beta_d_partial_var_s_of_loglh(object@system)
 
-  l_pbspbs <- partial_beta_s_partial_beta_s_of_loglh(object)
-  l_pbspvard <- partial_beta_s_partial_var_d_of_loglh(object)
-  l_pbspvars <- partial_beta_s_partial_var_s_of_loglh(object)
+  l_pbspbs <- partial_beta_s_partial_beta_s_of_loglh(object@system)
+  l_pbspvard <- partial_beta_s_partial_var_d_of_loglh(object@system)
+  l_pbspvars <- partial_beta_s_partial_var_s_of_loglh(object@system)
 
-  l_pvardpvard <- partial_var_d_partial_var_d_of_loglh(object)
-  l_pvardpvars <- partial_var_d_partial_var_s_of_loglh(object)
+  l_pvardpvard <- partial_var_d_partial_var_d_of_loglh(object@system)
+  l_pvardpvars <- partial_var_d_partial_var_s_of_loglh(object@system)
 
-  l_pvarspvars <- partial_var_s_partial_var_s_of_loglh(object)
+  l_pvarspvars <- partial_var_s_partial_var_s_of_loglh(object@system)
 
   if (object@system@correlated_shocks) {
-    l_pbdprho <- partial_beta_d_partial_rho_of_loglh(object)
-    l_pbsprho <- partial_beta_s_partial_rho_of_loglh(object)
-    l_pvardprho <- partial_var_d_partial_rho_of_loglh(object)
-    l_pvarsprho <- partial_var_s_partial_rho_of_loglh(object)
-    l_prhoprho <- partial_rho_partial_rho_of_loglh(object)
+    l_pbdprho <- partial_beta_d_partial_rho_of_loglh(object@system)
+    l_pbsprho <- partial_beta_s_partial_rho_of_loglh(object@system)
+    l_pvardprho <- partial_var_d_partial_rho_of_loglh(object@system)
+    l_pvarsprho <- partial_var_s_partial_rho_of_loglh(object@system)
+    l_prhoprho <- partial_rho_partial_rho_of_loglh(object@system)
   }
 
   ###############################
@@ -170,219 +176,4 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
   }
 
   -h
-})
-
-setGeneric("partial_beta_d_of_loglh_d", function(object) {
-  standardGeneric("partial_beta_d_of_loglh_d")
-})
-
-setMethod("partial_beta_d_of_loglh_d", signature(object = "diseq_directional"), function(object) {
-  c((object@system@demand@Psi * object@system@demand@h - object@system@demand@psi * object@system@rho2) / (object@system@demand@Psi * object@system@demand@sigma)) * object@system@demand@independent_matrix
-})
-
-setGeneric("partial_beta_d_of_loglh_s", function(object) {
-  standardGeneric("partial_beta_d_of_loglh_s")
-})
-
-setMethod("partial_beta_d_of_loglh_s", signature(object = "diseq_directional"), function(object) {
-  c(object@system@supply@psi * object@system@rho1 / (object@system@supply@Psi * object@system@demand@sigma)) * object@system@demand@independent_matrix
-})
-
-setGeneric("partial_beta_s_of_loglh_d", function(object) {
-  standardGeneric("partial_beta_s_of_loglh_d")
-})
-
-setMethod("partial_beta_s_of_loglh_d", signature(object = "diseq_directional"), function(object) {
-  c(object@system@demand@psi * object@system@rho1 / (object@system@demand@Psi * object@system@supply@sigma)) * object@system@supply@independent_matrix
-})
-
-setGeneric("partial_beta_s_of_loglh_s", function(object) {
-  standardGeneric("partial_beta_s_of_loglh_s")
-})
-
-setMethod("partial_beta_s_of_loglh_s", signature(object = "diseq_directional"), function(object) {
-  c((object@system@supply@Psi * object@system@supply@h - object@system@supply@psi * object@system@rho2) / (object@system@supply@Psi * object@system@supply@sigma)) * object@system@supply@independent_matrix
-})
-
-setGeneric("partial_var_d_of_loglh_d", function(object) {
-  standardGeneric("partial_var_d_of_loglh_d")
-})
-
-setMethod("partial_var_d_of_loglh_d", signature(object = "diseq_directional"), function(object) {
-  c((object@system@demand@Psi * (object@system@demand@h ** 2 - 1) - object@system@demand@h * object@system@demand@psi * object@system@rho2) / (2 * object@system@demand@Psi * object@system@demand@var))
-})
-
-setGeneric("partial_var_d_of_loglh_s", function(object) {
-  standardGeneric("partial_var_d_of_loglh_s")
-})
-
-setMethod("partial_var_d_of_loglh_s", signature(object = "diseq_directional"), function(object) {
-  c(object@system@demand@h * object@system@supply@psi * object@system@rho1 / (2 * object@system@supply@Psi * object@system@demand@var))
-})
-
-setGeneric("partial_var_s_of_loglh_d", function(object) {
-  standardGeneric("partial_var_s_of_loglh_d")
-})
-
-setMethod("partial_var_s_of_loglh_d", signature(object = "diseq_directional"), function(object) {
-  c(object@system@supply@h * object@system@demand@psi * object@system@rho1 / (2 * object@system@demand@Psi * object@system@supply@var))
-})
-
-setGeneric("partial_var_s_of_loglh_s", function(object) {
-  standardGeneric("partial_var_s_of_loglh_s")
-})
-
-setMethod("partial_var_s_of_loglh_s", signature(object = "diseq_directional"), function(object) {
-  c((object@system@supply@Psi * (object@system@supply@h ** 2 - 1) - object@system@supply@h * object@system@supply@psi * object@system@rho2) / (2 * object@system@supply@Psi * object@system@supply@var))
-})
-
-setGeneric("partial_rho_of_loglh_d", function(object) {
-  standardGeneric("partial_rho_of_loglh_d")
-})
-
-setMethod("partial_rho_of_loglh_d", signature(object = "diseq_directional"), function(object) {
-  c(object@system@demand@psi * object@system@rho1 ** 2 * object@system@demand@z / object@system@demand@Psi)
-})
-
-setGeneric("partial_rho_of_loglh_s", function(object) {
-  standardGeneric("partial_rho_of_loglh_s")
-})
-
-setMethod("partial_rho_of_loglh_s", signature(object = "diseq_directional"), function(object) {
-  c(object@system@supply@psi * object@system@rho1 ** 2 * object@system@supply@z / object@system@supply@Psi)
-})
-
-setGeneric("partial_beta_d_partial_beta_d_of_loglh", function(object) {
-  standardGeneric("partial_beta_d_partial_beta_d_of_loglh")
-})
-
-setMethod("partial_beta_d_partial_beta_d_of_loglh", signature(object = "diseq_directional"), function(object) {
-  t(object@system@demand@independent_matrix[object@system@demand@separation_subset, ] * c(((-object@system@demand@Psi ** 2 + object@system@demand@Psi * object@system@demand@psi * object@system@rho2 ** 2 * object@system@supply@z - object@system@demand@psi ** 2 * object@system@rho2 ** 2) / (object@system@demand@Psi ** 2 * object@system@demand@var)))[object@system@demand@separation_subset]) %*% object@system@demand@independent_matrix[object@system@demand@separation_subset, ] +
-    t(object@system@demand@independent_matrix[object@system@supply@separation_subset, ] * c((object@system@supply@psi * object@system@rho1 ** 2 * (object@system@supply@Psi * object@system@demand@z - object@system@supply@psi) / (object@system@supply@Psi ** 2 * object@system@demand@var)))[object@system@supply@separation_subset]) %*% object@system@demand@independent_matrix[object@system@supply@separation_subset, ]
-})
-
-setGeneric("partial_beta_d_partial_beta_s_of_loglh", function(object) {
-  standardGeneric("partial_beta_d_partial_beta_s_of_loglh")
-})
-
-setMethod("partial_beta_d_partial_beta_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  t(object@system@supply@independent_matrix[object@system@demand@separation_subset, ] * c((-object@system@demand@psi * object@system@rho1 * object@system@rho2 * (object@system@demand@Psi * object@system@supply@z - object@system@demand@psi) / (object@system@demand@Psi ** 2 * object@system@demand@sigma * object@system@supply@sigma)))[object@system@demand@separation_subset]) %*% object@system@demand@independent_matrix[object@system@demand@separation_subset, ] +
-    t(object@system@supply@independent_matrix[object@system@supply@separation_subset, ] * c((-object@system@supply@psi * object@system@rho1 * object@system@rho2 * (object@system@supply@Psi * object@system@demand@z - object@system@supply@psi) / (object@system@supply@Psi ** 2 * object@system@demand@sigma * object@system@supply@sigma)))[object@system@supply@separation_subset]) %*% object@system@demand@independent_matrix[object@system@supply@separation_subset, ]
-})
-
-setGeneric("partial_beta_d_partial_var_d_of_loglh", function(object) {
-  standardGeneric("partial_beta_d_partial_var_d_of_loglh")
-})
-
-setMethod("partial_beta_d_partial_var_d_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c((object@system@demand@Psi * object@system@demand@psi * object@system@rho2 * (object@system@demand@h * object@system@rho2 * object@system@supply@z + 1) - object@system@demand@h * (2 * object@system@demand@Psi ** 2 + object@system@demand@psi ** 2 * object@system@rho2 ** 2)) / (2 * object@system@demand@Psi ** 2 * object@system@demand@sigma ** 3))[object@system@demand@separation_subset] * object@system@demand@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c(object@system@supply@psi * object@system@rho1 * (object@system@supply@Psi * (object@system@demand@h * object@system@rho1 * object@system@demand@z - 1) - object@system@demand@h * object@system@supply@psi * object@system@rho1) / (2 * object@system@supply@Psi ** 2 * object@system@demand@sigma ** 3))[object@system@supply@separation_subset] * object@system@demand@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_beta_d_partial_var_s_of_loglh", function(object) {
-  standardGeneric("partial_beta_d_partial_var_s_of_loglh")
-})
-
-setMethod("partial_beta_d_partial_var_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c(-object@system@supply@h * object@system@demand@psi * object@system@rho1 * object@system@rho2 * (object@system@demand@Psi * object@system@supply@z - object@system@demand@psi) / (2 * object@system@demand@Psi ** 2 * object@system@demand@sigma * object@system@supply@var))[object@system@demand@separation_subset] * object@system@demand@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c(-object@system@supply@h * object@system@supply@psi * object@system@rho1 * object@system@rho2 * (object@system@supply@Psi * object@system@demand@z - object@system@supply@psi) / (2 * object@system@supply@Psi ** 2 * object@system@demand@sigma * object@system@supply@var))[object@system@supply@separation_subset] * object@system@demand@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_beta_d_partial_rho_of_loglh", function(object) {
-  standardGeneric("partial_beta_d_partial_rho_of_loglh")
-})
-
-setMethod("partial_beta_d_partial_rho_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c(-object@system@demand@psi * object@system@rho1 ** 2 * (object@system@demand@Psi * (object@system@rho1 + object@system@rho2 * object@system@demand@z * object@system@supply@z) - object@system@demand@psi * object@system@rho2 * object@system@demand@z) / (object@system@demand@Psi ** 2 * object@system@demand@sigma))[object@system@demand@separation_subset] * object@system@demand@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c(object@system@supply@psi * object@system@rho1 ** 2 * (object@system@supply@Psi * (object@system@rho1 * object@system@demand@z * object@system@supply@z + object@system@rho2) - object@system@supply@psi * object@system@rho1 * object@system@supply@z) / (object@system@supply@Psi ** 2 * object@system@demand@sigma))[object@system@supply@separation_subset] * object@system@demand@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_beta_s_partial_beta_s_of_loglh", function(object) {
-  standardGeneric("partial_beta_s_partial_beta_s_of_loglh")
-})
-
-setMethod("partial_beta_s_partial_beta_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  t(object@system@supply@independent_matrix[object@system@demand@separation_subset, ] * c((object@system@demand@psi * object@system@rho1 ** 2 * (object@system@demand@Psi * object@system@supply@z - object@system@demand@psi) / (object@system@demand@Psi ** 2 * object@system@supply@var)))[object@system@demand@separation_subset]) %*% object@system@supply@independent_matrix[object@system@demand@separation_subset, ] +
-    t(object@system@supply@independent_matrix[object@system@supply@separation_subset, ] * c(((-object@system@supply@Psi ** 2 + object@system@supply@Psi * object@system@supply@psi * object@system@rho2 ** 2 * object@system@demand@z - object@system@supply@psi ** 2 * object@system@rho2 ** 2) / (object@system@supply@Psi ** 2 * object@system@supply@var)))[object@system@supply@separation_subset]) %*% object@system@supply@independent_matrix[object@system@supply@separation_subset, ]
-})
-
-setGeneric("partial_beta_s_partial_var_d_of_loglh", function(object) {
-  standardGeneric("partial_beta_s_partial_var_d_of_loglh")
-})
-
-setMethod("partial_beta_s_partial_var_d_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c(-object@system@demand@h * object@system@demand@psi * object@system@rho1 * object@system@rho2 * (object@system@demand@Psi * object@system@supply@z - object@system@demand@psi) / (2 * object@system@demand@Psi ** 2 * object@system@demand@var * object@system@supply@sigma))[object@system@demand@separation_subset] * object@system@supply@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c(-object@system@demand@h * object@system@supply@psi * object@system@rho1 * object@system@rho2 * (object@system@supply@Psi * object@system@demand@z - object@system@supply@psi) / (2 * object@system@supply@Psi ** 2 * object@system@demand@var * object@system@supply@sigma))[object@system@supply@separation_subset] * object@system@supply@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_beta_s_partial_var_s_of_loglh", function(object) {
-  standardGeneric("partial_beta_s_partial_var_s_of_loglh")
-})
-
-setMethod("partial_beta_s_partial_var_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c(object@system@demand@psi * object@system@rho1 * (object@system@demand@Psi * (object@system@supply@h * object@system@rho1 * object@system@supply@z - 1) - object@system@supply@h * object@system@demand@psi * object@system@rho1) / (2 * object@system@demand@Psi ** 2 * object@system@supply@sigma ** 3))[object@system@demand@separation_subset] * object@system@supply@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c((object@system@supply@Psi * object@system@supply@psi * object@system@rho2 * (object@system@supply@h * object@system@rho2 * object@system@demand@z + 1) - object@system@supply@h * (2 * object@system@supply@Psi ** 2 + object@system@supply@psi ** 2 * object@system@rho2 ** 2)) / (2 * object@system@supply@Psi ** 2 * object@system@supply@sigma ** 3))[object@system@supply@separation_subset] * object@system@supply@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_beta_s_partial_rho_of_loglh", function(object) {
-  standardGeneric("partial_beta_s_partial_rho_of_loglh")
-})
-
-setMethod("partial_beta_s_partial_rho_of_loglh", signature(object = "diseq_directional"), function(object) {
-  colSums(c(object@system@demand@psi * object@system@rho1 ** 2 * (object@system@demand@Psi * (object@system@rho1 * object@system@demand@z * object@system@supply@z + object@system@rho2) - object@system@demand@psi * object@system@rho1 * object@system@demand@z) / (object@system@demand@Psi ** 2 * object@system@supply@sigma))[object@system@demand@separation_subset] * object@system@supply@independent_matrix[object@system@demand@separation_subset, ]) +
-    colSums(c(-object@system@supply@psi * object@system@rho1 ** 2 * (object@system@supply@Psi * (object@system@rho1 + object@system@rho2 * object@system@demand@z * object@system@supply@z) - object@system@supply@psi * object@system@rho2 * object@system@supply@z) / (object@system@supply@Psi ** 2 * object@system@supply@sigma))[object@system@supply@separation_subset] * object@system@supply@independent_matrix[object@system@supply@separation_subset, ])
-})
-
-setGeneric("partial_var_d_partial_var_d_of_loglh", function(object) {
-  standardGeneric("partial_var_d_partial_var_d_of_loglh")
-})
-
-setMethod("partial_var_d_partial_var_d_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum(((2 * object@system@demand@Psi ** 2 * (1 - 2 * object@system@demand@h ** 2) + object@system@demand@Psi * object@system@demand@h * object@system@demand@psi * object@system@rho2 * (object@system@demand@h * object@system@rho2 * object@system@supply@z + 3) - object@system@demand@h ** 2 * object@system@demand@psi ** 2 * object@system@rho2 ** 2) / (4 * object@system@demand@Psi ** 2 * object@system@demand@sigma ** 4))[object@system@demand@separation_subset]) +
-    sum((object@system@demand@h * object@system@supply@psi * object@system@rho1 * (object@system@supply@Psi * (object@system@demand@h * object@system@rho1 * object@system@demand@z - 3) - object@system@demand@h * object@system@supply@psi * object@system@rho1) / (4 * object@system@supply@Psi ** 2 * object@system@demand@sigma ** 4))[object@system@supply@separation_subset])
-})
-
-setGeneric("partial_var_d_partial_var_s_of_loglh", function(object) {
-  standardGeneric("partial_var_d_partial_var_s_of_loglh")
-})
-
-setMethod("partial_var_d_partial_var_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum((-object@system@demand@h * object@system@supply@h * object@system@demand@psi * object@system@rho1 * object@system@rho2 * (object@system@demand@Psi * object@system@supply@z - object@system@demand@psi) / (4 * object@system@demand@Psi ** 2 * object@system@demand@var * object@system@supply@var))[object@system@demand@separation_subset]) +
-    sum((-object@system@demand@h * object@system@supply@h * object@system@supply@psi * object@system@rho1 * object@system@rho2 * (object@system@supply@Psi * object@system@demand@z - object@system@supply@psi) / (4 * object@system@supply@Psi ** 2 * object@system@demand@var * object@system@supply@var))[object@system@supply@separation_subset])
-})
-
-setGeneric("partial_var_d_partial_rho_of_loglh", function(object) {
-  standardGeneric("partial_var_d_partial_rho_of_loglh")
-})
-
-setMethod("partial_var_d_partial_rho_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum((-object@system@demand@h * object@system@demand@psi * object@system@rho1 ** 2 * (object@system@demand@Psi * (object@system@rho1 + object@system@rho2 * object@system@demand@z * object@system@supply@z) - object@system@demand@psi * object@system@rho2 * object@system@demand@z) / (2 * object@system@demand@Psi ** 2 * object@system@demand@var))[object@system@demand@separation_subset]) +
-    sum((object@system@demand@h * object@system@supply@psi * object@system@rho1 ** 2 * (object@system@supply@Psi * (object@system@rho1 * object@system@demand@z * object@system@supply@z + object@system@rho2) - object@system@supply@psi * object@system@rho1 * object@system@supply@z) / (2 * object@system@supply@Psi ** 2 * object@system@demand@var))[object@system@supply@separation_subset])
-})
-
-setGeneric("partial_var_s_partial_var_s_of_loglh", function(object) {
-  standardGeneric("partial_var_s_partial_var_s_of_loglh")
-})
-
-setMethod("partial_var_s_partial_var_s_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum((object@system@supply@h * object@system@demand@psi * object@system@rho1 * (object@system@demand@Psi * (object@system@supply@h * object@system@rho1 * object@system@supply@z - 3) - object@system@supply@h * object@system@demand@psi * object@system@rho1) / (4 * object@system@demand@Psi ** 2 * object@system@supply@sigma ** 4))[object@system@demand@separation_subset]) +
-    sum(((2 * object@system@supply@Psi ** 2 * (1 - 2 * object@system@supply@h ** 2) + object@system@supply@Psi * object@system@supply@h * object@system@supply@psi * object@system@rho2 * (object@system@supply@h * object@system@rho2 * object@system@demand@z + 3) - object@system@supply@h ** 2 * object@system@supply@psi ** 2 * object@system@rho2 ** 2) / (4 * object@system@supply@Psi ** 2 * object@system@supply@sigma ** 4))[object@system@supply@separation_subset])
-})
-
-setGeneric("partial_var_s_partial_rho_of_loglh", function(object) {
-  standardGeneric("partial_var_s_partial_rho_of_loglh")
-})
-
-setMethod("partial_var_s_partial_rho_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum((object@system@supply@h * object@system@demand@psi * object@system@rho1 ** 2 * (object@system@demand@Psi * (object@system@rho1 * object@system@demand@z * object@system@supply@z + object@system@rho2) - object@system@demand@psi * object@system@rho1 * object@system@demand@z) / (2 * object@system@demand@Psi ** 2 * object@system@supply@var))[object@system@demand@separation_subset]) +
-    sum((-object@system@supply@h * object@system@supply@psi * object@system@rho1 ** 2 * (object@system@supply@Psi * (object@system@rho1 + object@system@rho2 * object@system@demand@z * object@system@supply@z) - object@system@supply@psi * object@system@rho2 * object@system@supply@z) / (2 * object@system@supply@Psi ** 2 * object@system@supply@var))[object@system@supply@separation_subset])
-})
-
-setGeneric("partial_rho_partial_rho_of_loglh", function(object) {
-  standardGeneric("partial_rho_partial_rho_of_loglh")
-})
-
-setMethod("partial_rho_partial_rho_of_loglh", signature(object = "diseq_directional"), function(object) {
-  sum((object@system@demand@psi * object@system@rho1 ** 3 * (object@system@demand@Psi * (3 * object@system@demand@h * object@system@rho1 * object@system@rho2 - object@system@supply@h * (3 * object@system@rho2 ** 2 + 1) + object@system@rho1 * object@system@demand@z ** 2 * object@system@supply@z) - object@system@demand@psi * object@system@rho1 * object@system@demand@z ** 2) / object@system@demand@Psi ** 2)[object@system@demand@separation_subset]) +
-    sum((object@system@supply@psi * object@system@rho1 ** 3 * (object@system@supply@Psi * (-object@system@demand@h * (3 * object@system@rho2 ** 2 + 1) + 3 * object@system@supply@h * object@system@rho1 * object@system@rho2 + object@system@rho1 * object@system@demand@z * object@system@supply@z ** 2) - object@system@supply@psi * object@system@rho1 * object@system@supply@z ** 2) / object@system@supply@Psi ** 2)[object@system@supply@separation_subset])
 })

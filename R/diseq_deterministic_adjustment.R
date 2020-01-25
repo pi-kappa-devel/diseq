@@ -1,6 +1,7 @@
 #' Disequilibrium model with deterministic price dynamics.
 #'
 #' @include diseq_base.R
+#' @include derivatives_deterministic_adjustment.R
 #' @name diseq_deterministic_adjustment-class
 #' @export
 setClass(

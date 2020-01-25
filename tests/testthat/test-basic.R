@@ -23,6 +23,10 @@ test_that(paste0("Calcualted gradient of '", get_model_description(mdl), "' matc
  test_calculated_gradient(mdl, est@coef, 1e-5)
 })
 
+test_that(paste0("Calcualted hessian of '", get_model_description(mdl), "' matches the numerical approximation"), {
+  test_calculated_hessian(mdl, est@coef, 1e-1)
+})
+
 test_that(paste0("Mean marginal effect are calculatable"), {
   test_marginal_effect(get_mean_marginal_effect, mdl, est, "P")
   test_marginal_effect(get_mean_marginal_effect, mdl, est, "Xs1")
