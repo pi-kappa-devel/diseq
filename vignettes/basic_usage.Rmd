@@ -2,7 +2,7 @@
 title: "Basic usage of Diseq package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{A showcase of basic Diseq functionality}
+  %\VignetteIndexEntry{An example of estimations using models for market in disequilibrium}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -26,60 +26,47 @@ library(diseq)
 library(magrittr)
 ```
 
-Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For the 
-tutorial, we will use simulated data. Although we could simulate data independently from the package, we will use 
-the top-level simulation functionality of Diseq to simplify the process. The `simulate_model` function also initializes
-the model. However, we will only keep the data to show how the model can be initialized through a constructor. We will
-simulate data both for a market in equilibrium and a market in disequilibrium.
+Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For 
+this example, we will use simulated data. Although we could simulate data independently from the package, we will use 
+the top-level simulation functionality of Diseq to simplify the process. See the documentation of `simulate_model_data` 
+for more information on the simulation functionality. Here, we simulate data using a data generating process for a 
+market in disequilibrium with stochastic price dynamics.
 
 ```{r setup.data}
 nobs <- 2000
-tobs <- 8
+tobs <- 5
 
-alpha_d <- -1.9
-beta_d0 <- 4.9
-beta_d <- c(2.1, -0.7)
-eta_d <- c(3.5, 6.25)
+alpha_d <- -0.1
+beta_d0 <- 9.8
+beta_d <- c(0.3, -0.2)
+eta_d <- c(0.6, -0.1)
 
-alpha_s <- 2.8
-beta_s0 <- 1.2
-beta_s <- c(0.65)
-eta_s <- c(1.15, 4.2)
+alpha_s <- 0.1
+beta_s0 <- 5.1
+beta_s <- c(0.9)
+eta_s <- c(-0.5, 0.2)
 
-gamma <- 0.1
-beta_p0 <- 3.3
-beta_p <- c(1.1)
+gamma <- 1.2
+beta_p0 <- 3.1
+beta_p <- c(0.8)
 
 sigma_d <- 1
 sigma_s <- 1
 sigma_p <- 1
-rho_ds <- 0.5
+rho_ds <- 0.0
 rho_dp <- 0.0
 rho_sp <- 0.0
 
-seed <- 5502
-stopifnot(abs(rho_ds) <= 1)
+seed <- 443
 
-eq_data <- simulate_model(
-  "eq_fiml", nobs, tobs,
-  alpha_d, beta_d0, beta_d, eta_d,
-  alpha_s, beta_s0, beta_s, eta_s,
-  gamma, beta_p0, beta_p,
-  sigma_d = sigma_d, sigma_s = sigma_s, sigma_p = sigma_p, rho_ds = rho_ds, rho_dp = rho_dp, rho_sp = rho_sp,
-  seed = seed, verbose = 0
-)@model_tibble
-
-diseq_data <- simulate_model(
+stochastic_adjustment_data <- simulate_model_data(
   "diseq_stochastic_adjustment", nobs, tobs,
   alpha_d, beta_d0, beta_d, eta_d,
   alpha_s, beta_s0, beta_s, eta_s,
   gamma, beta_p0, beta_p,
   sigma_d = sigma_d, sigma_s = sigma_s, sigma_p = sigma_p, rho_ds = rho_ds, rho_dp = rho_dp, rho_sp = rho_sp,
-  seed = seed, verbose = 0
-)@model_tibble
-
-diseq_data <- diseq_data %>% 
-  dplyr::mutate(date = factor(date))
+  seed = seed
+)
 ```
 
 ## Initialize the model
@@ -152,35 +139,35 @@ eq2sls <- new(
   "eq_2sls",
   key_columns,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
-  eq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 eqfiml <- new(
   "eq_fiml",
   key_columns,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
-  eq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
   key_columns,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
-  diseq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 drmdl <- new(
   "diseq_directional",
   key_columns, time_column,
   quantity_column, price_column, demand_specification, supply_specification,
-  diseq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
   key_columns, time_column,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
-  diseq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 samdl <- new(
@@ -188,7 +175,7 @@ samdl <- new(
   key_columns, time_column,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification), 
   price_specification,
-  diseq_data,
+  stochastic_adjustment_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 ```
@@ -295,7 +282,10 @@ functionality is based on `bbmle`.
 ```{r analysis.summaries}
 summary(eq2sls@first_stage_model)
 summary(eq2sls@system_model)
+bbmle::summary(eqfiml_est)
 bbmle::summary(bsmdl_est)
+bbmle::summary(damdl_est)
+bbmle::summary(samdl_est)
 ```
 The estimated demanded and supplied quantities can be calculated per observation. 
 

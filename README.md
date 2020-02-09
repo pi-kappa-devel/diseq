@@ -49,16 +49,11 @@ library(diseq)
 ```
 
 The example uses simulated data. The diseq package offers a function to
-simulate data and initialize a model in one step. See the documentation
-of `simulate_model` for details. Models can be initialized with a
-dataset using a constructor.
-
-In this example, a basic disequilibrium model is estimated. There are
-also other models available (see [Design and
-functionality](#design-and-functionality)).
+simulate data from data generating processes that correspond to the
+models that the package provides.
 
 ``` r
-mdl <- simulate_model(
+model_tbl <- simulate_model_data(
   "diseq_basic", 10000, 5,
   -1.9, 4.9, c(2.1, -0.7), c(3.5, 6.25),
   2.8, 1.2, c(0.65), c(1.15, 4.2),
@@ -67,43 +62,126 @@ mdl <- simulate_model(
 )
 ```
 
+Models are initialized by a constructor. In this example, a basic
+disequilibrium model is estimated. There are also other models available
+(see [Design and functionality](#design-and-functionality)). The
+constructor sets the model’s parameters and performs the necessary
+initialization processes. The following variables specify this example’s
+parameterization.
+
+  - The key is the combination of columns that uniquely identify a
+    record of the dataset. For panel data, this should be a vector of
+    the entity identifier and the time columns.
+
+<!-- end list -->
+
+``` r
+key_columns <- c("id", "date")
+```
+
+  - The quantity variable.
+
+<!-- end list -->
+
+``` r
+quantity_column <- "Q"
+```
+
+  - The price variable.
+
+<!-- end list -->
+
+``` r
+price_column <- "P"
+```
+
+  - The sepecification of the system’s equations. Each specification
+    sets the right hand side of one system equation. The expressions are
+    specified similarly to the expressions of formulas of linear models.
+    Indicator variables and interactions are created automatically by
+    the constructor.
+
+<!-- end list -->
+
+``` r
+demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
+supply_specification <- "Xs1 + X1 + X2"
+```
+
+  - The verbosity level controls the level of messaging. The object
+    displays
+      - error: always,
+      - warning: \(\ge\) 1,
+      - info: \(\ge\) 2,
+      - verbose: \(\ge\) 3 and
+      - debug: \(\ge\) 4.
+
+<!-- end list -->
+
+``` r
+verbose <- 4
+```
+
+  - Should the model estimation allow for correlated demand and supply
+    shocks?
+
+<!-- end list -->
+
+``` r
+use_correlated_shocks <- TRUE
+```
+
+``` r
+mdl <- new(
+  "diseq_basic",
+  key_columns,
+  quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
+  model_tbl,
+  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+)
+#> Info: This is 'Basic with correlated shocks' model
+#> Verbose: Using columns id, date, Q, P, Xd1, Xd2, X1, X2, Xs1.
+```
+
 The model is estimated with default options by a simple call. See the
 documentation of `estimate` for more details and options.
 
 ``` r
 est <- estimate(mdl)
+#> Verbose: Initializing using linear regression estimations.
+#> Debug: Using starting values: D_P = 2.1334612971289, D_CONST = 1.74512294884244, D_Xd1 = 0.371173675755609, D_Xd2 = -0.134123191634723, D_X1 = 1.55733325744955, D_X2 = 4.57681889311855, S_P = 2.13368618959257, S_CONST = 0.754830637264177, S_Xs1 = 0.530640038804247, S_X1 = 1.5539938204713, S_X2 = 4.56958594244215, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
 summary(est)
 #> Maximum likelihood estimation
 #> 
 #> Call:
-#> `bbmle::mle2`(list(skip.hessian = FALSE, start = c(D_P = 2.13612848679375, 
-#> D_CONST = 1.81846891329318, D_Xd1 = 0.360519700208155, D_Xd2 = -0.127953324215315, 
-#> D_X1 = 1.55709136453431, D_X2 = 4.55420183606562, S_P = 2.13273424671937, 
-#> S_CONST = 0.738905062339338, S_Xs1 = 0.548743057706831, S_X1 = 1.55631931181641, 
-#> S_X2 = 4.55094892540246, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
+#> `bbmle::mle2`(list(skip.hessian = FALSE, start = c(D_P = 2.1334612971289, 
+#> D_CONST = 1.74512294884244, D_Xd1 = 0.371173675755609, D_Xd2 = -0.134123191634723, 
+#> D_X1 = 1.55733325744955, D_X2 = 4.57681889311855, S_P = 2.13368618959257, 
+#> S_CONST = 0.754830637264177, S_Xs1 = 0.530640038804247, S_X1 = 1.5539938204713, 
+#> S_X2 = 4.56958594244215, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
 #> ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
 #>     gr = function(...) gradient(object, ...)))
 #> 
 #> Coefficients:
 #>              Estimate Std. Error  z value  Pr(z)    
-#> D_P        -1.9257636  0.0350306 -54.9737 <2e-16 ***
-#> D_CONST     4.8180838  0.1370628  35.1524 <2e-16 ***
-#> D_Xd1       2.0950102  0.0179847 116.4885 <2e-16 ***
-#> D_Xd2      -0.6807079  0.0133580 -50.9589 <2e-16 ***
-#> D_X1        3.5170578  0.0191700 183.4668 <2e-16 ***
-#> D_X2        6.2743935  0.0177504 353.4789 <2e-16 ***
-#> S_P         2.8003013  0.0068342 409.7471 <2e-16 ***
-#> S_CONST     1.2107950  0.0395546  30.6107 <2e-16 ***
-#> S_Xs1       0.6591005  0.0057569 114.4882 <2e-16 ***
-#> S_X1        1.1421241  0.0060785 187.8966 <2e-16 ***
-#> S_X2        4.1903780  0.0059934 699.1651 <2e-16 ***
-#> D_VARIANCE  1.0119257  0.0190813  53.0325 <2e-16 ***
-#> S_VARIANCE  0.9927877  0.0072733 136.4972 <2e-16 ***
-#> RHO        -0.0066240  0.0312731  -0.2118 0.8323    
+#> D_P        -1.9017291  0.0358194 -53.0921 <2e-16 ***
+#> D_CONST     4.9053673  0.1415429  34.6564 <2e-16 ***
+#> D_Xd1       2.0822199  0.0180697 115.2327 <2e-16 ***
+#> D_Xd2      -0.7088348  0.0136147 -52.0640 <2e-16 ***
+#> D_X1        3.5124797  0.0194037 181.0213 <2e-16 ***
+#> D_X2        6.2667695  0.0180124 347.9143 <2e-16 ***
+#> S_P         2.7970361  0.0068834 406.3475 <2e-16 ***
+#> S_CONST     1.1906485  0.0398902  29.8481 <2e-16 ***
+#> S_Xs1       0.6485039  0.0057989 111.8317 <2e-16 ***
+#> S_X1        1.1467542  0.0061024 187.9191 <2e-16 ***
+#> S_X2        4.2091141  0.0060775 692.5783 <2e-16 ***
+#> D_VARIANCE  1.0121758  0.0195476  51.7801 <2e-16 ***
+#> S_VARIANCE  1.0162146  0.0074433 136.5269 <2e-16 ***
+#> RHO        -0.0131056  0.0325131  -0.4031 0.6869    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> -2 log L: 138660.1
+#> -2 log L: 139600.5
 ```
 
 ## Design and functionality
@@ -129,17 +207,17 @@ calculate
 
   - shortage probabilities,
   - marginal effects on shortage probabilities,
-  - normalized point estimates of shortages,
-  - relative point estimates of shortages,
+  - point estimates of normalized shortages,
+  - point estimates of relative shortages,
   - aggregate demand and supply,
-  - post-estimation classification of observation in demand and supply.
+  - post-estimation classification of observations in demand and supply.
 
 ## Contributors
 
-Pantelis Karapanagiotis 
+Pantelis Karapanagiotis
 
 Feel free to join, share, contribute, distribute.
 
 ## License
 
-The code is distributed under the MIT License. 
+The code is distributed under the MIT License.

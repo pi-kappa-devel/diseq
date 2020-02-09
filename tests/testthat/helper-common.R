@@ -1,11 +1,12 @@
 skipped_tests <- c(
-  #"2sls"
+  ""
+  #, "2sls"
   #, "fiml"
   #, "basic"
   #, "directional"
   #, "deterministic_adjustment"
   #, "stochastic_adjustment"
-  "style"
+  , "style"
 )
 verbose <- 0
 
@@ -38,7 +39,9 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
   invisible(act$val)
 }
 
-
+test_convergence <- function(est) {
+  expect(est@details$convergence == 0, sprintf("Failed to converge"))
+}
 
 test_calculated_hessian <- function(mdl, params, tolerance) {
   nh <- as.matrix(numDeriv::jacobian(function(p) gradient(mdl, p), params, method = "Richardson"))
@@ -79,30 +82,21 @@ test_aggregation <- function(aggregation, mdl, params) {
   expect(!is.na(aggregation(mdl, params)), sprintf("Failed to calculate aggregate"))
 }
 
+
+test_estimation_accuracy <- function(estimation, parameters, tolerance) {
+  errors <- abs(estimation - parameters)
+
+  for (i in seq_len(length(errors))) {
+    expect(errors[i] < tolerance, sprintf(
+        "Accuracy test failed for %s (estimated = %g, actual = %g) with difference %f.",
+        names(errors)[i], estimation[i], parameters[i], errors[i]
+      )
+    )
+  }
+
+  invisible()
+}
+
 ## Simulation settings
-nobs <- 1000
-tobs <- 3
-
-alpha_d <- -1.9
-beta_d0 <- 4.9
-beta_d <- c(2.1, -0.7)
-eta_d <- c(3.5, 6.25)
-
-alpha_s <- 2.8
-beta_s0 <- 1.2
-beta_s <- c(0.65)
-eta_s <- c(1.15, 4.2)
-
-gamma <- NA
-beta_p0 <- NA
-beta_p <- c(NA)
-
-sigma_d <- 1
-sigma_s <- 1
-sigma_p <- 1
-rho_ds <- 0.1
-rho_dp <- 0.0
-rho_sp <- 0.0
-
-seed <- 84
+seed <- 42
 verbose <- 0

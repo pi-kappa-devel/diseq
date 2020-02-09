@@ -104,7 +104,9 @@ setMethod("initialize", "system_stochastic_adjustment", function(
       .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
       demand_initializer, supply_initializer
     )
-    .Object@price_equation <- new("equation_base", quantity, price, price_specification, data, "Price Equation", "P_")
+    .Object@price_equation <- new(
+      "equation_stochastic_adjustment", quantity, price, price_specification, data, "Price Equation", "P_"
+    )
     .Object@lagged_price_vector <- as.matrix(data[, get_lagged_price_variable(.Object)])
 
     .Object
@@ -188,17 +190,20 @@ setMethod("calculate_system_moments", signature(object = "system_stochastic_adju
       + object@supply@sigma ** 2 * (-object@demand@alpha - object@supply@alpha + object@gamma)
     ) / object@delta
 
-  if (!is.na(object@var_P) && object@var_P < 0) {
-    object@var_P <- NA_real_
+  validate_variance <- function(var) {
+    if (!is.na(var) && var < 0) {
+      var <- NA_real_
+    }
+    var
   }
+
+  object@var_P <- validate_variance(object@var_P)
   object@sigma_P <- sqrt(object@var_P)
-  if (!is.na(object@var_D) && object@var_D < 0) {
-    object@var_D <- NA_real_
-  }
+
+  object@var_D <- validate_variance(object@var_D)
   object@sigma_D <- sqrt(object@var_D)
-  if (!is.na(object@var_S) && object@var_S < 0) {
-    object@var_S <- NA_real_
-  }
+
+  object@var_S <- validate_variance(object@var_S)
   object@sigma_S <- sqrt(object@var_S)
 
   object@cov_DS <-
@@ -223,21 +228,21 @@ setMethod("calculate_system_moments", signature(object = "system_stochastic_adju
         object@supply@sigma + object@rho_ds * object@demand@sigma * object@supply@sigma - object@supply@sigma ** 2
     ) / object@delta
 
-  object@rho_DS <- object@cov_DS / object@sigma_D / object@sigma_S
-  if (!is.na(object@rho_DS) && abs(object@rho_DS) >= 1) {
-    object@rho_DS <- NA_real_
+  validate_correlation <- function(rho) {
+    if (!is.na(rho) && abs(rho) >= 1) {
+      rho <- NA_real_
+    }
+    rho
   }
+
+  object@rho_DS <- object@cov_DS / object@sigma_D / object@sigma_S
+  object@rho_DS <- validate_correlation(object@rho_DS)
 
   object@rho_DP <- object@cov_DP / object@sigma_P / object@sigma_D
-  if (!is.na(object@rho_DP) && abs(object@rho_DP) >= 1) {
-    object@rho_DP <- NA_real_
-  }
+  object@rho_DP <- validate_correlation(object@rho_DP)
 
   object@rho_SP <- object@cov_SP / object@sigma_P / object@sigma_S
-  if (!is.na(object@rho_SP) && abs(object@rho_SP) >= 1) {
-    object@rho_SP <- NA_real_
-  }
-
+  object@rho_SP <- validate_correlation(object@rho_SP)
 
   zeta_sq <- (
     -object@rho_DP ** 2 + 2 * object@rho_DP * object@rho_DS * object@rho_SP - object@rho_DS ** 2 -

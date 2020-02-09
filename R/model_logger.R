@@ -48,7 +48,7 @@ setMethod("print_error", signature(object = "model_logger"), function(object, ..
 })
 
 setMethod("print_warning", signature(object = "model_logger"), function(object, ...) {
-  ate <- ifelse(length(knitr::opts_chunk$get()) > 0, "\n", "")
+  ate <- ifelse(rlang::is_installed("knitr") && length(knitr::opts_chunk$get()) > 0, "\n", "")
   if (object@verbosity > 0) warning(..., ate, immediate. = TRUE, call. = FALSE)
   object
 })

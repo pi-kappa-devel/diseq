@@ -60,17 +60,11 @@ setMethod("estimate", signature(object = "eq_2sls"), function(object, ...) {
   independent[object@system@supply@price_variable == independent] <- fitted_column
   supply_formula <- formula(paste0(object@system@quantity_variable, " ~ ", paste0(independent, collapse = " + ")))
 
-  if (object@system@correlated_shocks) {
-    object@system_model <- systemfit::systemfit(
-      list(demand = demand_formula, supply = supply_formula), data = object@model_tibble, ...
-    )
-  }
-  else {
-    inst <- formula(paste0(" ~ ", paste0(first_stage_controls, collapse = " + ")))
-    object@system_model <- systemfit::systemfit(
-      list(demand = demand_formula, supply = supply_formula), "2SLS", inst = inst, data = object@model_tibble, ...
-    )
-  }
+  inst <- formula(paste0(" ~ ", paste0(first_stage_controls, collapse = " + ")))
+  object@system_model <- systemfit::systemfit(
+    list(demand = demand_formula, supply = supply_formula), method = "2SLS", inst = inst, data = object@model_tibble,
+    ...
+  )
 
   object
 })

@@ -53,7 +53,6 @@ setClass(
 
 setMethod("initialize", "equation_base",
   function(.Object, quantity, price, specification, data, name, prefix) {
-
     tf <- formula(paste0(quantity, " ~ ", specification))
     tnames <- all.vars(tf)
     independent <- tnames[tnames != quantity]

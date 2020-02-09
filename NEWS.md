@@ -1,3 +1,19 @@
+# diseq 0.0.5.9004
+
+* Added a vignette with an equilibrium assessment example.
+
+# diseq 0.0.5.9003
+
+* Added model-specific simulation functions.
+
+# diseq 0.0.5.9002
+
+* Refactored simulation code.
+
+# diseq 0.0.5.9001
+
+* Added simulation generating processes for all supported models. 
+
 # diseq 0.0.4.9013
 
 * Separated auto-generated derivative code to dedicated derivative files. 
