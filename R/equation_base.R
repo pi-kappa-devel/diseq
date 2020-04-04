@@ -51,7 +51,8 @@ setClass(
   )
 )
 
-setMethod("initialize", "equation_base",
+setMethod(
+  "initialize", "equation_base",
   function(.Object, quantity, price, specification, data, name, prefix) {
     tf <- formula(paste0(quantity, " ~ ", specification))
     tnames <- all.vars(tf)
@@ -63,7 +64,8 @@ setMethod("initialize", "equation_base",
     names(data) <- paste0(prefix, names(data))
 
     prefixed_specification <- stringr::str_replace_all(
-      deparse(tf), stringr::str_c(paste0(tnames, collapse = "|")), function(from) paste0(prefix, from)
+      deparse(tf), stringr::str_c(paste0(tnames, collapse = "|")),
+      function(from) paste0(prefix, from)
     )
 
     formula <- formula(prefixed_specification)
@@ -159,9 +161,12 @@ setMethod("get_prefixed_const_variable", signature(object = "equation_base"), fu
   paste0(object@variable_prefix, "CONST")
 })
 
-setMethod("get_prefixed_independent_variables", signature(object = "equation_base"), function(object) {
-  colnames(object@independent_matrix)
-})
+setMethod(
+  "get_prefixed_independent_variables", signature(object = "equation_base"),
+  function(object) {
+    colnames(object@independent_matrix)
+  }
+)
 
 #' @rdname get_prefixed_price_variable
 setMethod("get_prefixed_price_variable", signature(object = "equation_base"), function(object) {

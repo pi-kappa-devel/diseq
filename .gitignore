@@ -7,6 +7,10 @@
 # RStudio files
 .Rproj.user/
 
+# emacs generated files
+\#*\#
+*~
+
 # Produced vignettes
 vignettes/*.html
 vignettes/*.R

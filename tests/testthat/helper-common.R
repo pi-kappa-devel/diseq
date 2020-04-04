@@ -1,24 +1,26 @@
 skipped_tests <- c(
   ""
-  #, "2sls"
-  #, "fiml"
-  #, "basic"
-  #, "directional"
-  #, "deterministic_adjustment"
-  #, "stochastic_adjustment"
-  , "style"
+  # , "2sls"
+  # , "fiml"
+  # , "basic"
+  # , "directional"
+  # , "deterministic_adjustment"
+  # , "stochastic_adjustment"
 )
 verbose <- 0
 
 test_calculated_gradient <- function(mdl, params, tolerance) {
   cg <- as.matrix(gradient(mdl, params))
-  ng <- as.matrix(numDeriv::grad(function(p) minus_log_likelihood(mdl, p), params, method = "Richardson"))
+  ng <- as.matrix(numDeriv::grad(
+    function(p) minus_log_likelihood(mdl, p), params,
+    method = "Richardson"
+  ))
   rownames(ng) <- rownames(cg)
 
   pnames <- rownames(cg)
   max_diff <- 0
 
-  act <- quasi_label(rlang::enquo(ng))
+  act <- testthat::quasi_label(rlang::enquo(ng))
 
   for (row in seq_len(length(act$val))) {
     scale <- max(abs(ng[row]), abs(cg[row]))
@@ -28,8 +30,8 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
     max_diff <- ifelse(max_diff < diff, diff, max_diff)
     expect(diff < tolerance, sprintf(
       "%s (numerical = %g, calculated = %g) failed with differences (%f, %f).",
-      pnames[row], ng[row], cg[row], ad, rd)
-    )
+      pnames[row], ng[row], cg[row], ad, rd
+    ))
   }
 
   if (max_diff > tolerance) {
@@ -40,7 +42,7 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
 }
 
 test_convergence <- function(est) {
-  expect(est@details$convergence == 0, sprintf("Failed to converge"))
+  testthat::expect(est@details$convergence == 0, sprintf("Failed to converge"))
 }
 
 test_calculated_hessian <- function(mdl, params, tolerance) {
@@ -49,7 +51,7 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
   pnames <- rownames(ch)
   max_diff <- 0
 
-  act <- quasi_label(rlang::enquo(nh))
+  act <- testthat::quasi_label(rlang::enquo(nh))
 
   for (row in seq_len(nrow(nh))) {
     for (col in seq_len(ncol(nh))) {
@@ -60,8 +62,8 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
       max_diff <- ifelse(max_diff < diff, diff, max_diff)
       expect(diff < tolerance, sprintf(
         "[%s, %s] (numerical = %g, calculated = %g) failed with differences (%f, %f).",
-        pnames[row], pnames[col], nh[row, col], ch[row, col], ad, rd)
-      )
+        pnames[row], pnames[col], nh[row, col], ch[row, col], ad, rd
+      ))
     }
   }
 
@@ -74,12 +76,15 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
 
 
 test_marginal_effect <- function(effect, mdl, params, column) {
-  expect(!is.na(effect(mdl, params, column)), sprintf("Failed to calculate marginal effect of %s", column))
+  testthat::expect(
+    !is.na(effect(mdl, params, column)),
+    sprintf("Failed to calculate marginal effect of %s", column)
+  )
 }
 
 
 test_aggregation <- function(aggregation, mdl, params) {
-  expect(!is.na(aggregation(mdl, params)), sprintf("Failed to calculate aggregate"))
+  testthat::expect(!is.na(aggregation(mdl, params)), sprintf("Failed to calculate aggregate"))
 }
 
 
@@ -88,10 +93,9 @@ test_estimation_accuracy <- function(estimation, parameters, tolerance) {
 
   for (i in seq_len(length(errors))) {
     expect(errors[i] < tolerance, sprintf(
-        "Accuracy test failed for %s (estimated = %g, actual = %g) with difference %f.",
-        names(errors)[i], estimation[i], parameters[i], errors[i]
-      )
-    )
+      "Accuracy test failed for %s (estimated = %g, actual = %g) with difference %f.",
+      names(errors)[i], estimation[i], parameters[i], errors[i]
+    ))
   }
 
   invisible()

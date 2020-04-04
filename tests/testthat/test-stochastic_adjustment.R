@@ -5,9 +5,9 @@ skip_if("stochastic_adjustment" %in% skipped_tests, message = "Focus on developi
 parameters <- list(
   nobs = 2000, tobs = 4,
   alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.02), eta_d = c(0.6, -0.1),
-  alpha_s = 0.1, beta_s0 = 6.1, beta_s = c(0.9), eta_s  = c(-0.5, 0.2),
+  alpha_s = 0.1, beta_s0 = 6.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
   gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8),
-  sigma_d  = 1.0, sigma_s  = 1.0, sigma_p = 1.0, rho_ds  = 0.0, rho_dp  = 0.0, rho_sp  = 0.0
+  sigma_d = 1.0, sigma_s = 1.0, sigma_p = 1.0, rho_ds = 0.0, rho_dp = 0.0, rho_sp = 0.0
 )
 
 mdl <- simulate_stochastic_adjustment_model(parameters, seed = seed, verbose = verbose)
@@ -18,17 +18,23 @@ optimization_method <- "BFGS"
 
 # Estimate
 optimization_controls <- list(REPORT = 10, maxit = 50000, reltol = reltol)
-est <- estimate(mdl, control = optimization_controls, method = optimization_method, use_numerical_hessian = TRUE)
+est <- estimate(mdl,
+  control = optimization_controls,
+  method = optimization_method, use_numerical_hessian = TRUE
+)
 
 test_that(paste0("Estimates of '", get_model_description(mdl), "' are accurate"), {
-  test_estimation_accuracy(est@coef, unlist(parameters[-c(1,2)]), 1e-0)
+  test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
 test_that(paste0(get_model_description(mdl), "' converges"), {
   test_convergence(est)
 })
 
-test_that(paste0("Calcualted gradient of '", get_model_description(mdl), "' matches the numerical approximation"), {
+test_that(paste0(
+  "Calcualted gradient of '",
+  get_model_description(mdl), "' matches the numerical approximation"
+), {
   test_calculated_gradient(mdl, est@coef, 1e-04)
 })
 

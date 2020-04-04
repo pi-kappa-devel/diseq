@@ -11,54 +11,65 @@ setClass(
   prototype()
 )
 
-setMethod("initialize", "diseq_directional", function(
-  .Object,
-  verbose = 0,
-  key_columns, time_column,
-  quantity_column, price_column, demand_specification, supply_specification,
-  use_correlated_shocks = TRUE,
-  data
-) {
-  .Object <- callNextMethod(
-    .Object,
-    "Directional", verbose,
-    key_columns, time_column,
-    quantity_column, price_column, demand_specification, supply_specification, NULL,
-    use_correlated_shocks,
-    data,
-    function(...) new("system_directional", ...)
-  )
-
-  # Check for misspecification
-  if (
-    price_column %in% .Object@system@demand@independent_variables &&
-    price_column %in% .Object@system@supply@independent_variables
-  ) {
-    print_error(.Object@logger,
-      "Price cannot be part of both the demand and supply equations here (See Maddala, 1974, pp1021)"
+setMethod(
+  "initialize", "diseq_directional",
+  function(
+           .Object,
+           verbose = 0,
+           key_columns, time_column,
+           quantity_column, price_column, demand_specification, supply_specification,
+           use_correlated_shocks = TRUE,
+           data) {
+    .Object <- callNextMethod(
+      .Object,
+      "Directional", verbose,
+      key_columns, time_column,
+      quantity_column, price_column, demand_specification, supply_specification, NULL,
+      use_correlated_shocks,
+      data,
+      function(...) new("system_directional", ...)
     )
+
+    # Check for misspecification
+    if (
+      price_column %in% .Object@system@demand@independent_variables &&
+        price_column %in% .Object@system@supply@independent_variables
+    ) {
+      print_error(
+        .Object@logger,
+        "Price cannot be part of both the demand and supply equations here ",
+        "(See Maddala, 1974, pp1021)"
+      )
+    }
+
+    print_info(
+      .Object@logger,
+      "Sample separated with ", sum(.Object@system@demand@separation_subset),
+      " rows in excess supply and ",
+      sum(.Object@system@supply@separation_subset), " in excess demand regime."
+    )
+
+    .Object
   }
-
-  print_info(.Object@logger,
-     "Sample separated with ", sum(.Object@system@demand@separation_subset), " rows in excess supply and ",
-     sum(.Object@system@supply@separation_subset), " in excess demand regime."
-  )
-
-  .Object
-})
+)
 
 #' @rdname minus_log_likelihood
-setMethod("minus_log_likelihood", signature(object = "diseq_directional"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
+setMethod(
+  "minus_log_likelihood", signature(object = "diseq_directional"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
 
-  loglhd <- sum(
-    log(object@system@demand@Psi[object@system@demand@separation_subset] / object@system@demand@sigma)
-  )
-  loglhs <- sum(
-    log(object@system@supply@Psi[object@system@supply@separation_subset] / object@system@supply@sigma)
-  )
-  - loglhd - loglhs
-})
+    loglhd <- sum(
+      log(object@system@demand@Psi[object@system@demand@separation_subset] /
+        object@system@demand@sigma)
+    )
+    loglhs <- sum(
+      log(object@system@supply@Psi[object@system@supply@separation_subset] /
+        object@system@supply@sigma)
+    )
+    -loglhd - loglhs
+  }
+)
 
 setMethod("gradient", signature(object = "diseq_directional"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
@@ -66,18 +77,23 @@ setMethod("gradient", signature(object = "diseq_directional"), function(object, 
   nd <- object@system@demand@separation_subset
   pd <- object@system@supply@separation_subset
 
-  l_pbd <-
-    colSums(partial_beta_d_of_loglh_d(object@system)[nd, ]) + colSums(partial_beta_d_of_loglh_s(object@system)[pd, ])
-  l_pbs <-
-    colSums(partial_beta_s_of_loglh_d(object@system)[nd, ]) + colSums(partial_beta_s_of_loglh_s(object@system)[pd, ])
-  l_pvard <-
-    sum(partial_var_d_of_loglh_d(object@system)[nd]) + sum(partial_var_d_of_loglh_s(object@system)[pd])
-  l_pvars <-
-    sum(partial_var_s_of_loglh_d(object@system)[nd]) + sum(partial_var_s_of_loglh_s(object@system)[pd])
+  l_pbd <- (
+    colSums(partial_beta_d_of_loglh_d(object@system)[nd, ]) +
+      colSums(partial_beta_d_of_loglh_s(object@system)[pd, ]))
+  l_pbs <- (
+    colSums(partial_beta_s_of_loglh_d(object@system)[nd, ]) +
+      colSums(partial_beta_s_of_loglh_s(object@system)[pd, ]))
+  l_pvard <- (
+    sum(partial_var_d_of_loglh_d(object@system)[nd]) +
+      sum(partial_var_d_of_loglh_s(object@system)[pd]))
+  l_pvars <- (
+    sum(partial_var_s_of_loglh_d(object@system)[nd]) +
+      sum(partial_var_s_of_loglh_s(object@system)[pd]))
 
   if (object@system@correlated_shocks) {
-    l_prho <-
-      sum(partial_rho_of_loglh_d(object@system)[nd]) + sum(partial_rho_of_loglh_s(object@system)[pd])
+    l_prho <- (
+      sum(partial_rho_of_loglh_d(object@system)[nd]) +
+        sum(partial_rho_of_loglh_s(object@system)[pd]))
   }
 
   g <- rep(NA, length(get_likelihood_variables(object@system)))
@@ -136,13 +152,19 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
   h[get_prefixed_variance_variable(object@system@supply), names(l_pbdpvars)] <- t(l_pbdpvars)
   h[names(l_pbdpvars), get_prefixed_variance_variable(object@system@supply)] <- l_pbdpvars
 
-  h[get_prefixed_variance_variable(object@system@demand), get_prefixed_variance_variable(object@system@demand)] <-
-    l_pvardpvard
+  h[
+    get_prefixed_variance_variable(object@system@demand),
+    get_prefixed_variance_variable(object@system@demand)
+  ] <- l_pvardpvard
 
-  h[get_prefixed_variance_variable(object@system@demand), get_prefixed_variance_variable(object@system@supply)] <-
-    l_pvardpvars
-  h[get_prefixed_variance_variable(object@system@supply), get_prefixed_variance_variable(object@system@demand)] <-
-    l_pvardpvars
+  h[
+    get_prefixed_variance_variable(object@system@demand),
+    get_prefixed_variance_variable(object@system@supply)
+  ] <- l_pvardpvars
+  h[
+    get_prefixed_variance_variable(object@system@supply),
+    get_prefixed_variance_variable(object@system@demand)
+  ] <- l_pvardpvars
 
   h[rownames(l_pbspbs), colnames(l_pbspbs)] <- l_pbspbs
 
@@ -152,8 +174,10 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
   h[get_prefixed_variance_variable(object@system@demand), names(l_pbspvard)] <- t(l_pbspvard)
   h[names(l_pbspvard), get_prefixed_variance_variable(object@system@demand)] <- l_pbspvard
 
-  h[get_prefixed_variance_variable(object@system@supply), get_prefixed_variance_variable(object@system@supply)] <-
-    l_pvarspvars
+  h[
+    get_prefixed_variance_variable(object@system@supply),
+    get_prefixed_variance_variable(object@system@supply)
+  ] <- l_pvarspvars
 
   if (object@system@correlated_shocks) {
     h[get_correlation_variable(object@system), names(l_pbdprho)] <- t(l_pbdprho)
@@ -162,17 +186,28 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
     h[get_correlation_variable(object@system), names(l_pbsprho)] <- t(l_pbsprho)
     h[names(l_pbsprho), get_correlation_variable(object@system)] <- l_pbsprho
 
-    h[get_prefixed_variance_variable(object@system@demand), get_correlation_variable(object@system)] <-
-      l_pvardprho
-    h[get_correlation_variable(object@system), get_prefixed_variance_variable(object@system@demand)] <-
-      l_pvardprho
+    h[
+      get_prefixed_variance_variable(object@system@demand),
+      get_correlation_variable(object@system)
+    ] <- l_pvardprho
+    h[
+      get_correlation_variable(object@system),
+      get_prefixed_variance_variable(object@system@demand)
+    ] <- l_pvardprho
 
-    h[get_prefixed_variance_variable(object@system@supply), get_correlation_variable(object@system)] <-
-      l_pvarsprho
-    h[get_correlation_variable(object@system), get_prefixed_variance_variable(object@system@supply)] <-
-      l_pvarsprho
+    h[
+      get_prefixed_variance_variable(object@system@supply),
+      get_correlation_variable(object@system)
+    ] <- l_pvarsprho
+    h[
+      get_correlation_variable(object@system),
+      get_prefixed_variance_variable(object@system@supply)
+    ] <- l_pvarsprho
 
-    h[get_correlation_variable(object@system), get_correlation_variable(object@system)] <- l_prhoprho
+    h[
+      get_correlation_variable(object@system),
+      get_correlation_variable(object@system)
+    ] <- l_prhoprho
   }
 
   -h

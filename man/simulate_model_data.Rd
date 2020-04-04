@@ -26,7 +26,7 @@ simulate_model_data(
   rho_ds = 0,
   rho_dp = 0,
   rho_sp = 0,
-  seed = NA,
+  seed = NA_integer_,
   price_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5),
   control_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5)
 )
@@ -52,7 +52,7 @@ simulate_model_data(
   rho_ds = 0,
   rho_dp = 0,
   rho_sp = 0,
-  seed = NA,
+  seed = NA_integer_,
   price_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5),
   control_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5)
 )

@@ -7,9 +7,11 @@ setClass(
   prototype()
 )
 
-setMethod("initialize", "system_directional", function(
-  .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks
-) {
+setMethod(
+  "initialize", "system_directional",
+  function(
+           .Object, quantity, price,
+           demand_specification, supply_specification, data, correlated_shocks) {
     demand_initializer <- function(...) {
       price_diff <- paste0(price, "_DIFF")
       excess_supply_subset <- data[, price_diff] < 0

@@ -32,12 +32,20 @@ setClass(
   )
 )
 
-setMethod("initialize", "system_base", function(
-    .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
-    demand_initializer, supply_initializer
-  ) {
-    .Object@demand <- demand_initializer(quantity, price, demand_specification, data, "Demand Equation", "D_")
-    .Object@supply <- supply_initializer(quantity, price, supply_specification, data, "Supply Equation", "S_")
+setMethod(
+  "initialize", "system_base",
+  function(
+           .Object, quantity, price,
+           demand_specification, supply_specification, data, correlated_shocks,
+           demand_initializer, supply_initializer) {
+    .Object@demand <- demand_initializer(
+      quantity, price,
+      demand_specification, data, "Demand Equation", "D_"
+    )
+    .Object@supply <- supply_initializer(
+      quantity, price,
+      supply_specification, data, "Supply Equation", "S_"
+    )
     .Object@correlated_shocks <- correlated_shocks
 
     .Object@quantity_variable <- quantity
@@ -125,7 +133,7 @@ setMethod("set_parameters", signature(object = "system_base"), function(object, 
   if (object@correlated_shocks) {
     object@rho <- parameters[get_correlation_variable(object)]
     object@rho <- ifelse(abs(object@rho) > 1, NA_real_, object@rho)
-    object@rho1 <- 1 / sqrt(1 - object@rho ** 2)
+    object@rho1 <- 1 / sqrt(1 - object@rho**2)
     object@rho2 <- object@rho * object@rho1
   }
   object

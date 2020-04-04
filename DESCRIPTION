@@ -1,6 +1,6 @@
 Package: diseq
 Title: Estimation Methods for Markets in Disequilibrium
-Version: 0.0.5.9004
+Version: 0.0.5.9006
 Authors@R: person(
         "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
         role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908")
@@ -14,7 +14,7 @@ Description: The diseq package provides a toolkit of methods that can be used to
     case of a system of simultaneous equations. The disequilibrium estimation is
     based on Maddala and Nelson (1974) <doi:10.2307/1914215>. The package takes
     advantage of the expressions of the gradients of the likelihoods given in
-    Karapanagiotis (2020).
+    Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>.
 Language: en-US
 Imports:
     bbmle (>= 1.0.20),
@@ -35,7 +35,6 @@ RoxygenNote: 7.0.2
 Suggests:
     ggplot2 (>= 3.0.0),
     knitr (>= 1.20),
-    lintr (>= 1.0.2),
     rmarkdown (>= 1.10),
     testthat (>= 2.0.0)
 VignetteBuilder: knitr

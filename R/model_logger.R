@@ -1,13 +1,17 @@
+#' Logger class
+#'
+#' @slot verbosity Controls the intensity of output messages. Errors are always printed.
+#' Other than this, a value of
+#' \describe{
+#'  \item{1}{prints warnings,}
+#'  \item{2}{prints basic information,}
+#'  \item{3}{prints verbose information and,}
+#'  \item{4}{prints debug information.}
+#' }
+
 setClass(
   "model_logger",
   representation(
-    #' @field verbose Controls the intensity of output messages. Errors are always printed. Other than this, a value of
-    #' \describe{
-    #'  \item{1}{prints warnings,}
-    #'  \item{2}{prints basic information,}
-    #'  \item{3}{prints verbose information and,}
-    #'  \item{4}{prints debug information.}
-    #' }
     verbosity = "numeric"
   ),
   prototype(
@@ -15,7 +19,8 @@ setClass(
   )
 )
 
-setMethod("initialize", "model_logger",
+setMethod(
+  "initialize", "model_logger",
   function(.Object, verbosity) {
     .Object@verbosity <- verbosity
     .Object

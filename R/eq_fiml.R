@@ -10,26 +10,29 @@ setClass(
   representation()
 )
 
-setMethod("initialize", "eq_fiml", function(
-  .Object,
-  verbose = 0,
-  key_columns,
-  quantity_column, price_column, demand_specification, supply_specification,
-  use_correlated_shocks = TRUE,
-  data
-) {
-  .Object <- callNextMethod(
-    .Object,
-    "Equilibrium FIML", verbose,
-    key_columns,
-    quantity_column, price_column, demand_specification, supply_specification,
-    use_correlated_shocks,
-    data,
-    function(...) new("system_fiml", ...)
-  )
+setMethod(
+  "initialize", "eq_fiml",
+  function(
+           .Object,
+           verbose = 0,
+           key_columns,
+           quantity_column, price_column,
+           demand_specification, supply_specification,
+           use_correlated_shocks = TRUE,
+           data) {
+    .Object <- callNextMethod(
+      .Object,
+      "Equilibrium FIML", verbose,
+      key_columns,
+      quantity_column, price_column, demand_specification, supply_specification,
+      use_correlated_shocks,
+      data,
+      function(...) new("system_fiml", ...)
+    )
 
-  .Object
-})
+    .Object
+  }
+)
 
 #' @rdname minus_log_likelihood
 setMethod("minus_log_likelihood", signature(object = "eq_fiml"), function(object, parameters) {

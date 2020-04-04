@@ -11,12 +11,12 @@ setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 #' Base S4 model class.
 #'
 #' @slot logger Logger object.
-#' @slot key_columns Vector of column names that uniquely identify data records. For panel data this vector should
-#' contain an entity and a time identifier.
+#' @slot key_columns Vector of column names that uniquely identify data records. For panel data
+#' this vector should contain an entity and a time identifier.
 #' @slot time_column Column name for the time-point data.
 #' @slot explanatory_columns Vector of explanatory column names for all model's equations.
-#' @slot data_columns Vector of model's data column names. This is the union of the quantity, price and
-#' explanatory columns.
+#' @slot data_columns Vector of model's data column names. This is the union of the quantity,
+#' price and explanatory columns.
 #' @slot columns Vector of primary key and data column names for all model's equations.
 #' @slot model_tibble Model data tibble.
 #' @slot model_type_string Model type string description.
@@ -38,19 +38,19 @@ setClass(
     model_tibble = "tbl_df",
     model_type_string = "character",
     system = "system_base"
-
   )
 )
 
-setMethod("initialize", "model_base", function(
-  .Object,
-  model_type_string, verbose,
-  key_columns, time_column,
-  quantity_column, price_column, demand_specification, supply_specification, price_specification,
-  use_correlated_shocks,
-  data,
-  system_initializer
-) {
+setMethod("initialize", "model_base",
+          function(
+                                               .Object,
+                                               model_type_string, verbose,
+                                               key_columns, time_column,
+                   quantity_column, price_column,
+                   demand_specification, supply_specification, price_specification,
+                                               use_correlated_shocks,
+                                               data,
+                                               system_initializer) {
 
   ## Model assignments
   .Object@model_type_string <- model_type_string
@@ -68,7 +68,8 @@ setMethod("initialize", "model_base", function(
   ))
   if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
     .Object@explanatory_columns <- unique(c(
-      .Object@explanatory_columns, all.vars(formula(paste0(price_column, " ~ ", price_specification)))
+        .Object@explanatory_columns,
+        all.vars(formula(paste0(price_column, " ~ ", price_specification)))
     ))
   }
   .Object@data_columns <- unique(c(quantity_column, price_column, .Object@explanatory_columns))
@@ -94,14 +95,16 @@ setMethod("initialize", "model_base", function(
       remaining_levels <- levels(x)
       removed_levels <- initial_levels[!(initial_levels %in% remaining_levels)]
       if (length(removed_levels)) {
-        print_warning(.Object@logger, "Removing unobserved '", paste0(removed_levels, collapse = ", "), "' level(s).")
+          print_warning(.Object@logger, "Removing unobserved '",
+                        paste0(removed_levels, collapse = ", "), "' level(s).")
       }
       x
     })
 
   ## Create primary key column
   key_columns_syms <- rlang::syms(.Object@key_columns)
-  .Object@model_tibble <- .Object@model_tibble %>% dplyr::mutate(pk = as.integer(paste0(!!!key_columns_syms)))
+              .Object@model_tibble <- .Object@model_tibble %>%
+                  dplyr::mutate(pk = as.integer(paste0(!!!key_columns_syms)))
 
   ## Do we need to use lags?
   if (.Object@model_type_string %in% c(
@@ -121,9 +124,11 @@ setMethod("initialize", "model_base", function(
 
     drop_rows <- .Object@model_tibble %>%
       dplyr::select(!!lagged_price_sym) %>%
-      is.na()
+      is.na() %>%
+      c()
     .Object@model_tibble <- .Object@model_tibble[!drop_rows, ]
-    print_info(.Object@logger, "Dropping ", sum(drop_rows), " rows by generating '", lagged_price_column, "'.")
+      print_info(.Object@logger, "Dropping ",
+                 sum(drop_rows), " rows by generating '", lagged_price_column, "'.")
 
     ## Do we need to use first differences?
     if (.Object@model_type_string %in% c("Directional", "Deterministic Adjustment")) {
@@ -140,7 +145,8 @@ setMethod("initialize", "model_base", function(
 
   if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
     .Object@system <- system_initializer(
-      quantity_column, price_column, demand_specification, supply_specification, price_specification,
+        quantity_column, price_column,
+        demand_specification, supply_specification, price_specification,
       .Object@model_tibble, use_correlated_shocks
     )
   }
@@ -169,16 +175,19 @@ setGeneric("minus_log_likelihood", function(object, parameters) {
 
 #' Model estimation.
 #'
-#' With the exception of \code{\link{eq_2sls-class}} all model are estimated be maximum likelihood. The likelihood is
+#' With the exception of \code{\link{eq_2sls-class}} all model are estimated be maximum
+#' likelihood. The likelihood is
 #' optimized using \code{\link[bbmle]{mle2}}. If no starting values are
-#' provided, the function uses linear regression estimates as initializing values. The default optimization method is
+#' provided, the function uses linear regression estimates as initializing values.
+#' The default optimization method is
 #' BFGS. For other alternatives see \code{\link[bbmle]{mle2}}.
 #'
-#' The \code{\link{eq_2sls-class}} is estimated using linear least squares. The implementation is based on
-#' \code{\link[systemfit]{systemfit}}.
+#' The \code{\link{eq_2sls-class}} is estimated using linear least squares. The implementation
+#' is based on \code{\link[systemfit]{systemfit}}.
 #'
 #' @param object A model object.
-#' @param ... Named parameter used in the model's estimation. These are passed further down to the estimation call.
+#' @param ... Named parameter used in the model's estimation. These are passed further down
+#' to the estimation call.
 #' @rdname estimate
 #' @export
 setGeneric("estimate", function(object, ...) {
@@ -197,7 +206,8 @@ setGeneric("get_model_description", function(object) {
 
 #' Number of observations.
 #'
-#' Returns the number of observations that are used by an initialized model. The number of used observations may differ
+#' Returns the number of observations that are used by an initialized model. The number of
+#' used observations may differ
 #' from the numbers of observations of the data set that was passed to the model's initialization.
 #' @param object A model object.
 #' @rdname get_number_of_observations
@@ -213,7 +223,8 @@ setGeneric("get_descriptives", function(object, variables) {
 
 #' Demand descriptives
 #'
-#' Calculates and returns basic descriptive statistics for the model's demand data. Factor variables are excluded from
+#' Calculates and returns basic descriptive statistics for the model's demand data. Factor
+#' variables are excluded from
 #' the calculations.
 #' @param object A model object.
 #' @rdname get_demand_descriptives
@@ -224,7 +235,8 @@ setGeneric("get_demand_descriptives", function(object) {
 
 #' Supply descriptives
 #'
-#' Calculates and returns basic descriptive statistics for the model's supply data. Factor variables are excluded from
+#' Calculates and returns basic descriptive statistics for the model's supply data. Factor
+#' variables are excluded from
 #' the calculations.
 #' @param object A model object.
 #' @rdname get_supply_descriptives
@@ -276,14 +288,16 @@ setMethod("get_initializing_values", signature(object = "model_base"), function(
   ## Set demand initializing values
   varloc <- !(get_prefixed_independent_variables(object@system@demand) %in% names(dlm$coefficients))
   if (sum(varloc) > 0) {
-    print_error(object@logger,
-                "Misspecified model matrix. The matrix should contain all the variables except the variance."
+    print_error(
+      object@logger,
+      "Misspecified model matrix. The matrix should contain all the variables except the variance."
     )
   }
   if (any(is.na(dlm$coefficients))) {
-    print_warning(object@logger,
-                  "Setting demand side NA initial values to zero: ",
-                  paste0(names(dlm$coefficients[is.na(dlm$coefficients)]), collapse = ", "), "."
+    print_warning(
+      object@logger,
+      "Setting demand side NA initial values to zero: ",
+      paste0(names(dlm$coefficients[is.na(dlm$coefficients)]), collapse = ", "), "."
     )
     dlm$coefficients[is.na(dlm$coefficients)] <- 0
   }
@@ -296,14 +310,16 @@ setMethod("get_initializing_values", signature(object = "model_base"), function(
   ## Set supply initializing values
   varloc <- !(get_prefixed_independent_variables(object@system@supply) %in% names(slm$coefficients))
   if (sum(varloc) > 0) {
-    print_error(object@logger,
-                "Misspecified model matrix. The matrix should contain all the variables except the variance."
+    print_error(
+      object@logger,
+      "Misspecified model matrix. The matrix should contain all the variables except the variance."
     )
   }
   if (any(is.na(slm$coefficients))) {
-    print_warning(object@logger,
-                  "Setting supply side NA initial values to zero: ",
-                  paste0(names(slm$coefficients[is.na(slm$coefficients)]), collapse = ", ")
+    print_warning(
+      object@logger,
+      "Setting supply side NA initial values to zero: ",
+      paste0(names(slm$coefficients[is.na(slm$coefficients)]), collapse = ", ")
     )
     slm$coefficients[is.na(slm$coefficients)] <- 0
   }
@@ -320,7 +336,8 @@ setMethod("get_initializing_values", signature(object = "model_base"), function(
 
   start <- c(start, 1, 1)
   names(start)[(length(start) - 1):length(start)] <- c(
-    get_prefixed_variance_variable(object@system@demand), get_prefixed_variance_variable(object@system@supply)
+      get_prefixed_variance_variable(object@system@demand),
+      get_prefixed_variance_variable(object@system@supply)
   )
 
   if (object@system@correlated_shocks) {
@@ -334,7 +351,8 @@ setMethod("get_initializing_values", signature(object = "model_base"), function(
 
 #' Demand aggregation.
 #'
-#' Sets the model's parameters given in the estimation object and calculates the sample's aggregate demand.
+#' Sets the model's parameters given in the estimation object and calculates the
+#' sample's aggregate demand.
 #' @param object A model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @rdname get_aggregate_demand
@@ -352,8 +370,8 @@ setMethod("get_aggregate_demand", signature(object = "model_base"), function(obj
 
 #' Estimated demanded quantities.
 #'
-#' Sets the model's parameters given in the estimation object and calculates the estimated demanded quantity for each
-#' observation.
+#' Sets the model's parameters given in the estimation object and calculates the estimated
+#' demanded quantity for each observation.
 #' @param object A model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @rdname get_estimated_demanded_quantities
@@ -364,14 +382,16 @@ setGeneric("get_estimated_demanded_quantities", function(object, estimation) {
 })
 
 #' @rdname get_estimated_demanded_quantities
-setMethod("get_estimated_demanded_quantities", signature(object = "model_base"), function(object, estimation) {
+setMethod("get_estimated_demanded_quantities", signature(object = "model_base"),
+          function(object, estimation) {
   object@system <- set_parameters(object@system, estimation@coef)
   get_estimated_quantities(object@system@demand)
 })
 
 #' Supply aggregation.
 #'
-#' Sets the model's parameters given in the estimation object and calculates sample's aggregate supply.
+#' Sets the model's parameters given in the estimation object and calculates sample's
+#' aggregate supply.
 #' @param object A model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @rdname get_aggregate_supply
@@ -389,7 +409,8 @@ setMethod("get_aggregate_supply", signature(object = "model_base"), function(obj
 
 #' Estimated supplied quantities.
 #'
-#' Sets the model's parameters given in the estimation object and calculates the estimated supplied quantity for each
+#' Sets the model's parameters given in the estimation object and calculates the estimated
+#' supplied quantity for each
 #' observation.
 #' @param object A model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
@@ -401,7 +422,8 @@ setGeneric("get_estimated_supplied_quantities", function(object, estimation) {
 })
 
 #' @rdname get_estimated_supplied_quantities
-setMethod("get_estimated_supplied_quantities", signature(object = "model_base"), function(object, estimation) {
+setMethod("get_estimated_supplied_quantities", signature(object = "model_base"),
+          function(object, estimation) {
   object@system <- set_parameters(object@system, estimation@coef)
   get_estimated_quantities(object@system@supply)
 })

@@ -6,26 +6,29 @@ setClass(
   prototype()
 )
 
-setMethod("initialize", "diseq_base", function(
-  .Object,
-  model_type_string, verbose,
-  key_columns, time_column,
-  quantity_column, price_column, demand_specification, supply_specification, price_specification,
-  use_correlated_shocks,
-  data,
-  system_initializer
-) {
-
-  .Object <- callNextMethod(
-    .Object,
-    model_type_string, verbose,
-    key_columns, time_column,
-    quantity_column, price_column, demand_specification, supply_specification, price_specification,
-    use_correlated_shocks,
-    data,
-    system_initializer
-  )
-})
+setMethod(
+  "initialize", "diseq_base",
+  function(
+           .Object,
+           model_type_string, verbose,
+           key_columns, time_column,
+           quantity_column, price_column,
+           demand_specification, supply_specification, price_specification,
+           use_correlated_shocks,
+           data,
+           system_initializer) {
+    .Object <- callNextMethod(
+      .Object,
+      model_type_string, verbose,
+      key_columns, time_column,
+      quantity_column, price_column,
+      demand_specification, supply_specification, price_specification,
+      use_correlated_shocks,
+      data,
+      system_initializer
+    )
+  }
+)
 
 setGeneric("calculate_h", function(object, equation) {
   standardGeneric("calculate_h")
@@ -119,13 +122,15 @@ setGeneric("get_estimated_shortage_indices", function(object, estimation) {
   standardGeneric("get_estimated_shortage_indices")
 })
 
-setMethod("calculate_h", signature(object = "system_base", equation = "equation_base"),
+setMethod(
+  "calculate_h", signature(object = "system_base", equation = "equation_base"),
   function(object, equation) {
     (object@quantity_vector - equation@independent_matrix %*% equation@alpha_beta) / equation@sigma
   }
 )
 
-setMethod("calculate_z",
+setMethod(
+  "calculate_z",
   signature(object = "system_base", equation_i = "equation_base", equation_j = "equation_base"),
   function(object, equation_i, equation_j) {
     (equation_i@h - equation_j@h * object@rho) * object@rho1
@@ -133,58 +138,67 @@ setMethod("calculate_z",
 )
 
 #' @describeIn estimate Disequilibrium model estimation.
-#' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using the numerically
-#' approximated Hessian. Calculated Hessians are available for the basic and directional models.
-setMethod("estimate", signature(object = "diseq_base"), function(object, use_numerical_hessian = TRUE, ...) {
-  va_args <- list(...)
+#' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
+#' the numerically approximated Hessian. Calculated Hessians are available for the basic
+#' and directional models.
+setMethod(
+  "estimate", signature(object = "diseq_base"),
+  function(object, use_numerical_hessian = TRUE, ...) {
+    va_args <- list(...)
 
-  va_args$skip.hessian <- !use_numerical_hessian
+    va_args$skip.hessian <- !use_numerical_hessian
 
-  if (is.null(va_args$start)) {
-    print_verbose(object@logger, "Initializing using linear regression estimations.")
-    va_args$start <- get_initializing_values(object)
-  }
-  names(va_args$start) <- get_likelihood_variables(object@system)
-  print_debug(
-    object@logger, "Using starting values: ",
-    paste(names(va_args$start), va_args$start, sep = " = ", collapse = ", ")
-  )
-
-  if (is.null(va_args$method)) {
-    va_args$method <- "BFGS"
-  }
-
-  va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
-  bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
-  va_args$gr <- function(...) gradient(object, ...)
-  bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
-
-  est <- do.call(bbmle::mle2, va_args)
-  est@call.orig <- call("bbmle::mle2", va_args)
-
-  if ((object@model_type_string %in% c("Basic", "Directional")) && va_args$skip.hessian) {
-    print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
-    est@details$hessian <- hessian(object, est@coef)
-    tryCatch(
-      est@vcov <- MASS::ginv(est@details$hessian),
-      error = function(e) print_warning(object@logger, e$message)
+    if (is.null(va_args$start)) {
+      print_verbose(object@logger, "Initializing using linear regression estimations.")
+      va_args$start <- get_initializing_values(object)
+    }
+    names(va_args$start) <- get_likelihood_variables(object@system)
+    print_debug(
+      object@logger, "Using starting values: ",
+      paste(names(va_args$start), va_args$start, sep = " = ", collapse = ", ")
     )
-  }
 
-  est
-})
+    if (is.null(va_args$method)) {
+      va_args$method <- "BFGS"
+    }
+
+    va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
+    bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
+    va_args$gr <- function(...) gradient(object, ...)
+    bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
+
+    est <- do.call(bbmle::mle2, va_args)
+    est@call.orig <- call("bbmle::mle2", va_args)
+
+    if ((object@model_type_string %in% c("Basic", "Directional")) && va_args$skip.hessian) {
+      print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
+      est@details$hessian <- hessian(object, est@coef)
+      tryCatch(
+        est@vcov <- MASS::ginv(est@details$hessian),
+        error = function(e) print_warning(object@logger, e$message)
+      )
+    }
+
+    est
+  }
+)
 
 setMethod("get_shortage_variance", signature(object = "diseq_base"), function(object) {
   sqrt(object@system@demand@var + object@system@supply@var - 2 * object@system@demand@sigma *
-         object@system@supply@sigma * object@system@rho)
+    object@system@supply@sigma * object@system@rho)
 })
 
 #' @rdname get_normalized_shortages
-setMethod("get_normalized_shortages", signature(object = "diseq_base"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  (object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
-      object@system@supply@independent_matrix %*% object@system@supply@alpha_beta) / get_shortage_variance(object)
-})
+setMethod(
+  "get_normalized_shortages", signature(object = "diseq_base"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    (
+      object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
+        object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
+    ) / get_shortage_variance(object)
+  }
+)
 
 #' @rdname get_relative_shortages
 setMethod("get_relative_shortages", signature(object = "diseq_base"), function(object, parameters) {
@@ -196,11 +210,15 @@ setMethod("get_relative_shortages", signature(object = "diseq_base"), function(o
 })
 
 #' @rdname get_shortage_probabilities
-setMethod("get_shortage_probabilities", signature(object = "diseq_base"), function(object, parameters) {
-  pnorm(get_normalized_shortages(object, parameters))
-})
+setMethod(
+  "get_shortage_probabilities", signature(object = "diseq_base"),
+  function(object, parameters) {
+    pnorm(get_normalized_shortages(object, parameters))
+  }
+)
 
-setMethod("get_scaled_effect", signature(object = "diseq_base"),
+setMethod(
+  "get_scaled_effect", signature(object = "diseq_base"),
   function(object, estimation, variable, scale_function) {
     object@system <- set_parameters(object@system, estimation@coef)
     dvar <- paste0(object@system@demand@variable_prefix, variable)
@@ -209,7 +227,9 @@ setMethod("get_scaled_effect", signature(object = "diseq_base"),
     in_supply <- svar %in% get_prefixed_independent_variables(object@system@supply)
     scale <- scale_function(estimation@coef)
     if (in_demand && in_supply) {
-      effect <- scale * (estimation@coef[dvar] - estimation@coef[svar]) / get_shortage_variance(object)
+      effect <- scale * (
+        estimation@coef[dvar] - estimation@coef[svar]
+      ) / get_shortage_variance(object)
       names(effect) <- paste0("B_", variable)
     }
     else if (in_demand) {
@@ -225,16 +245,31 @@ setMethod("get_scaled_effect", signature(object = "diseq_base"),
 )
 
 #' @rdname get_mean_marginal_effect
-setMethod("get_mean_marginal_effect", signature(object = "diseq_base"), function(object, estimation, variable) {
-  get_scaled_effect(object, estimation, variable, function(x) mean(dnorm(get_normalized_shortages(object, x))))
-})
+setMethod(
+  "get_mean_marginal_effect", signature(object = "diseq_base"),
+  function(object, estimation, variable) {
+    get_scaled_effect(
+      object, estimation, variable,
+      function(x) mean(dnorm(get_normalized_shortages(object, x)))
+    )
+  }
+)
 
 #' @rdname get_marginal_effect_at_mean
-setMethod("get_marginal_effect_at_mean", signature(object = "diseq_base"), function(object, estimation, variable) {
-  get_scaled_effect(object, estimation, variable, function(x) dnorm(mean(get_normalized_shortages(object, x))))
-})
+setMethod(
+  "get_marginal_effect_at_mean", signature(object = "diseq_base"),
+  function(object, estimation, variable) {
+    get_scaled_effect(
+      object, estimation, variable,
+      function(x) dnorm(mean(get_normalized_shortages(object, x)))
+    )
+  }
+)
 
 #' @rdname get_estimated_shortage_indices
-setMethod("get_estimated_shortage_indices", signature(object = "diseq_base"), function(object, estimation) {
-  get_normalized_shortages(object, estimation@coef) >= 0
-})
+setMethod(
+  "get_estimated_shortage_indices", signature(object = "diseq_base"),
+  function(object, estimation) {
+    get_normalized_shortages(object, estimation@coef) >= 0
+  }
+)

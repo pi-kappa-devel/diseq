@@ -25,7 +25,6 @@ setClass(
     gr_rho_QP = "matrix",
 
     gr = "matrix"
-
   ),
   prototype(
     separation_subset = NULL,
@@ -46,7 +45,8 @@ setClass(
   )
 )
 
-setMethod("initialize", "equation_deterministic_adjustment",
+setMethod(
+  "initialize", "equation_deterministic_adjustment",
   function(.Object, quantity, price, specification, data, name, prefix, separation_subset) {
     .Object <- callNextMethod(.Object, quantity, price, specification, data, name, prefix)
     .Object@separation_subset <- separation_subset
@@ -54,7 +54,10 @@ setMethod("initialize", "equation_deterministic_adjustment",
   }
 )
 
-setMethod("set_parameters", signature(object = "equation_deterministic_adjustment"), function(object, parameters) {
-  object <- callNextMethod(object, parameters)
-  object
-})
+setMethod(
+  "set_parameters", signature(object = "equation_deterministic_adjustment"),
+  function(object, parameters) {
+    object <- callNextMethod(object, parameters)
+    object
+  }
+)

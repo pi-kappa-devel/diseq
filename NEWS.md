@@ -1,3 +1,11 @@
+# diseq 0.0.5.9006
+
+* Reformated code using the styler package. Removed the lintr based test.
+
+# diseq 0.0.5.9005
+
+* Adjustments to address breaking changes of the tibble package.
+
 # diseq 0.0.5.9004
 
 * Added a vignette with an equilibrium assessment example.

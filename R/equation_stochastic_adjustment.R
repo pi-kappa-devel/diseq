@@ -2,18 +2,21 @@
 setClass(
   "equation_stochastic_adjustment",
   contains = "equation_base",
-  representation(
-  )
+  representation()
 )
 
-setMethod("initialize", "equation_stochastic_adjustment",
+setMethod(
+  "initialize", "equation_stochastic_adjustment",
   function(.Object, quantity, price, specification, data, name, prefix) {
     .Object <- callNextMethod(.Object, quantity, price, specification, data, name, prefix)
     .Object
   }
 )
 
-setMethod("set_parameters", signature(object = "equation_stochastic_adjustment"), function(object, parameters) {
-  object <- callNextMethod(object, parameters)
-  object
-})
+setMethod(
+  "set_parameters", signature(object = "equation_stochastic_adjustment"),
+  function(object, parameters) {
+    object <- callNextMethod(object, parameters)
+    object
+  }
+)

@@ -12,14 +12,20 @@ setClass(
   )
 )
 
-setMethod("initialize", "system_basic", function(
-  .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
-  demand_initializer = NULL, supply_initializer = NULL
-) {
+setMethod(
+  "initialize", "system_basic",
+  function(
+           .Object, quantity, price,
+           demand_specification, supply_specification, data, correlated_shocks,
+           demand_initializer = NULL, supply_initializer = NULL) {
     .Object <- callNextMethod(
       .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
-      ifelse(is.null(demand_initializer), function(...) new("equation_basic", ...), demand_initializer),
-      ifelse(is.null(supply_initializer), function(...) new("equation_basic", ...), supply_initializer)
+      ifelse(is.null(demand_initializer),
+        function(...) new("equation_basic", ...), demand_initializer
+      ),
+      ifelse(is.null(supply_initializer),
+        function(...) new("equation_basic", ...), supply_initializer
+      )
     )
   }
 )
@@ -36,14 +42,16 @@ setGeneric("calculate_lh", function(object) {
   standardGeneric("calculate_lh")
 })
 
-setMethod("calculate_psi",
+setMethod(
+  "calculate_psi",
   signature(object = "system_basic", equation_i = "equation_basic", equation_j = "equation_basic"),
   function(object, equation_i, equation_j) {
     dnorm(equation_i@h) * dnorm(equation_j@z)
   }
 )
 
-setMethod("calculate_Psi",
+setMethod(
+  "calculate_Psi",
   signature(object = "system_basic", equation_i = "equation_basic", equation_j = "equation_basic"),
   function(object, equation_i, equation_j) {
     dnorm(equation_i@h) * pnorm(equation_j@z, lower.tail = FALSE)
