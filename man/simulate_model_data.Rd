@@ -27,8 +27,8 @@ simulate_model_data(
   rho_dp = 0,
   rho_sp = 0,
   seed = NA_integer_,
-  price_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5),
-  control_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5)
+  price_generator = function(nobs) stats::rnorm(n = nobs, mean = 2.5, sd = 0.5),
+  control_generator = function(nobs) stats::rnorm(n = nobs, mean = 2.5, sd = 0.5)
 )
 
 \S4method{simulate_model_data}{ANY}(
@@ -53,8 +53,8 @@ simulate_model_data(
   rho_dp = 0,
   rho_sp = 0,
   seed = NA_integer_,
-  price_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5),
-  control_generator = function(N) stats::rnorm(n = N, mean = 2.5, sd = 0.5)
+  price_generator = function(nobs) stats::rnorm(n = nobs, mean = 2.5, sd = 0.5),
+  control_generator = function(nobs) stats::rnorm(n = nobs, mean = 2.5, sd = 0.5)
 )
 }
 \arguments{
@@ -105,6 +105,7 @@ simulate_model_data(
 \item{control_generator}{Pseudo number generator for non-prices controls.}
 }
 \description{
-Returns a data tibble with simulated data from a generating process that matches the passed model string. The
-simulated observations of the controls are drawn from a uniform distribution on the interval [2, 5].
+Returns a data tibble with simulated data from a generating process that matches the passed model
+string. The simulated observations of the controls are drawn from a uniform distribution on the
+interval [2, 5].
 }

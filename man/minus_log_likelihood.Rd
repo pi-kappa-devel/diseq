@@ -29,5 +29,6 @@ minus_log_likelihood(object, parameters)
 \item{parameters}{A vector of parameters at which the function is to be evaluated.}
 }
 \description{
-Returns the opposite of the log-likelihood.
+Returns the opposite of the log-likelihood. The package uses the likelihoods expressions that
+are derived in \href{Karapanagiotis (2020)}{http://dx.doi.org/10.2139/ssrn.3525622}.
 }

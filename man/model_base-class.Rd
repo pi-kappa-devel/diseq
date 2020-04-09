@@ -3,24 +3,24 @@
 \docType{class}
 \name{model_base-class}
 \alias{model_base-class}
-\title{Base S4 model class.}
+\title{Model base class.}
 \description{
-Base S4 model class.
+Model base class.
 }
 \section{Slots}{
 
 \describe{
 \item{\code{logger}}{Logger object.}
 
-\item{\code{key_columns}}{Vector of column names that uniquely identify data records. For panel data this vector should
-contain an entity and a time identifier.}
+\item{\code{key_columns}}{Vector of column names that uniquely identify data records. For panel data
+this vector should contain an entity and a time point identifier.}
 
-\item{\code{time_column}}{Column name for the time-point data.}
+\item{\code{time_column}}{Column name for the time point data.}
 
 \item{\code{explanatory_columns}}{Vector of explanatory column names for all model's equations.}
 
-\item{\code{data_columns}}{Vector of model's data column names. This is the union of the quantity, price and
-explanatory columns.}
+\item{\code{data_columns}}{Vector of model's data column names. This is the union of the quantity,
+price and explanatory columns.}
 
 \item{\code{columns}}{Vector of primary key and data column names for all model's equations.}
 
@@ -28,6 +28,6 @@ explanatory columns.}
 
 \item{\code{model_type_string}}{Model type string description.}
 
-\item{\code{system}}{Model system of equations.}
+\item{\code{system}}{Model's system of equations.}
 }}
 

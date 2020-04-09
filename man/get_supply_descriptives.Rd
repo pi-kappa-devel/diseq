@@ -3,7 +3,7 @@
 \name{get_supply_descriptives}
 \alias{get_supply_descriptives}
 \alias{get_supply_descriptives,model_base-method}
-\title{Supply descriptives}
+\title{Supply descriptive statistics}
 \usage{
 get_supply_descriptives(object)
 
@@ -12,7 +12,10 @@ get_supply_descriptives(object)
 \arguments{
 \item{object}{A model object.}
 }
+\value{
+A data tibble containing descriptive statistics..
+}
 \description{
-Calculates and returns basic descriptive statistics for the model's supply data. Factor variables are excluded from
-the calculations.
+Calculates and returns basic descriptive statistics for the model's supply data. Factor
+variables are excluded from  the calculations.
 }

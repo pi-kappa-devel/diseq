@@ -12,6 +12,9 @@ get_model_description(object)
 \arguments{
 \item{object}{A model object.}
 }
+\value{
+A string representation of the model.
+}
 \description{
-Returns a unique string representation of the model.
+A unique identifying string for the model.
 }

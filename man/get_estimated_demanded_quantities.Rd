@@ -14,9 +14,12 @@ get_estimated_demanded_quantities(object, estimation)
 
 \item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
 }
+\value{
+A vector with the estimated demanded quantities.
+}
 \description{
-Sets the model's parameters given in the estimation object and calculates the estimated demanded quantity for each
-observation.
+Sets the model's parameters given in the estimation object and calculates the estimated
+demanded quantity for each observation.
 }
 \seealso{
 get_aggregate_demand

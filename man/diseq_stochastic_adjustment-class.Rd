@@ -5,5 +5,22 @@
 \alias{diseq_stochastic_adjustment-class}
 \title{Disequilibrium model with stochastic price dynamics.}
 \description{
-Disequilibrium model with stochastic price dynamics.
+The disequilibrium model with stochastic price adjustsmenst is dscribed by a
+system of four equations. Three of of them form a stochastic linear system of market equations
+equations coupled with a stochastic price evolution equation. The fourth euation is the short
+side rule. In contrast to the deterministic counterpart, the model does not impose any
+separation rule on the sample. It is estimated using full information maximum likelihood.
+
+\deqn{
+  \begin{aligned}
+  D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
+  S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
+  Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
+  \Delta P_{nt} &=
+    \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right) +  X_{p,nt}'\beta_{p} + u_{p,nt}.
+  \end{aligned}
+}
+}
+\seealso{
+\code{\link{initialize_model}}
 }

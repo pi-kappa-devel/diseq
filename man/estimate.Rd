@@ -19,19 +19,26 @@ estimate(object, ...)
 \arguments{
 \item{object}{A model object.}
 
-\item{...}{Named parameter used in the model's estimation. These are passed further down to the estimation call.}
+\item{...}{Named parameter used in the model's estimation. These are passed further down
+to the estimation call. For the \code{\linkS4class{eq_2sls}} model, the parameters a passed
+to \code{\link[systemfit]{systemfit}}. For the rest of the models, the parameters are passed
+to \code{\link[bbmle]{mle2}}.}
 
-\item{use_numerical_hessian}{If true, the variance-covariance matrix is calculated using the numerically
-approximated Hessian. Calculated Hessians are available for the basic and directional models.}
+\item{use_numerical_hessian}{If true, the variance-covariance matrix is calculated using
+the numerically approximated Hessian. Calculated Hessians are available for the basic
+and directional models.}
+}
+\value{
+The object that holds the estimation result.
 }
 \description{
-With the exception of \code{\link{eq_2sls-class}} all model are estimated be maximum likelihood. The likelihood is
-optimized using \code{\link[bbmle]{mle2}}. If no starting values are
-provided, the function uses linear regression estimates as initializing values. The default optimization method is
-BFGS. For other alternatives see \code{\link[bbmle]{mle2}}.
-}
-\details{
-The \code{\link{eq_2sls-class}} is estimated using linear least squares. The implementation is based on
+With the exception of \code{\linkS4class{eq_2sls}} all model are estimated by maximum
+likelihood. The likelihood estimation is
+using \code{\link[bbmle]{mle2}}. If no starting values are
+provided, the function uses linear regression estimates as initializing values.
+The default optimization method is
+BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The \code{\linkS4class{eq_2sls}} is
+estimated using two stage least squares. The implementation is based on
 \code{\link[systemfit]{systemfit}}.
 }
 \section{Functions}{

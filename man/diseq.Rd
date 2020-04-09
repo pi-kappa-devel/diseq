@@ -5,21 +5,53 @@
 \alias{diseq}
 \title{diseq: A package for estimating models for markets in equilibrium and disequilibrium}
 \description{
-The diseq package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The
-equilibrium model can be estimated with either two-stage least squares or with full information maximum likelihood.
-The methods are asymptotically equivalent. The disequilibrium models are estimated using full information
-maximum likelihood. All maximum likelihood models can be estimated both with independent and correlated demand and
-supply shocks.
+The diseq package provides tools to estimate and analyze an equilibrium and four disequilibrium
+models. The equilibrium model can be estimated with either two-stage least squares or with full
+information maximum likelihood.
+The methods are asymptotically equivalent. The disequilibrium models are estimated using full
+information maximum likelihood. All maximum likelihood models can be estimated both with
+independent and correlated demand and supply shocks.
 }
-\section{Disequilibrium model classes}{
+\details{
+## Usage
+
+The easiest way to get accustomed with the functionality of the package is to check the
+accompanying vignettes and the \href{../README.html}{README} file. These can be found
+in the following links:
 
 \describe{
-\item{\code{\linkS4class{eq_2sls}}}{Equilibrium two-stage least square model}
-\item{\code{\linkS4class{eq_fiml}}}{Equilibrium full information maximum likelihood}
-\item{\code{\linkS4class{diseq_basic}}}{Disequilibrium model with unknown sample separation}
-\item{\code{\linkS4class{diseq_directional}}}{Disequilibrium model with directional sample separation}
-\item{\code{\linkS4class{diseq_deterministic_adjustment}}}{Disequilibrium model with deterministic price dynamics}
-\item{\code{\linkS4class{diseq_stochastic_adjustment}}}{Disequilibrium model with stochastic price dynamics}
-}
+  \item{\href{../doc/basic_usage.html}{basic_usage}}{
+    \code{vignette("basic_usage", package = "diseq")}}
+  \item{\href{../doc/equilibrium_assessment.html}{equilibrium_assessment}}{
+    \code{vignette("equilibrium_assessment", package = "diseq")}}
 }
 
+## Market model classes:
+
+The model hierachy is described in the \href{../README.html}{README} file. See
+\code{\link{initialize_model}} for initialization details.
+
+### Equilibrium model classes:
+
+\describe{
+  \item{\code{\linkS4class{eq_2sls}}}{Equilibrium two-stage least square model}
+  \item{\code{\linkS4class{eq_fiml}}}{Equilibrium full information maximum likelihood}
+}
+
+### Disequilibrium model classes:
+
+\describe{
+  \item{\code{\linkS4class{diseq_basic}}}{
+    Disequilibrium model with a only basic short side rule}
+  \item{\code{\linkS4class{diseq_directional}}}{
+    Disequilibrium model with directional sample separation}
+  \item{\code{\linkS4class{diseq_deterministic_adjustment}}}{
+    Disequilibrium model with deterministic price dynamics}
+  \item{\code{\linkS4class{diseq_stochastic_adjustment}}}{
+    Disequilibrium model with stochastic price dynamics}
+}
+
+## Model initialization
+
+Details on the construction of model objects can be found in \code{\link{initialize_model}}
+}

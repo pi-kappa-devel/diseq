@@ -5,5 +5,21 @@
 \alias{diseq_deterministic_adjustment-class}
 \title{Disequilibrium model with deterministic price dynamics.}
 \description{
-Disequilibrium model with deterministic price dynamics.
+The disequilibrium model with deterministic price adjustsmenst consists of four
+equations. The two market euations, the short side rule and  price evolution equation. The first
+two equations are stochastic. The price equation is deterministic. The sample is seperated
+based on the sign of the price changes as in the \code{\linkS4class{diseq_directional}} model.
+The model is estimated using full information maximum likelihood.
+
+\deqn{
+  \begin{aligned}
+  D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
+  S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
+  Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
+  \Delta P_{nt} &= \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right).
+  \end{aligned}
+}
+}
+\seealso{
+\code{\link{initialize_model}}
 }

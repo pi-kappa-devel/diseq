@@ -5,5 +5,23 @@
 \alias{diseq_directional-class}
 \title{Directional disequilibrium model with sample separation.}
 \description{
-Directional disequilibrium model with sample separation.
+The directional disequilibrium model consists of three equations and a separation
+rule. The market is discribed by a linear demand, a linear supply equation and the short side
+rule. The seperation
+rule splits the sample into regimes of excess supply and excess demand. If a price change is
+positive at the time point of the observation, then the observation is classified as being in an
+excess demand regime. Otherwise, it is assumed that it represents an excess supply state. The
+model is estimated using full information maximum likelihood.
+
+\deqn{
+  \begin{aligned}
+  D_{nt} &= X_{d,nt}'\beta_{d} + u_{d,nt}, \\
+  S_{nt} &= X_{s,nt}'\beta_{s} + u_{s,nt}, \\
+  Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
+  \Delta P_{nt} &\ge 0 \implies D_{nt} \ge S_{nt}.
+  \end{aligned}
+}
+}
+\seealso{
+\code{\link{initialize_model}}
 }

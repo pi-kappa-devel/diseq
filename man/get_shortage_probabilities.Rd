@@ -14,6 +14,10 @@ get_shortage_probabilities(object, parameters)
 
 \item{parameters}{A vector of parameters at which the shortage probabilities are evaluated.}
 }
+\value{
+A vector with the estimated shortage probabilities.
+}
 \description{
-Returns the estimated shortage probabilities.
+Returns the estimated shortage probabilities, i.e. the estimated probabilities of an
+observation coming from an excess demand regime.
 }

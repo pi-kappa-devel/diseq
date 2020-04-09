@@ -1,6 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # Models for Markets in Disequilibrium <img src='man/figures/logo.png' align="right" height="36" />
 
 <!-- badges: start -->
@@ -39,13 +37,11 @@ You can find the documentation of the package by typing
 
 ## Example
 
-This is a basic example which shows you how estimate a model. The
+This is a basic example which shows you how to estimate a model. The
 package is loaded in the standard way.
 
 ``` r
 library(diseq)
-#> Loading required package: bbmle
-#> Loading required package: stats4
 ```
 
 The example uses simulated data. The diseq package offers a function to
@@ -55,8 +51,8 @@ models that the package provides.
 ``` r
 model_tbl <- simulate_model_data(
   "diseq_basic", 10000, 5,
-  -1.9, 4.9, c(2.1, -0.7), c(3.5, 6.25),
-  2.8, 1.2, c(0.65), c(1.15, 4.2),
+  -1.9, 12.9, c(2.1, -0.7), c(3.5, 6.25),
+  2.8, 10.2, c(0.65), c(1.15, 4.2),
   NA, NA, c(NA),
   seed = 42
 )
@@ -119,7 +115,7 @@ supply_specification <- "Xs1 + X1 + X2"
 <!-- end list -->
 
 ``` r
-verbose <- 4
+verbose <- 0
 ```
 
   - Should the model estimation allow for correlated demand and supply
@@ -139,8 +135,6 @@ mdl <- new(
   model_tbl,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
-#> Info: This is 'Basic with correlated shocks' model
-#> Verbose: Using columns id, date, Q, P, Xd1, Xd2, X1, X2, Xs1.
 ```
 
 The model is estimated with default options by a simple call. See the
@@ -148,40 +142,39 @@ documentation of `estimate` for more details and options.
 
 ``` r
 est <- estimate(mdl)
-#> Verbose: Initializing using linear regression estimations.
-#> Debug: Using starting values: D_P = 2.1334612971289, D_CONST = 1.74512294884244, D_Xd1 = 0.371173675755609, D_Xd2 = -0.134123191634723, D_X1 = 1.55733325744955, D_X2 = 4.57681889311855, S_P = 2.13368618959257, S_CONST = 0.754830637264177, S_Xs1 = 0.530640038804247, S_X1 = 1.5539938204713, S_X2 = 4.56958594244215, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
-summary(est)
+bbmle::summary(est)
 #> Maximum likelihood estimation
 #> 
 #> Call:
-#> `bbmle::mle2`(list(skip.hessian = FALSE, start = c(D_P = 2.1334612971289, 
-#> D_CONST = 1.74512294884244, D_Xd1 = 0.371173675755609, D_Xd2 = -0.134123191634723, 
-#> D_X1 = 1.55733325744955, D_X2 = 4.57681889311855, S_P = 2.13368618959257, 
-#> S_CONST = 0.754830637264177, S_Xs1 = 0.530640038804247, S_X1 = 1.5539938204713, 
-#> S_X2 = 4.56958594244215, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
-#> ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
-#>     gr = function(...) gradient(object, ...)))
+#> `bbmle::mle2`(list(skip.hessian = FALSE, start = c(D_P = 2.20196877751699, 
+#> D_CONST = 11.2388922841303, D_Xd1 = 0.270903396323925, D_Xd2 = -0.0866785170449159, 
+#> D_X1 = 1.44062383641357, D_X2 = 4.46769000498207, S_P = 2.19994905762293, 
+#> S_CONST = 10.2218850028638, S_Xs1 = 0.59622703822817, S_X1 = 1.43857649730766, 
+#> S_X2 = 4.46672975897316, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
+#> ), method = "BFGS", minuslogl = function (...) 
+#> minus_log_likelihood(object, ...), gr = function (...) 
+#> gradient(object, ...)))
 #> 
 #> Coefficients:
 #>              Estimate Std. Error  z value  Pr(z)    
-#> D_P        -1.9017291  0.0358194 -53.0921 <2e-16 ***
-#> D_CONST     4.9053673  0.1415429  34.6564 <2e-16 ***
-#> D_Xd1       2.0822199  0.0180697 115.2327 <2e-16 ***
-#> D_Xd2      -0.7088348  0.0136147 -52.0640 <2e-16 ***
-#> D_X1        3.5124797  0.0194037 181.0213 <2e-16 ***
-#> D_X2        6.2667695  0.0180124 347.9143 <2e-16 ***
-#> S_P         2.7970361  0.0068834 406.3475 <2e-16 ***
-#> S_CONST     1.1906485  0.0398902  29.8481 <2e-16 ***
-#> S_Xs1       0.6485039  0.0057989 111.8317 <2e-16 ***
-#> S_X1        1.1467542  0.0061024 187.9191 <2e-16 ***
-#> S_X2        4.2091141  0.0060775 692.5783 <2e-16 ***
-#> D_VARIANCE  1.0121758  0.0195476  51.7801 <2e-16 ***
-#> S_VARIANCE  1.0162146  0.0074433 136.5269 <2e-16 ***
-#> RHO        -0.0131056  0.0325131  -0.4031 0.6869    
+#> D_P        -1.9277826  0.0643871 -29.9405 <2e-16 ***
+#> D_CONST    12.7187450  0.1665723  76.3557 <2e-16 ***
+#> D_Xd1       2.1041794  0.0386208  54.4831 <2e-16 ***
+#> D_Xd2      -0.6396308  0.0293756 -21.7742 <2e-16 ***
+#> D_X1        3.4902260  0.0398746  87.5300 <2e-16 ***
+#> D_X2        6.2935478  0.0385864 163.1028 <2e-16 ***
+#> S_P         2.8065335  0.0120090 233.7023 <2e-16 ***
+#> S_CONST    10.1644425  0.0494381 205.5993 <2e-16 ***
+#> S_Xs1       0.6782140  0.0097622  69.4737 <2e-16 ***
+#> S_X1        1.1295126  0.0104475 108.1137 <2e-16 ***
+#> S_X2        4.1981877  0.0103540 405.4635 <2e-16 ***
+#> D_VARIANCE  1.0177756  0.0303119  33.5767 <2e-16 ***
+#> S_VARIANCE  1.0026251  0.0074199 135.1273 <2e-16 ***
+#> RHO        -0.0238756  0.0376718  -0.6338 0.5262    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> -2 log L: 139600.5
+#> -2 log L: 138110.5
 ```
 
 ## Design and functionality

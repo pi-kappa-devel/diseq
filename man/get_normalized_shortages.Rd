@@ -14,6 +14,9 @@ get_normalized_shortages(object, parameters)
 
 \item{parameters}{A vector of parameters at which the shortages are evaluated.}
 }
+\value{
+A vector with the estimated normalized shortages.
+}
 \description{
 Returns the estimated shortages normalized by the variance of the difference of the shocks.
 }

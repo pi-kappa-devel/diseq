@@ -1,3 +1,4 @@
+#' Disequlibrium model base class
 #' @include model_base.R
 setClass(
   "diseq_base",
@@ -6,6 +7,7 @@ setClass(
   prototype()
 )
 
+#' @rdname initialize_model
 setMethod(
   "initialize", "diseq_base",
   function(
@@ -47,6 +49,7 @@ setGeneric("get_shortage_variance", function(object) {
 #' Returns the estimated shortages normalized by the variance of the difference of the shocks.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
+#' @return A vector with the estimated normalized shortages.
 #' @rdname get_normalized_shortages
 #' @export
 setGeneric("get_normalized_shortages", function(object, parameters) {
@@ -58,6 +61,7 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 #' Returns the estimated shortages normalized by the estimated supplied quantity.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
+#' @return A vector with the estimated normalized shortages.
 #' @rdname get_relative_shortages
 #' @export
 setGeneric("get_relative_shortages", function(object, parameters) {
@@ -66,9 +70,11 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 
 #' Shortage probabilities.
 #'
-#' Returns the estimated shortage probabilities.
+#' Returns the estimated shortage probabilities, i.e. the estimated probabilities of an
+#' observation coming from an excess demand regime.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortage probabilities are evaluated.
+#' @return A vector with the estimated shortage probabilities.
 #' @rdname get_shortage_probabilities
 #' @export
 setGeneric("get_shortage_probabilities", function(object, parameters) {
@@ -85,6 +91,7 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 #' @param object A disequilibrium model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
+#' @return The mean of the estimated marginal effects of the passed variable.
 #' @rdname get_mean_marginal_effect
 #' @export
 setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
@@ -97,6 +104,7 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 #' @param object A disequilibrium model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
+#' @return The marginal effects of the passed variable evaluated at the estimated mean.
 #' @rdname get_marginal_effect_at_mean
 #' @export
 setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable) {
@@ -116,6 +124,7 @@ setGeneric("hessian", function(object, parameters) {
 #' Returns the indices for which the estimated shortages of the market are non-negative.
 #' @param object A disequilibrium model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
+#' @return A vector of indices.
 #' @rdname get_estimated_shortage_indices
 #' @export
 setGeneric("get_estimated_shortage_indices", function(object, estimation) {

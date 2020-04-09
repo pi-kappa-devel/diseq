@@ -1,10 +1,10 @@
 Package: diseq
 Title: Estimation Methods for Markets in Disequilibrium
-Version: 0.0.5.9006
+Version: 0.0.5.9009
+Date: 2020-04-09
 Authors@R: person(
-        "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
-        role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908")
-    )
+    "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908"))
 Description: The diseq package provides a toolkit of methods that can be used to 
     estimate markets in equilibrium and disequilibrium. Specifically, it allows the
     estimation of an equilibrium and four disequilibrium model specifications. It
@@ -12,10 +12,12 @@ Description: The diseq package provides a toolkit of methods that can be used to
     effects calculations. The estimation methods are based on full information
     maximum likelihood techniques. The equilibrium estimation constitutes a special
     case of a system of simultaneous equations. The disequilibrium estimation is
-    based on Maddala and Nelson (1974) <doi:10.2307/1914215>. The package takes
-    advantage of the expressions of the gradients of the likelihoods given in
+    based on Maddala and Nelson (1974) <doi:10.2307/1914215>. The package is
+    using the expressions of the gradients of the likelihoods derived in
     Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>.
 Language: en-US
+URL: https://github.com/pi-kappa-devel/diseq/
+BugReports: https://github.com/pi-kappa-devel/diseq/issues
 Imports:
     bbmle (>= 1.0.20),
     dplyr (>= 0.7.6),
@@ -23,7 +25,6 @@ Imports:
     MASS (>= 7.3-50),
     methods,
     numDeriv (>= 2016.8-1),
-    pastecs (>= 1.3.21),
     rlang (>= 0.2.1),
     systemfit (>= 1.1),
     tibble (>= 1.4.2),
@@ -31,7 +32,7 @@ Imports:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests:
     ggplot2 (>= 3.0.0),
     knitr (>= 1.20),

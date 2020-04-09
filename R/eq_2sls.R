@@ -1,10 +1,28 @@
+#' @include eq_base.R
+#' @importFrom systemfit systemfit
+
 setOldClass(c("systemfit"))
 
-#' Equilibrium model estimated using 2-stage least squares.
+#' @title Equilibrium model estimated using 2-stage least squares.
 #'
-#' @include eq_base.R
-#' @name eq_2sls-class
-#' @import systemfit
+#' @description In the first stage, prices are regressed on remaining controls from both the
+#' demand and supply equations. In the second stage, the demand and supply equation is estimated
+#' using the fitted prices instead of the observed. A necessary identification condition is that
+#' there is at least one control that is exclusively part of the demand and one control
+#' that is exclusively part of the supply equation.
+#'
+#' \deqn{
+#'   \begin{aligned}
+#'   D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
+#'   S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
+#'   Q_{nt} &= D_{nt} = S_{nt} ,
+#'   \end{aligned}
+#' }
+#'
+#' @slot first_stage_model An estimated first stage equation of type \code{\link[lm]{lm}}.
+#' @slot system_model An estimated system of market equations of type
+#'   \code{\link[systemfit]{systemfit}}.
+#' @seealso \code{\link{initialize_model}}
 #' @export
 setClass(
   "eq_2sls",
@@ -15,6 +33,8 @@ setClass(
   )
 )
 
+#' @describeIn initialize_model Two stage least squares equilibrium model constructor.
+#' @export
 setMethod(
   "initialize", "eq_2sls",
   function(
@@ -23,14 +43,13 @@ setMethod(
            key_columns,
            quantity_column, price_column,
            demand_specification, supply_specification,
-           use_correlated_shocks = TRUE,
            data) {
     .Object <- callNextMethod(
       .Object,
       "Equilibrium 2SLS", verbose,
       key_columns,
       quantity_column, price_column, demand_specification, supply_specification,
-      use_correlated_shocks,
+      FALSE,
       data,
       function(...) new("system_basic", ...)
     )

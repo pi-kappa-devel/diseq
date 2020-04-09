@@ -14,8 +14,12 @@ get_aggregate_supply(object, estimation)
 
 \item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
 }
+\value{
+The sum of the estimated supplied quantities.
+}
 \description{
-Sets the model's parameters given in the estimation object and calculates sample's aggregate supply.
+Sets the model's parameters given in the estimation object and calculates sample's
+aggregate supply.
 }
 \seealso{
 get_estimated_supplied_quantities

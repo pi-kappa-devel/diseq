@@ -691,7 +691,17 @@ setMethod(
 
     use_correlated_shocks <- TRUE
 
-    if (model_string %in% c("eq_2sls", "eq_fiml", "diseq_basic")) {
+
+    if (model_string == "eq_2sls") {
+      model <- new(
+        model_string,
+        key_columns,
+        quantity_column, price_column, demand_specification, supply_specification,
+        sdt,
+        verbose = verbose
+      )
+    }
+    else if (model_string %in% c("eq_fiml", "diseq_basic")) {
       model <- new(
         model_string,
         key_columns,

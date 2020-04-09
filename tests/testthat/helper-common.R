@@ -28,7 +28,7 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
     rd <- ifelse(scale, ad / scale, 0)
     diff <- min(ad, rd)
     max_diff <- ifelse(max_diff < diff, diff, max_diff)
-    expect(diff < tolerance, sprintf(
+    testthat::expect(diff < tolerance, sprintf(
       "%s (numerical = %g, calculated = %g) failed with differences (%f, %f).",
       pnames[row], ng[row], cg[row], ad, rd
     ))
@@ -60,7 +60,7 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
       rd <- ifelse(scale, ad / scale, 0)
       diff <- min(ad, rd)
       max_diff <- ifelse(max_diff < diff, diff, max_diff)
-      expect(diff < tolerance, sprintf(
+      testthat::expect(diff < tolerance, sprintf(
         "[%s, %s] (numerical = %g, calculated = %g) failed with differences (%f, %f).",
         pnames[row], pnames[col], nh[row, col], ch[row, col], ad, rd
       ))
@@ -92,7 +92,7 @@ test_estimation_accuracy <- function(estimation, parameters, tolerance) {
   errors <- abs(estimation - parameters)
 
   for (i in seq_len(length(errors))) {
-    expect(errors[i] < tolerance, sprintf(
+    testthat::expect(errors[i] < tolerance, sprintf(
       "Accuracy test failed for %s (estimated = %g, actual = %g) with difference %f.",
       names(errors)[i], estimation[i], parameters[i], errors[i]
     ))

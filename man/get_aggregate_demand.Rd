@@ -14,8 +14,12 @@ get_aggregate_demand(object, estimation)
 
 \item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
 }
+\value{
+The sum of the estimated demanded quantities.
+}
 \description{
-Sets the model's parameters given in the estimation object and calculates the sample's aggregate demand.
+Sets the model's parameters given in the estimation object and calculates the
+sample's aggregate demand.
 }
 \seealso{
 get_estimated_demanded_quantities

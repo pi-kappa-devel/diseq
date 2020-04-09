@@ -3,7 +3,7 @@
 \name{get_demand_descriptives}
 \alias{get_demand_descriptives}
 \alias{get_demand_descriptives,model_base-method}
-\title{Demand descriptives}
+\title{Demand descriptive statistics}
 \usage{
 get_demand_descriptives(object)
 
@@ -12,7 +12,10 @@ get_demand_descriptives(object)
 \arguments{
 \item{object}{A model object.}
 }
+\value{
+A data tibble containing descriptive statistics..
+}
 \description{
-Calculates and returns basic descriptive statistics for the model's demand data. Factor variables are excluded from
-the calculations.
+Calculates and returns basic descriptive statistics for the model's demand data. Factor
+variables are excluded from the calculations.
 }

@@ -1,19 +1,23 @@
 ---
 title: "Assessing market equilibrium"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: false
+  pdf_document:
+    highlight: null
+    number_sections: yes
 vignette: >
   %\VignetteIndexEntry{An example of equilibrium assessment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-This short tutorial gives an example of how one can statistically assess whether a market is in an equilibrium state.
+This short tutorial gives an example of how one can statistically assess whether a market is in an equilibrium state. The tutorial assumes some familiarity with the concepts and the functionality of the package. The [basic_usage](basic_usage.html) vignette can be helpful in acquiring this familiarity.
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+if (requireNamespace("knitr", quietly = TRUE)) {
+  knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+}
 ```
 
 ## Setup the environment
@@ -25,11 +29,7 @@ library(diseq)
 library(magrittr)
 ```
 
-Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For 
-this example, we will use simulated data. Although we could simulate data independently from the package, we will use 
-the top-level simulation functionality of Diseq to simplify the process. See the documentation of `simulate_model_data` 
-for more information on the simulation functionality. Here, we simulate data using a data generating process for a 
-market in equilibrium.
+Prepare the data. Here, we simply simulate data using a data generating process for a market in equilibrium.
 
 ```{r setup.data}
 nobs <- 5000
@@ -63,102 +63,60 @@ eq_data <- simulate_model_data(
 
 ## Initialize the model
 
-The constructor sets the basic parameters for model initialization and constructs a model object. The needed arguments 
-for a construction call are configured as follows:
+Prepare the basic parameters for model initialization.
 
- * Set the fields that uniquely identify data rows. For panel data this should be a vector of the entity identifier and 
- the time columns.
-
-```{r model.parameters.key}
+```{r model.parameters}
 key_columns <- c("id", "date")
-```
- 
- * Set time field. This is needed for the calculation of price first differences. The `diseq_directional`, 
- `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment` models require calculating the first differences.
-
-```{r model.parameters.time}
 time_column <- c("date")
-```
-
- * Set the quantity variable. The quantity variable is the observable. For the equilibrium models, it is equal with the
- demanded and supplied quantities. For the disequilibrium models, the observed quantity represents either a demanded or
- a supplied quantity.
-
-```{r model.parameters.quantity}
 quantity_column <- "Q"
-```
-
- * Set the price variable. 
-
-```{r model.parameters.price}
 price_column <- "P"
-```
-
- * Set the remaining demand and supply variables. Simply include the factor variables here as in a usual `lm` formula.
- Indicator variables and interaction terms will be created automatically by the constructor. For the `diseq_directional`
- model, the price cannot go in both equations. For the rest of the models, the price can go in both equations if treated
- as exogenous. The `diseq_stochastic_adjustment` requires also the specification of price dynamics.
-
-```{r model.parameters.specifications}
 demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
 supply_specification <- "Xs1 + X1 + X2"
 price_specification <- "Xp1"
-```
-
- * Set the verbosity level. This controls the level of messaging. The object displays
-     * error: always,
-     * warning: . $\ge$ 1, 
-     * info: . $\ge$ 2, 
-     * verbose: . $\ge$ 3 and
-     * debug :. $\ge$ 4.
-```{r model.parameters.verbose}
 verbose <- 2
-```
-
- * Should the estimation allow for correlated demand and supply shocks?
-
-```{r model.parameters.correlated_shocks}
 use_correlated_shocks <- TRUE
 ```
 
-Using the above parameterization, construct the model objects. Here we construct two equilibrium models and four 
-disequilibrium models. The constructors of the models that use 
-price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and 
-`diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per entity. 
+Using the above parameterization, construct the model objects. Here we construct two equilibrium models and four  disequilibrium models. All the models are constructed using the simulated data from a model of market in equilibrium.
 
 ```{r model.constructor}
 eq2sls <- new(
   "eq_2sls",
   key_columns,
-  quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
+  quantity_column, price_column,
+  demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data[eq_data$date != 1, ],
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  verbose = verbose
 )
 eqfiml <- new(
   "eq_fiml",
   key_columns,
-  quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
+  quantity_column, price_column,
+  demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data[eq_data$date != 1, ],
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
   key_columns,
-  quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
+  quantity_column, price_column,
+  demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data[eq_data$date != 1, ],
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 drmdl <- new(
   "diseq_directional",
   key_columns, time_column,
-  quantity_column, price_column, demand_specification, supply_specification,
+  quantity_column, price_column,
+  demand_specification, supply_specification,
   eq_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
   key_columns, time_column,
-  quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
+  quantity_column, price_column,
+  demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data,
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
@@ -166,37 +124,40 @@ damdl <- new(
 
 ## Estimation 
 
-Set estimation parameters and estimate the model. The only model that is estimated by least squares is `eq_2sls`. The 
-remaining models are estimated using full information maximum likelihood. First choose an estimation method and the 
-corresponding optimization controls. The available methods are:
+Set the estimation parameters. 
 
- * Nelder-Mead: Does not require the gradient of the likelihood to be known.
-
- * BFGS: Uses the analytically calculated gradients. By default the Diseq package uses this method. 
-
- * L-BFGS-B: Constrained optimization.
-
-```{r estimation.parameters.method}
+```{r estimation.parameters}
 optimization_method <- "BFGS"
 optimization_controls <- list(maxit = 10000, reltol = 1e-8)
 ```
 
-Then estimate the model. See the documentation for more options.
+Estimate the models.
 
 ```{r estimation.execution}
 eq2sls <- estimate(eq2sls)
-eqfiml_est <- estimate(eqfiml, control = optimization_controls, method = optimization_method)
-bsmdl_est <- estimate(bsmdl, control = optimization_controls, method = optimization_method)
-drmdl_est <- estimate(drmdl, control = optimization_controls, method = optimization_method)
-damdl_est <- estimate(damdl, control = optimization_controls, method = optimization_method)
+eqfiml_est <- estimate(eqfiml,
+  control = optimization_controls,
+  method = optimization_method
+)
+bsmdl_est <- estimate(bsmdl,
+  control = optimization_controls,
+  method = optimization_method
+)
+drmdl_est <- estimate(drmdl,
+  control = optimization_controls,
+  method = optimization_method
+)
+damdl_est <- estimate(damdl,
+  control = optimization_controls,
+  method = optimization_method
+)
 ```
+
 ## Post estimation analysis 
 
 ### Summaries
 
-All the model estimates support the `summary` function. The `eq_2sls` provides also the first stage estimation. The 
-`summary` output comes from `systemfit`. The remaining models are estimated using maximum likelihood and the `summary` 
-functionality is based on `bbmle`. 
+All the models provide estimates for the simulated data. Even with simulated data, it is difficult to assess which model performs better by examining only the summaries in separation or collectively. 
 
 ```{r analysis.summaries}
 summary(eq2sls@first_stage_model)
@@ -208,88 +169,98 @@ bbmle::summary(damdl_est)
 
 ### Model selection
 
-The deterministic adjustment model has price dynamics that are analogous to excess demand and estimates one extra 
-parameter. The directional model estimates one parameter less as the model does not have enough equations to
-identify prices in both demand and supply equations. The estimated parameters are summarized as follows.
+The deterministic adjustment model has price dynamics that are analogous to excess demand and estimates one extra parameter. The directional model estimates one parameter less as the model does not have enough equations to identify prices in both demand and supply equations. The estimated parameters are summarized as follows.
 
 ```{r analysis.estimates}
 sim_coef <- c(
-  alpha_d, beta_d0, beta_d, eta_d, 
-  alpha_s, beta_s0, beta_s, eta_s, 
-  NA,  
+  alpha_d, beta_d0, beta_d, eta_d,
+  alpha_s, beta_s0, beta_s, eta_s,
+  NA,
   sigma_d, sigma_s,
   rho_ds
 )
 names(sim_coef) <- names(damdl_est@coef)
 
-dm_inc <- eq2sls@system_model$coefficients[grep("demand", names(eq2sls@system_model$coefficients))]
-sp_inc <- eq2sls@system_model$coefficients[grep("supply", names(eq2sls@system_model$coefficients))]
+dm_inc <- eq2sls@system_model$coefficients[
+  grep(
+    "demand",
+    names(eq2sls@system_model$coefficients)
+  )
+]
+sp_inc <- eq2sls@system_model$coefficients[
+  grep(
+    "supply",
+    names(eq2sls@system_model$coefficients)
+  )
+]
 lm_coef <- c(
   dm_inc[2], dm_inc[-2], sp_inc[2], sp_inc[-2],
-  NA, 
+  NA,
   NA, NA,
   NA
 )
 
 eqfiml_coef <- append(
-  eqfiml_est@coef, c(NA), 
-  after = which(names(eqfiml_est@coef) == get_prefixed_variance_variable(eqfiml@system@demand)) - 1
+  eqfiml_est@coef, c(NA),
+  after = which(names(eqfiml_est@coef) ==
+    get_prefixed_variance_variable(eqfiml@system@demand)) - 1
 )
 
 bsmdl_coef <- append(
-  bsmdl_est@coef, c(NA), 
-  after = which(names(bsmdl_est@coef) == get_prefixed_variance_variable(bsmdl@system@demand)) - 1
+  bsmdl_est@coef, c(NA),
+  after = which(names(bsmdl_est@coef) ==
+    get_prefixed_variance_variable(bsmdl@system@demand)) - 1
 )
 
 drmdl_coef <- append(
-  drmdl_est@coef, c(NA), 
-  after = which(names(drmdl_est@coef) == get_prefixed_variance_variable(drmdl@system@demand)) - 1
+  drmdl_est@coef, c(NA),
+  after = which(names(drmdl_est@coef) ==
+    get_prefixed_variance_variable(drmdl@system@demand)) - 1
 )
 drmdl_coef <- append(
-  drmdl_coef, c(S_P = NA), 
-  after = which(names(drmdl_est@coef) == get_prefixed_const_variable(drmdl@system@supply)) - 1
+  drmdl_coef, c(S_P = NA),
+  after = which(names(drmdl_est@coef) ==
+    get_prefixed_const_variable(drmdl@system@supply)) - 1
 )
 
 damdl_coef <- damdl_est@coef
 
 comp <- tibble::tibble(
   parameter = names(sim_coef),
-  sim = sim_coef, lm = lm_coef, fi = eqfiml_coef, 
-  bm = bsmdl_coef, dm = drmdl_coef, da = damdl_coef, 
-  lmerr = abs(lm_coef - sim_coef), fierr = abs(eqfiml_coef - sim_coef), 
-  bmerr = abs(bsmdl_coef - sim_coef), dmerr = abs(drmdl_coef - sim_coef), 
+  sim = sim_coef, lm = lm_coef, fi = eqfiml_coef,
+  bm = bsmdl_coef, dm = drmdl_coef, da = damdl_coef,
+  lmerr = abs(lm_coef - sim_coef), fierr = abs(eqfiml_coef - sim_coef),
+  bmerr = abs(bsmdl_coef - sim_coef), dmerr = abs(drmdl_coef - sim_coef),
   daerr = abs(damdl_coef - sim_coef)
 )
 comp
 ```
 
-Since we have used simulated data, we can calculate the average absolute error of the parameter estimation for each 
-of the models. 
+Since we have used simulated data, we can calculate the average absolute error of the parameter estimation for each of the models. In practice, the population values are unknown and this calculation is impossible. 
 
 ```{r analysis.averages}
 comp_means <- colMeans(comp[, grep("err", colnames(comp))], na.rm = TRUE)
 comp_means
 ```
 
-The average absolute error cannot provide an overall estimation assessment as the market models have different parameter
-spaces. To assess the overall model performance one can instead use an information criterion.
+Moreover, the average absolute error cannot provide an overall estimation assessment as the market models have different parameter spaces. To assess the overall model performance one can instead use an information criterion.
 
 ```{r analysis.model.selection}
 model_names <- c(
-  eqfiml@model_type_string, 
+  eqfiml@model_type_string,
   bsmdl@model_type_string, drmdl@model_type_string, damdl@model_type_string
 )
 model_obs <- c(
-  get_number_of_observations(eqfiml), 
-  get_number_of_observations(bsmdl), get_number_of_observations(drmdl), 
+  get_number_of_observations(eqfiml),
+  get_number_of_observations(bsmdl), get_number_of_observations(drmdl),
   get_number_of_observations(damdl)
 )
 model_errors <- c(
-  comp_means["fierr"], 
-  comp_means["bmerr"], comp_means["dmerr"], 
+  comp_means["fierr"],
+  comp_means["bmerr"], comp_means["dmerr"],
   comp_means["daerr"]
 )
-seltbl <- AIC(eqfiml_est, bsmdl_est, drmdl_est, damdl_est) %>% 
+seltbl <- AIC(eqfiml_est, bsmdl_est, drmdl_est, damdl_est) %>%
   tibble::add_column(Model = model_names, .before = 1) %>%
   tibble::add_column(Obs. = model_obs, `Mean Error` = model_errors) %>%
   dplyr::rename(D.F. = df) %>%

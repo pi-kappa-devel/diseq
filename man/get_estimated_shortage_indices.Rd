@@ -14,6 +14,9 @@ get_estimated_shortage_indices(object, estimation)
 
 \item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
 }
+\value{
+A vector of indices.
+}
 \description{
 Returns the indices for which the estimated shortages of the market are non-negative.
 }

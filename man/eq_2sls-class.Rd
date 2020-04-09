@@ -5,5 +5,29 @@
 \alias{eq_2sls-class}
 \title{Equilibrium model estimated using 2-stage least squares.}
 \description{
-Equilibrium model estimated using 2-stage least squares.
+In the first stage, prices are regressed on remaining controls from both the
+demand and supply equations. In the second stage, the demand and supply equation is estimated
+using the fitted prices instead of the observed. A necessary identification condition is that
+there is at least one control that is exclusively part of the demand and one control
+that is exclusively part of the supply equation.
+
+\deqn{
+  \begin{aligned}
+  D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
+  S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
+  Q_{nt} &= D_{nt} = S_{nt} ,
+  \end{aligned}
+}
+}
+\section{Slots}{
+
+\describe{
+\item{\code{first_stage_model}}{An estimated first stage equation of type \code{\link[lm]{lm}}.}
+
+\item{\code{system_model}}{An estimated system of market equations of type
+\code{\link[systemfit]{systemfit}}.}
+}}
+
+\seealso{
+\code{\link{initialize_model}}
 }

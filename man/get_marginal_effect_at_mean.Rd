@@ -16,6 +16,9 @@ get_marginal_effect_at_mean(object, estimation, variable)
 
 \item{variable}{Variable name for which the effect is calculated.}
 }
+\value{
+The marginal effects of the passed variable evaluated at the estimated mean.
+}
 \description{
 Returns the estimated marginal effects evaluated at the mean.
 }

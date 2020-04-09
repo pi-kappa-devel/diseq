@@ -1,10 +1,11 @@
 citHeader("To cite diseq in publications use:")
 
-citEntry(entry = "Unpublished",
-  title        = "Disequilibrium Model Estimation {diseq}",
+year <- sub("-.*", "", meta$Date)
+version <- sprintf("R package version %s", meta$Version)
+
+citEntry(entry = "misc",
+  title        = paste0(meta$Title, " {diseq}"),
   author       = personList(as.person("Pantelis Karapanagiotis")),
-  note         = "In development R package",
-  year         = "2020",
-  textVersion  = paste("Pantelis Karapanagiotis (2020).",
-        "Disequilibrium Model Estimation.")
-)
+  year         = year,
+  textVersion  = paste0("Pantelis Karapanagiotis (", year, "). ", meta$Title, ". ", version, "."),
+  note = version)

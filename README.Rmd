@@ -2,8 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -18,10 +16,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The diseq package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium 
-model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are
-asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. All 
-maximum likelihood models can be estimated both with independent and correlated demand and supply shocks.
+The diseq package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. All maximum likelihood models can be estimated both with independent and correlated demand and supply shocks.
 
 ## Installation
 <!--
@@ -32,7 +27,6 @@ install.packages("diseq")
 ```
 --> 
 You can download the source code of the development version from [GitHub](https://github.com/pi-kappa-devel/diseq).
-
 
 After you install it, there is a basic-usage example installed with it. To see it type the command
 ```
@@ -46,13 +40,13 @@ You can find the documentation of the package by typing
 
 ## Example
 
-This is a basic example which shows you how estimate a model. The package is loaded in the standard way.
+This is a basic example which shows you how to estimate a model. The package is loaded in the standard way.
+
 ```{r loading}
 library(diseq)
 ```
 
-The example uses simulated data. The diseq package offers a function to simulate data from data generating processes
-that correspond to the models that the package provides.
+The example uses simulated data. The diseq package offers a function to simulate data from data generating processes that correspond to the models that the package provides.
 ```{r simulation}
 model_tbl <- simulate_model_data(
   "diseq_basic", 10000, 5,
@@ -63,12 +57,9 @@ model_tbl <- simulate_model_data(
 )
 ```
 
-Models are initialized by a constructor. In this example, a basic disequilibrium model is estimated. There are also
-other models available (see [Design and functionality]). The constructor sets the model's parameters and performs
-the necessary initialization processes. The following variables specify this example's parameterization.
+Models are initialized by a constructor. In this example, a basic disequilibrium model is estimated. There are also other models available (see [Design and functionality]). The constructor sets the model's parameters and performs the necessary initialization processes. The following variables specify this example's parameterization.
 
- * The key is the combination of columns that uniquely identify a record of the dataset. For panel data, this should be
- a vector of the entity identifier and the time columns.
+ * The key is the combination of columns that uniquely identify a record of the dataset. For panel data, this should be a vector of the entity identifier and the time columns.
 ```{r model.parameters.key}
 key_columns <- c("id", "date")
 ```
@@ -83,9 +74,7 @@ quantity_column <- "Q"
 price_column <- "P"
 ```
 
- * The sepecification of the system's equations. Each specification sets the right hand side of one system equation.
- The expressions are specified similarly to the expressions of formulas of linear models. Indicator variables and 
- interactions are created automatically by the constructor. 
+ * The sepecification of the system's equations. Each specification sets the right hand side of one system equation. The expressions are specified similarly to the expressions of formulas of linear models. Indicator variables and interactions are created automatically by the constructor. 
 ```{r model.parameters.equations}
 demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
 supply_specification <- "Xs1 + X1 + X2"

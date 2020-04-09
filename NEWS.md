@@ -1,3 +1,15 @@
+# diseq 0.0.5.9009
+
+* Improved documentation.
+
+# diseq 0.0.5.9008
+
+* Removed unused parameter from the constructor of the equilibrium two stage least square model.
+
+# diseq 0.0.5.9007
+
+* Removed dependence on pastecs package.
+
 # diseq 0.0.5.9006
 
 * Reformated code using the styler package. Removed the lintr based test.
