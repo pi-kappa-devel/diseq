@@ -508,19 +508,21 @@ setMethod(
 #' Simulate model data.
 #'
 #' Returns a data \code{tibble} with simulated data from a generating process that matches the
-#' passed model string. The simulated observations of the controls are drawn from a uniform
-#' distribution on the interval [2, 5].
-#' @param model_string Equilibrium model type. It should be either \code{eq_2sls} or \code{eq_fiml}.
+#' passed model string. By default, the simulated observations of the controls are drawn from a
+#' normal distribution.
+#' @param model_string Model type. It should be among \code{eq_2sls}, \code{eq_fiml},
+#'   \code{diseq_basic}, \code{diseq_directional}, \code{diseq_deterministic_adjustment}, and
+#'   \code{diseq_stochastic_adjustment}.
 #' @param nobs Number of simulated entities.
 #' @param tobs Number of simulated dates.
-#' @param alpha_d Demand price coefficient.
-#' @param beta_d0 Demand constant coefficient.
-#' @param beta_d Demand exclusive controls' coefficients.
-#' @param eta_d Demand common controls' coefficients.
-#' @param alpha_s Supply price coefficient.
-#' @param beta_s0 Supply constant coefficient.
-#' @param beta_s Supply exclusive controls' coefficients.
-#' @param eta_s Supply common controls' coefficients.
+#' @param alpha_d Price coefficient of demand.
+#' @param beta_d0 Constant coefficient of demand.
+#' @param beta_d Coefficients of exclusive demand controls.
+#' @param eta_d Demand coefficients of common controls.
+#' @param alpha_s Price coefficient of supply.
+#' @param beta_s0 Constant coefficient of supply.
+#' @param beta_s Coefficients of exclusive supply controls.
+#' @param eta_s Supply coefficients of common controls.
 #' @param gamma Price equation's stability factor.
 #' @param beta_p0 Price equation's constant coefficient.
 #' @param beta_p Price equation's control coefficients.
@@ -530,9 +532,10 @@ setMethod(
 #' @param rho_ds Demand and supply shocks' correlation coefficient.
 #' @param rho_dp Demand and price shocks' correlation coefficient.
 #' @param rho_sp Supply and price shocks' correlation coefficient.
-#' @param seed Pseudo number generator seed.
-#' @param price_generator Pseudo number generator for prices.
-#' @param control_generator Pseudo number generator for non-prices controls.
+#' @param seed Pseudo random number generator seed.
+#' @param price_generator Pseudo random number generator callback for prices.
+#' @param control_generator Pseudo random number generator callback for non-price controls.
+#' @return The simulated data.
 #' @rdname simulate_model_data
 #' @export
 setGeneric(

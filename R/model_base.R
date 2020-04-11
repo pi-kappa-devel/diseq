@@ -226,7 +226,7 @@ setMethod(
 #' Minus log-likelihood.
 #'
 #' Returns the opposite of the log-likelihood. The package uses the likelihoods expressions that
-#' are derived in \href{Karapanagiotis (2020)}{https://dx.doi.org/10.2139/ssrn.3525622}.
+#' are derived in \href{https://dx.doi.org/10.2139/ssrn.3525622}{Karapanagiotis (2020)}.
 #' @param object A model object.
 #' @param parameters A vector of parameters at which the function is to be evaluated.
 #' @rdname minus_log_likelihood

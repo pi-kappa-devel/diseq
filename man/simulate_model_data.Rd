@@ -58,27 +58,29 @@ simulate_model_data(
 )
 }
 \arguments{
-\item{model_string}{Equilibrium model type. It should be either \code{eq_2sls} or \code{eq_fiml}.}
+\item{model_string}{Model type. It should be among \code{eq_2sls}, \code{eq_fiml},
+\code{diseq_basic}, \code{diseq_directional}, \code{diseq_deterministic_adjustment}, and
+\code{diseq_stochastic_adjustment}.}
 
 \item{nobs}{Number of simulated entities.}
 
 \item{tobs}{Number of simulated dates.}
 
-\item{alpha_d}{Demand price coefficient.}
+\item{alpha_d}{Price coefficient of demand.}
 
-\item{beta_d0}{Demand constant coefficient.}
+\item{beta_d0}{Constant coefficient of demand.}
 
-\item{beta_d}{Demand exclusive controls' coefficients.}
+\item{beta_d}{Coefficients of exclusive demand controls.}
 
-\item{eta_d}{Demand common controls' coefficients.}
+\item{eta_d}{Demand coefficients of common controls.}
 
-\item{alpha_s}{Supply price coefficient.}
+\item{alpha_s}{Price coefficient of supply.}
 
-\item{beta_s0}{Supply constant coefficient.}
+\item{beta_s0}{Constant coefficient of supply.}
 
-\item{beta_s}{Supply exclusive controls' coefficients.}
+\item{beta_s}{Coefficients of exclusive supply controls.}
 
-\item{eta_s}{Supply common controls' coefficients.}
+\item{eta_s}{Supply coefficients of common controls.}
 
 \item{gamma}{Price equation's stability factor.}
 
@@ -98,14 +100,17 @@ simulate_model_data(
 
 \item{rho_sp}{Supply and price shocks' correlation coefficient.}
 
-\item{seed}{Pseudo number generator seed.}
+\item{seed}{Pseudo random number generator seed.}
 
-\item{price_generator}{Pseudo number generator for prices.}
+\item{price_generator}{Pseudo random number generator callback for prices.}
 
-\item{control_generator}{Pseudo number generator for non-prices controls.}
+\item{control_generator}{Pseudo random number generator callback for non-price controls.}
+}
+\value{
+The simulated data.
 }
 \description{
 Returns a data \code{tibble} with simulated data from a generating process that matches the
-passed model string. The simulated observations of the controls are drawn from a uniform
-distribution on the interval [2, 5].
+passed model string. By default, the simulated observations of the controls are drawn from a
+normal distribution.
 }

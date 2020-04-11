@@ -1,6 +1,10 @@
+# diseq 0.0.7
+
+* Fixed order of arguments in web-link of estimation documentation. Improved simulation documentation.
+
 # diseq 0.0.6
 
-* Corrected documentation typos. Fixed web links.
+* Corrected documentation typos. Fixed web-links.
 
 # diseq 0.0.5.9009
 
