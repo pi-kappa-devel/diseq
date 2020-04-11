@@ -1,4 +1,6 @@
 #' @import methods
+
+#' @title Equation base class
 setClass(
   "equation_base",
   representation(
@@ -104,36 +106,59 @@ setMethod(
 
 #' Constant coefficient variable name.
 #'
-#' Returns the variable name for the constant coefficient parameter of the equation.
+#' The constant coefficient name is constructed by concatenating the equation prefix
+#' with \code{CONST}.
 #' @param object An equation object.
+#' @return The constant coefficient name.
 #' @rdname get_prefixed_const_variable
 #' @export
 setGeneric("get_prefixed_const_variable", function(object) {
   standardGeneric("get_prefixed_const_variable")
 })
 
+#' Independent variable names.
+#'
+#' The names of the independent variables are constructed by concatenating the equation prefix
+#' with the column names of the data \code{tibble}.
+#' @param object An equation object.
+#' @return A vector with the independent variable names.
+#' @rdname get_prefixed_independent_variables
+#' @export
 setGeneric("get_prefixed_independent_variables", function(object) {
   standardGeneric("get_prefixed_independent_variables")
 })
 
 #' Price coefficient variable name.
 #'
-#' Returns the variable name for the price coefficient parameter of the equation.
+#' The price coefficient name is constructed by concatenating the equation prefix
+#' with the name of the price column.
 #' @param object An equation object.
+#' @return The price coefficient variable name.
 #' @rdname get_prefixed_price_variable
 #' @export
 setGeneric("get_prefixed_price_variable", function(object) {
   standardGeneric("get_prefixed_price_variable")
 })
 
+#' Control variable names.
+#'
+#' The controls of the equation are the independent variables without the price variable.
+#' Their names are constructed by concatenating the equation prefix with the name of
+#' the price column.
+#' @param object An equation object.
+#' @return A vector with the control variable names.
+#' @rdname get_prefixed_control_variables
+#' @export
 setGeneric("get_prefixed_control_variables", function(object) {
   standardGeneric("get_prefixed_control_variables")
 })
 
-#' Shock variance variable name.
+#' Variance variable name.
 #'
-#' Returns the variable name for the variance of the shock of the equation.
+#' The variance variables is constructed by concatenating the equation prefix with
+#' 'VARIANCE'.
 #' @param object An equation object.
+#' @return The variable name for the variance of the shock of the equation.
 #' @rdname get_prefixed_variance_variable
 #' @export
 setGeneric("get_prefixed_variance_variable", function(object) {
@@ -161,6 +186,7 @@ setMethod("get_prefixed_const_variable", signature(object = "equation_base"), fu
   paste0(object@variable_prefix, "CONST")
 })
 
+#' @rdname get_prefixed_price_variable
 setMethod(
   "get_prefixed_independent_variables", signature(object = "equation_base"),
   function(object) {
@@ -173,6 +199,7 @@ setMethod("get_prefixed_price_variable", signature(object = "equation_base"), fu
   colnames(object@price_vector)
 })
 
+#' @rdname get_prefixed_price_variable
 setMethod("get_prefixed_control_variables", signature(object = "equation_base"), function(object) {
   colnames(object@control_matrix)
 })

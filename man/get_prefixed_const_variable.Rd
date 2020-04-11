@@ -12,6 +12,10 @@ get_prefixed_const_variable(object)
 \arguments{
 \item{object}{An equation object.}
 }
+\value{
+The constant coefficient name.
+}
 \description{
-Returns the variable name for the constant coefficient parameter of the equation.
+The constant coefficient name is constructed by concatenating the equation prefix
+with \code{CONST}.
 }

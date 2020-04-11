@@ -1,4 +1,6 @@
 #' @include equation_base.R
+
+#' @title Basic disequilibrium model equation class
 setClass(
   "equation_basic",
   contains = "equation_base",

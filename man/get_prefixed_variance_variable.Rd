@@ -3,7 +3,7 @@
 \name{get_prefixed_variance_variable}
 \alias{get_prefixed_variance_variable}
 \alias{get_prefixed_variance_variable,equation_base-method}
-\title{Shock variance variable name.}
+\title{Variance variable name.}
 \usage{
 get_prefixed_variance_variable(object)
 
@@ -12,6 +12,10 @@ get_prefixed_variance_variable(object)
 \arguments{
 \item{object}{An equation object.}
 }
+\value{
+The variable name for the variance of the shock of the equation.
+}
 \description{
-Returns the variable name for the variance of the shock of the equation.
+The variance variables is constructed by concatenating the equation prefix with
+'VARIANCE'.
 }

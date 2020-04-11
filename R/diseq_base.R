@@ -1,5 +1,6 @@
-#' Disequlibrium model base class
 #' @include model_base.R
+
+#' @title Equilibrium model base class
 setClass(
   "diseq_base",
   contains = "model_base",
@@ -7,7 +8,6 @@ setClass(
   prototype()
 )
 
-#' @rdname initialize_model
 setMethod(
   "initialize", "diseq_base",
   function(

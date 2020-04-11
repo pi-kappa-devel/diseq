@@ -1,3 +1,7 @@
+# diseq 0.0.6
+
+* Corrected documentation typos. Fixed web links.
+
 # diseq 0.0.5.9009
 
 * Improved documentation.
@@ -8,15 +12,15 @@
 
 # diseq 0.0.5.9007
 
-* Removed dependence on pastecs package.
+* Removed dependence on `pastecs` package.
 
 # diseq 0.0.5.9006
 
-* Reformated code using the styler package. Removed the lintr based test.
+* Reformatted code using the `styler` package. Removed the `lintr` based test.
 
 # diseq 0.0.5.9005
 
-* Adjustments to address breaking changes of the tibble package.
+* Adjustments to address breaking changes of the `tibble` package.
 
 # diseq 0.0.5.9004
 
@@ -40,8 +44,7 @@
 
 # diseq 0.0.4.9012
 
-* Allowed estimation of equilibrium FIML, deterministic adjustment, and stochastic adjustment with one-sided inclusion
-of prices.
+* Allowed estimation of full information maximum likelihood, equilibrium, deterministic adjustment, and stochastic adjustment with one-sided inclusion of prices.
 * Modified model titles' generation.
 
 # diseq 0.0.4.9011

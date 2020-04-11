@@ -1,4 +1,6 @@
 #' @include equation_base.R
+
+#' @title Deterministic adjustment disequilibrium model equation class
 setClass(
   "equation_deterministic_adjustment",
   contains = "equation_base",

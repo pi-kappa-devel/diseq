@@ -1,4 +1,6 @@
 #' @include equation_basic.R
+
+#' @title Directional disequilibrium model equation class
 setClass(
   "equation_directional",
   contains = "equation_basic",

@@ -91,8 +91,8 @@ quantity_column <- "Q"
 price_column <- "P"
 ```
 
-  - The sepecification of the system’s equations. Each specification
-    sets the right hand side of one system equation. The expressions are
+  - The specification of the system’s equations. Each specification sets
+    the right hand side of one system equation. The expressions are
     specified similarly to the expressions of formulas of linear models.
     Indicator variables and interactions are created automatically by
     the constructor.

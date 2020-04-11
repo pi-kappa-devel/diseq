@@ -1,4 +1,6 @@
 #' @include equation_base.R
+
+#' @title Stochastic adjustment disequilibrium model equation class
 setClass(
   "equation_stochastic_adjustment",
   contains = "equation_base",

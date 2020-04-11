@@ -71,7 +71,6 @@ setGeneric("get_price_differences_variable", function(object) {
 #' Returns the variable name for the correlation coefficient parameter of the model.
 #' @param object A system object.
 #' @rdname get_correlation_variable
-#' @export
 setGeneric("get_correlation_variable", function(object) {
   standardGeneric("get_correlation_variable")
 })

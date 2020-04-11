@@ -179,11 +179,11 @@ samdl <- new(
 
 Set the estimation parameters. The only model that is estimated by least squares is `eq_2sls`. The remaining models are estimated using full information maximum likelihood. First choose an optimization method and the corresponding optimization controls. The available methods are:
 
- * Nelder-Mead: Does not require the gradient of the likelihood to be known.
+ * `Nelder-Mead`: Does not require the gradient of the likelihood to be known.
 
- * BFGS: Uses the analytically calculated gradients. By default the *Diseq* package uses this method. 
+ * `BFGS`: Uses the analytically calculated gradients. By default the *Diseq* package uses this method. 
 
- * L-BFGS-B: Constrained optimization.
+ * `L-BFGS-B`: Constrained optimization.
 
 ```{r estimation.parameters.method}
 optimization_method <- "BFGS"
@@ -265,7 +265,7 @@ cbind(
 
 ### Shortages
 
-Copy the disequilibrium model tibble and augment it with post-estimation data. The disequilibrium models can be used to estimate:
+Copy the disequilibrium model `tibble` and augment it with post-estimation data. The disequilibrium models can be used to estimate:
 
  * Shortage probabilities. These are the probabilities that the disequilibrium models assign to observing a particular extent of excess demand.
  

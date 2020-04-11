@@ -4,23 +4,18 @@
 #' @title Directional disequilibrium model with sample separation.
 #'
 #' @description The directional disequilibrium model consists of three equations and a separation
-#' rule. The market is discribed by a linear demand, a linear supply equation and the short side
-#' rule. The seperation
+#' rule. The market is described by a linear demand, a linear supply equation and the short side
+#' rule. The separation
 #' rule splits the sample into regimes of excess supply and excess demand. If a price change is
 #' positive at the time point of the observation, then the observation is classified as being in an
 #' excess demand regime. Otherwise, it is assumed that it represents an excess supply state. The
 #' model is estimated using full information maximum likelihood.
 #'
-#' \deqn{
-#'   \begin{aligned}
-#'   D_{nt} &= X_{d,nt}'\beta_{d} + u_{d,nt}, \\
-#'   S_{nt} &= X_{s,nt}'\beta_{s} + u_{s,nt}, \\
-#'   Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
-#'   \Delta P_{nt} &\ge 0 \implies D_{nt} \ge S_{nt}.
-#'   \end{aligned}
-#' }
+#' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
+#' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
+#' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
+#' \deqn{\Delta P_{nt} \ge 0 \Longrightarrow D_{nt} \ge S_{nt}.}
 #'
-#' @seealso \code{\link{initialize_model}}
 #' @export
 setClass(
   "diseq_directional",
@@ -29,8 +24,7 @@ setClass(
   prototype()
 )
 
-#' @describeIn initialize_model Directional disequilibrium model constructor
-#' @export
+#' @describeIn initialize_model_base Directional disequilibrium model base constructor
 setMethod(
   "initialize", "diseq_directional",
   function(

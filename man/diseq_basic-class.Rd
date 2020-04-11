@@ -9,14 +9,7 @@ The basic disequilibrium model consists of three equations. Two of them are
 the demand and supply equations. In addition, the model replaces the market clearing condition
 with the short side rule. The model is estimated using full information maximum likelihood.
 
-\deqn{
-  \begin{aligned}
-  D_{nt} &= X_{d,nt}'\beta_{d} + u_{d,nt}, \\
-  S_{nt} &= X_{s,nt}'\beta_{s} + u_{s,nt}, \\
-  Q_{nt} &= \min\{D_{nt},S_{nt}\} .
-  \end{aligned}
-}
-}
-\seealso{
-\code{\link{initialize_model}}
+\deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
+\deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
+\deqn{Q_{nt} = \min\{D_{nt},S_{nt}\}.}
 }

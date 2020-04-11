@@ -3,9 +3,9 @@
 \docType{class}
 \name{model_base-class}
 \alias{model_base-class}
-\title{Model base class.}
+\title{Model base class}
 \description{
-Model base class.
+Model base class
 }
 \section{Slots}{
 
@@ -24,7 +24,7 @@ price and explanatory columns.}
 
 \item{\code{columns}}{Vector of primary key and data column names for all model's equations.}
 
-\item{\code{model_tibble}}{Model data tibble.}
+\item{\code{model_tibble}}{Model data \code{tibble}.}
 
 \item{\code{model_type_string}}{Model type string description.}
 

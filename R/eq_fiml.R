@@ -7,15 +7,10 @@
 #' supply and the market clearing equations. This model is estimated using full information
 #' maximum likelihood.
 #'
-#' \deqn{
-#'   \begin{aligned}
-#'   D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
-#'   S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
-#'   Q_{nt} &= D_{nt} = S_{nt} ,
-#'   \end{aligned}
-#' }
+#' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
+#' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
+#' \deqn{Q_{nt} = D_{nt} = S_{nt}.}
 #'
-#' @seealso \code{\link{initialize_model}}
 #' @export
 setClass(
   "eq_fiml",
@@ -23,8 +18,7 @@ setClass(
   representation()
 )
 
-#' @describeIn initialize_model Two stage least squares equilibrium model constructor.
-#' @export
+#' @describeIn initialize_model_base Full information maximum likelihood model constructor
 setMethod(
   "initialize", "eq_fiml",
   function(

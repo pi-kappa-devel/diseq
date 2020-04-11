@@ -1,12 +1,12 @@
 #' @include model_base.R
 
+#' @title Equilibrium model base class
 setClass(
   "eq_base",
   contains = "model_base",
   representation()
 )
 
-#' @rdname initialize_model
 setMethod(
   "initialize", "eq_base",
   function(

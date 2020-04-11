@@ -11,7 +11,7 @@
 #' ## Usage
 #'
 #' The easiest way to get accustomed with the functionality of the package is to check the
-#' accompanying vignettes and the \href{../README.html}{README} file. These can be found
+#' accompanying vignettes and the \href{../README.html}{\code{README}} file. These can be found
 #' in the following links:
 #'
 #' \describe{
@@ -23,8 +23,8 @@
 #'
 #' ## Market model classes:
 #'
-#' The model hierachy is described in the \href{../README.html}{README} file. See
-#' \code{\link{initialize_model}} for initialization details.
+#' The model hierarchy is described in the \href{../README.html}{\code{README}} file. See
+#' the documentation of the classes for initialization details.
 #'
 #' ### Equilibrium model classes:
 #'
@@ -45,10 +45,6 @@
 #'   \item{\code{\linkS4class{diseq_stochastic_adjustment}}}{
 #'     Disequilibrium model with stochastic price dynamics}
 #' }
-#'
-#' ## Model initialization
-#'
-#' Details on the construction of model objects can be found in \code{\link{initialize_model}}
 #'
 #' @docType package
 #' @name diseq

@@ -2,23 +2,18 @@
 
 #' @title Disequilibrium model with stochastic price dynamics.
 #'
-#' @description The disequilibrium model with stochastic price adjustsmenst is dscribed by a
+#' @description The disequilibrium model with stochastic price adjustment is described by a
 #' system of four equations. Three of of them form a stochastic linear system of market equations
-#' equations coupled with a stochastic price evolution equation. The fourth euation is the short
+#' equations coupled with a stochastic price evolution equation. The fourth equation is the short
 #' side rule. In contrast to the deterministic counterpart, the model does not impose any
 #' separation rule on the sample. It is estimated using full information maximum likelihood.
 #'
-#' \deqn{
-#'   \begin{aligned}
-#'   D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
-#'   S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
-#'   Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
-#'   \Delta P_{nt} &=
-#'     \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right) +  X_{p,nt}'\beta_{p} + u_{p,nt}.
-#'   \end{aligned}
-#' }
+#' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
+#' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
+#' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
+#' \deqn{\Delta P_{nt} =
+#'     \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right) +  X_{p,nt}'\beta_{p} + u_{p,nt}.}
 #'
-#' @seealso \code{\link{initialize_model}}
 #' @export
 setClass(
   "diseq_stochastic_adjustment",
@@ -27,9 +22,8 @@ setClass(
   prototype()
 )
 
-#' @describeIn initialize_model Disequilibrium model with stochastic price adjustment
-#'   constructor
-#' @export
+#' @describeIn initialize_model_base Disequilibrium model with stochastic price
+#'   adjustment constructor
 setMethod(
   "initialize", "diseq_stochastic_adjustment",
   function(

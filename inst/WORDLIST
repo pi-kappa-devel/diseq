@@ -1,8 +1,8 @@
 doi
-eq_2sls
-eq_fiml
+dx
+ge
 Hessians
+https
 Karapanagiotis
 Maddala
-Nelder-Mead
-tibble
+ssrn

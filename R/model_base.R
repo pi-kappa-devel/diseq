@@ -1,14 +1,14 @@
 #' @include model_logger.R
 #' @include system_base.R
 #' @importFrom bbmle parnames mle2
-#' @importFrom stats formula lm model.matrix na.omit
+#' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
 #' @importFrom rlang :=
 #' @import dplyr magrittr tibble
 
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 
-#' Model base class.
+#' @title Model base class
 #'
 #' @slot logger Logger object.
 #' @slot key_columns Vector of column names that uniquely identify data records. For panel data
@@ -18,7 +18,7 @@ setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 #' @slot data_columns Vector of model's data column names. This is the union of the quantity,
 #'   price and explanatory columns.
 #' @slot columns Vector of primary key and data column names for all model's equations.
-#' @slot model_tibble Model data tibble.
+#' @slot model_tibble Model data \code{tibble}.
 #' @slot model_type_string Model type string description.
 #' @slot system Model's system of equations.
 setClass(
@@ -41,7 +41,8 @@ setClass(
   )
 )
 
-#' @title Models' constructions
+#' @title Model initialization
+#'
 #' @details
 #' ## Common initialization
 #'
@@ -79,7 +80,6 @@ setClass(
 #'     and the \code{\linkS4class{diseq_stochastic_adjustment}} models, a column with price
 #'     differences is created.
 #' @param .Object The object to be Constructed.
-#' @param model_type_string Model type string (internal).
 #' @param verbose Verbosity level.
 #' @param key_columns Key columns of the data set.
 #' @param time_column The time column of the data set.
@@ -92,10 +92,10 @@ setClass(
 #' @param price_specification A formula representation of the price equation.
 #' @param use_correlated_shocks Should the model be estimated using correlated shocks?
 #' @param data The data set.
-#' @param system_initializer System initializer (internal).
 #' @return The initialized model.
-#' @name initialize_model
-#' @rdname initialize_model
+#' @name initialize_model_base
+NULL
+
 setMethod(
   "initialize", "model_base",
   function(
@@ -226,7 +226,7 @@ setMethod(
 #' Minus log-likelihood.
 #'
 #' Returns the opposite of the log-likelihood. The package uses the likelihoods expressions that
-#' are derived in \href{Karapanagiotis (2020)}{http://dx.doi.org/10.2139/ssrn.3525622}.
+#' are derived in \href{Karapanagiotis (2020)}{https://dx.doi.org/10.2139/ssrn.3525622}.
 #' @param object A model object.
 #' @param parameters A vector of parameters at which the function is to be evaluated.
 #' @rdname minus_log_likelihood
@@ -291,7 +291,7 @@ setGeneric("get_descriptives", function(object, variables) {
 #' Calculates and returns basic descriptive statistics for the model's demand data. Factor
 #' variables are excluded from the calculations.
 #' @param object A model object.
-#' @return A data tibble containing descriptive statistics..
+#' @return A data \code{tibble} containing descriptive statistics..
 #' @rdname get_demand_descriptives
 #' @export
 setGeneric("get_demand_descriptives", function(object) {
@@ -303,7 +303,7 @@ setGeneric("get_demand_descriptives", function(object) {
 #' Calculates and returns basic descriptive statistics for the model's supply data. Factor
 #' variables are excluded from  the calculations.
 #' @param object A model object.
-#' @return A data tibble containing descriptive statistics..
+#' @return A data \code{tibble} containing descriptive statistics..
 #' @rdname get_supply_descriptives
 #' @export
 setGeneric("get_supply_descriptives", function(object) {

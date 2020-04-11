@@ -9,14 +9,7 @@ The equilibrium model consists of thee equations. The demand, the
 supply and the market clearing equations. This model is estimated using full information
 maximum likelihood.
 
-\deqn{
-  \begin{aligned}
-  D_{nt} &= X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt}, \\
-  S_{nt} &= X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt}, \\
-  Q_{nt} &= D_{nt} = S_{nt} ,
-  \end{aligned}
-}
-}
-\seealso{
-\code{\link{initialize_model}}
+\deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
+\deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
+\deqn{Q_{nt} = D_{nt} = S_{nt}.}
 }

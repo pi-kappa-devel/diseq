@@ -7,15 +7,10 @@
 #' the demand and supply equations. In addition, the model replaces the market clearing condition
 #' with the short side rule. The model is estimated using full information maximum likelihood.
 #'
-#' \deqn{
-#'   \begin{aligned}
-#'   D_{nt} &= X_{d,nt}'\beta_{d} + u_{d,nt}, \\
-#'   S_{nt} &= X_{s,nt}'\beta_{s} + u_{s,nt}, \\
-#'   Q_{nt} &= \min\{D_{nt},S_{nt}\} .
-#'   \end{aligned}
-#' }
+#' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
+#' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
+#' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\}.}
 #'
-#' @seealso \code{\link{initialize_model}}
 #' @export
 setClass(
   "diseq_basic",
@@ -24,8 +19,7 @@ setClass(
   prototype()
 )
 
-#' @describeIn initialize_model Basic disequilibrium model constructor.
-#' @export
+#' @describeIn initialize_model_base Basic disequilibrium model base constructor
 setMethod(
   "initialize", "diseq_basic",
   function(

@@ -30,5 +30,5 @@ minus_log_likelihood(object, parameters)
 }
 \description{
 Returns the opposite of the log-likelihood. The package uses the likelihoods expressions that
-are derived in \href{Karapanagiotis (2020)}{http://dx.doi.org/10.2139/ssrn.3525622}.
+are derived in \href{Karapanagiotis (2020)}{https://dx.doi.org/10.2139/ssrn.3525622}.
 }

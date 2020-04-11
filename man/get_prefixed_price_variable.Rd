@@ -2,16 +2,26 @@
 % Please edit documentation in R/equation_base.R
 \name{get_prefixed_price_variable}
 \alias{get_prefixed_price_variable}
+\alias{get_prefixed_independent_variables,equation_base-method}
 \alias{get_prefixed_price_variable,equation_base-method}
+\alias{get_prefixed_control_variables,equation_base-method}
 \title{Price coefficient variable name.}
 \usage{
 get_prefixed_price_variable(object)
 
+\S4method{get_prefixed_independent_variables}{equation_base}(object)
+
 \S4method{get_prefixed_price_variable}{equation_base}(object)
+
+\S4method{get_prefixed_control_variables}{equation_base}(object)
 }
 \arguments{
 \item{object}{An equation object.}
 }
+\value{
+The price coefficient variable name.
+}
 \description{
-Returns the variable name for the price coefficient parameter of the equation.
+The price coefficient name is constructed by concatenating the equation prefix
+with the name of the price column.
 }

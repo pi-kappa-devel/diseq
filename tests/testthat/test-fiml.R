@@ -27,7 +27,7 @@ test_that(paste0(
   "Calcualted gradient of '", get_model_description(mdl),
   "' matches the numerical approximation"
 ), {
-  test_calculated_gradient(mdl, est@coef, 1e-4)
+  test_calculated_gradient(mdl, est@coef, 1e-3)
 })
 
 test_that(paste0("Aggregation is calculatable"), {

@@ -1,4 +1,6 @@
 #' @importFrom rlang .data
+
+
 setClass(
   "simulated_model",
   representation(
@@ -505,10 +507,10 @@ setMethod(
 
 #' Simulate model data.
 #'
-#' Returns a data tibble with simulated data from a generating process that matches the passed model
-#' string. The simulated observations of the controls are drawn from a uniform distribution on the
-#' interval [2, 5].
-#' @param model_string Equilibrium model type. It should be either 'eq_2sls' or 'eq_fiml'.
+#' Returns a data \code{tibble} with simulated data from a generating process that matches the
+#' passed model string. The simulated observations of the controls are drawn from a uniform
+#' distribution on the interval [2, 5].
+#' @param model_string Equilibrium model type. It should be either \code{eq_2sls} or \code{eq_fiml}.
 #' @param nobs Number of simulated entities.
 #' @param tobs Number of simulated dates.
 #' @param alpha_d Demand price coefficient.

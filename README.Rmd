@@ -74,7 +74,7 @@ quantity_column <- "Q"
 price_column <- "P"
 ```
 
- * The sepecification of the system's equations. Each specification sets the right hand side of one system equation. The expressions are specified similarly to the expressions of formulas of linear models. Indicator variables and interactions are created automatically by the constructor. 
+ * The specification of the system's equations. Each specification sets the right hand side of one system equation. The expressions are specified similarly to the expressions of formulas of linear models. Indicator variables and interactions are created automatically by the constructor. 
 ```{r model.parameters.equations}
 demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
 supply_specification <- "Xs1 + X1 + X2"
