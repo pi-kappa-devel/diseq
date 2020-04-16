@@ -17,5 +17,5 @@ The variable name for the variance of the shock of the equation.
 }
 \description{
 The variance variables is constructed by concatenating the equation prefix with
-'VARIANCE'.
+"VARIANCE".
 }

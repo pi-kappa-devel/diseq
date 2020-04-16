@@ -14,6 +14,22 @@
 #' \deqn{\Delta P_{nt} =
 #'     \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right) +  X_{p,nt}'\beta_{p} + u_{p,nt}.}
 #'
+#' @examples
+#' simulated_data <- simulate_model_data(
+#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities and time points
+#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, 0.1), # demand coefficients
+#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
+#'   1.4, 3.1, c(0.8) # price adjustment coefficient
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_stochastic_adjustment", # model type
+#'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
 #' @export
 setClass(
   "diseq_stochastic_adjustment",
@@ -28,12 +44,10 @@ setMethod(
   "initialize", "diseq_stochastic_adjustment",
   function(
            .Object,
-           verbose = 0,
-           key_columns, time_column,
-           quantity_column, price_column,
+           key_columns, time_column, quantity_column, price_column,
            demand_specification, supply_specification, price_specification,
-           use_correlated_shocks = TRUE,
-           data) {
+           data,
+           use_correlated_shocks = TRUE, verbose = 0) {
     .Object <- callNextMethod(
       .Object,
       "Stochastic Adjustment", verbose,

@@ -50,3 +50,27 @@ estimated using two stage least squares. The implementation is based on
 \item \code{estimate,eq_fiml-method}: Equilibrium model estimation.
 }}
 
+\examples{
+\donttest{
+simulated_data <- simulate_model_data(
+  "diseq_basic", 500, 3, # model type, observed entities, observed time points
+  -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+  0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+)
+
+# initialize the model
+model <- new(
+  "diseq_basic", # model type
+  c("id", "date"), "Q", "P", # keys, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+  simulated_data, # data
+  use_correlated_shocks = TRUE # allow shocks to be correlated
+)
+
+# estimate the model object (by default the maximum optimization is using BFGS)
+est <- estimate(model)
+
+# estimate the model by specifying the optimization details that are passed to the optimizer.
+est <- estimate(model, control = list(reltol = 1e-4), method = "BFGS")
+}
+}

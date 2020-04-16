@@ -1,14 +1,3 @@
-skipped_tests <- c(
-  ""
-  # , "2sls"
-  # , "fiml"
-  # , "basic"
-  # , "directional"
-  # , "deterministic_adjustment"
-  # , "stochastic_adjustment"
-)
-verbose <- 0
-
 test_calculated_gradient <- function(mdl, params, tolerance) {
   cg <- as.matrix(gradient(mdl, params))
   ng <- as.matrix(numDeriv::grad(
@@ -104,3 +93,76 @@ test_estimation_accuracy <- function(estimation, parameters, tolerance) {
 ## Simulation settings
 seed <- 42
 verbose <- 0
+
+load_or_simulate_model <- function(model_string, parameters) {
+  stored_data_filename <- paste0(model_string, "_", seed, ".rda")
+
+  if (file.exists("devel-environment") & file.exists(stored_data_filename)) {
+    load(stored_data_filename)
+  }
+  else {
+    model_tibble <- simulate_model_data(
+      model_string, parameters$nobs, parameters$tobs,
+      parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
+      parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
+      parameters$gamma, parameters$beta_p0, parameters$beta_p,
+      parameters$sigma_d, parameters$sigma_s, parameters$sigma_p,
+      parameters$rho_ds, parameters$rho_dp, parameters$rho_sp,
+      seed
+    )
+    if (file.exists("devel-environment")) {
+      save(model_tibble, file = stored_data_filename)
+    }
+  }
+
+  if (model_string == "eq_2sls") {
+    mdl <- new(
+      model_string,
+      c("id", "date"),
+      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
+      model_tibble,
+      verbose = verbose
+    )
+  }
+  else if (model_string %in% c("eq_fiml", "diseq_basic")) {
+    mdl <- new(
+      model_string,
+      c("id", "date"),
+      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
+      model_tibble,
+      use_correlated_shocks = TRUE, verbose = verbose
+    )
+  }
+  else if (model_string %in% c("diseq_directional")) {
+    mdl <- new(
+      model_string,
+      c("id", "date"), "date",
+      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2",
+      model_tibble,
+      use_correlated_shocks = TRUE, verbose = verbose
+    )
+  }
+  else if (model_string %in% c("diseq_deterministic_adjustment")) {
+    mdl <- new(
+      model_string,
+      c("id", "date"), "date",
+      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
+      model_tibble,
+      use_correlated_shocks = TRUE, verbose = verbose
+    )
+  }
+  else if (model_string %in% c("diseq_stochastic_adjustment")) {
+    mdl <- new(
+      model_string,
+      c("id", "date"), "date",
+      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1",
+      model_tibble,
+      use_correlated_shocks = TRUE, verbose = verbose
+    )
+  }
+  else {
+    stop("Unhandled model type.")
+  }
+
+  mdl
+}

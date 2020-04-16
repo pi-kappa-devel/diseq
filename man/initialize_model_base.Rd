@@ -14,45 +14,44 @@
 \usage{
 \S4method{initialize}{diseq_basic}(
   .Object,
-  verbose = 0,
   key_columns,
   quantity_column,
   price_column,
   demand_specification,
   supply_specification,
+  data,
   use_correlated_shocks = TRUE,
-  data
+  verbose = 0
 )
 
 \S4method{initialize}{diseq_deterministic_adjustment}(
   .Object,
-  verbose = 0,
   key_columns,
   time_column,
   quantity_column,
   price_column,
   demand_specification,
   supply_specification,
+  data,
   use_correlated_shocks = TRUE,
-  data
+  verbose = 0
 )
 
 \S4method{initialize}{diseq_directional}(
   .Object,
-  verbose = 0,
   key_columns,
   time_column,
   quantity_column,
   price_column,
   demand_specification,
   supply_specification,
+  data,
   use_correlated_shocks = TRUE,
-  data
+  verbose = 0
 )
 
 \S4method{initialize}{diseq_stochastic_adjustment}(
   .Object,
-  verbose = 0,
   key_columns,
   time_column,
   quantity_column,
@@ -60,37 +59,36 @@
   demand_specification,
   supply_specification,
   price_specification,
+  data,
   use_correlated_shocks = TRUE,
-  data
+  verbose = 0
 )
 
 \S4method{initialize}{eq_2sls}(
   .Object,
-  verbose = 0,
   key_columns,
   quantity_column,
   price_column,
   demand_specification,
   supply_specification,
-  data
+  data,
+  verbose = 0
 )
 
 \S4method{initialize}{eq_fiml}(
   .Object,
-  verbose = 0,
   key_columns,
   quantity_column,
   price_column,
   demand_specification,
   supply_specification,
+  data,
   use_correlated_shocks = TRUE,
-  data
+  verbose = 0
 )
 }
 \arguments{
 \item{.Object}{The object to be Constructed.}
-
-\item{verbose}{Verbosity level.}
 
 \item{key_columns}{Key columns of the data set.}
 
@@ -104,9 +102,11 @@ demand equation.}
 \item{supply_specification}{A formula representation of the right hand side of the
 supply equation.}
 
+\item{data}{The data set.}
+
 \item{use_correlated_shocks}{Should the model be estimated using correlated shocks?}
 
-\item{data}{The data set.}
+\item{verbose}{Verbosity level.}
 
 \item{time_column}{The time column of the data set.}
 

@@ -1,4 +1,4 @@
-citHeader("To cite diseq in publications use:")
+citHeader("To cite 'diseq' in publications use:")
 
 year <- sub("-.*", "", meta$Date)
 version <- sprintf("R package version %s", meta$Version)

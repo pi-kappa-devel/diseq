@@ -3,9 +3,6 @@ title: "Assessing market equilibrium"
 output:
   rmarkdown::html_vignette:
     toc: false
-  pdf_document:
-    highlight: null
-    number_sections: yes
 vignette: >
   %\VignetteIndexEntry{An example of equilibrium assessment}
   %\VignetteEngine{knitr::rmarkdown}
@@ -104,14 +101,6 @@ bsmdl <- new(
   eq_data[eq_data$date != 1, ],
   use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
-drmdl <- new(
-  "diseq_directional",
-  key_columns, time_column,
-  quantity_column, price_column,
-  demand_specification, supply_specification,
-  eq_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
-)
 damdl <- new(
   "diseq_deterministic_adjustment",
   key_columns, time_column,
@@ -140,10 +129,6 @@ eqfiml_est <- estimate(eqfiml,
   method = optimization_method
 )
 bsmdl_est <- estimate(bsmdl,
-  control = optimization_controls,
-  method = optimization_method
-)
-drmdl_est <- estimate(drmdl,
   control = optimization_controls,
   method = optimization_method
 )
@@ -212,26 +197,14 @@ bsmdl_coef <- append(
     get_prefixed_variance_variable(bsmdl@system@demand)) - 1
 )
 
-drmdl_coef <- append(
-  drmdl_est@coef, c(NA),
-  after = which(names(drmdl_est@coef) ==
-    get_prefixed_variance_variable(drmdl@system@demand)) - 1
-)
-drmdl_coef <- append(
-  drmdl_coef, c(S_P = NA),
-  after = which(names(drmdl_est@coef) ==
-    get_prefixed_const_variable(drmdl@system@supply)) - 1
-)
-
 damdl_coef <- damdl_est@coef
 
 comp <- tibble::tibble(
   parameter = names(sim_coef),
   sim = sim_coef, lm = lm_coef, fi = eqfiml_coef,
-  bm = bsmdl_coef, dm = drmdl_coef, da = damdl_coef,
+  bm = bsmdl_coef, da = damdl_coef,
   lmerr = abs(lm_coef - sim_coef), fierr = abs(eqfiml_coef - sim_coef),
-  bmerr = abs(bsmdl_coef - sim_coef), dmerr = abs(drmdl_coef - sim_coef),
-  daerr = abs(damdl_coef - sim_coef)
+  bmerr = abs(bsmdl_coef - sim_coef), daerr = abs(damdl_coef - sim_coef)
 )
 comp
 ```
@@ -248,19 +221,19 @@ Moreover, the average absolute error cannot provide an overall estimation assess
 ```{r analysis.model.selection}
 model_names <- c(
   eqfiml@model_type_string,
-  bsmdl@model_type_string, drmdl@model_type_string, damdl@model_type_string
+  bsmdl@model_type_string, damdl@model_type_string
 )
 model_obs <- c(
   get_number_of_observations(eqfiml),
-  get_number_of_observations(bsmdl), get_number_of_observations(drmdl),
+  get_number_of_observations(bsmdl),
   get_number_of_observations(damdl)
 )
 model_errors <- c(
   comp_means["fierr"],
-  comp_means["bmerr"], comp_means["dmerr"],
+  comp_means["bmerr"],
   comp_means["daerr"]
 )
-seltbl <- AIC(eqfiml_est, bsmdl_est, drmdl_est, damdl_est) %>%
+seltbl <- AIC(eqfiml_est, bsmdl_est, damdl_est) %>%
   tibble::add_column(Model = model_names, .before = 1) %>%
   tibble::add_column(Obs. = model_obs, `Mean Error` = model_errors) %>%
   dplyr::rename(D.F. = df) %>%

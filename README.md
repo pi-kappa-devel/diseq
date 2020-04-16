@@ -5,10 +5,10 @@
 
 <!-- badges: end -->
 
-The diseq package provides tools to estimate and analyze an equilibrium
-and four disequilibrium models. The equilibrium model can be estimated
-with either two-stage least squares or with full information maximum
-likelihood. The methods are asymptotically equivalent. The
+The *diseq* package provides tools to estimate and analyze an
+equilibrium and four disequilibrium models. The equilibrium model can be
+estimated with either two-stage least squares or with full information
+maximum likelihood. The methods are asymptotically equivalent. The
 disequilibrium models are estimated using full information maximum
 likelihood. All maximum likelihood models can be estimated both with
 independent and correlated demand and supply shocks.
@@ -16,7 +16,7 @@ independent and correlated demand and supply shocks.
 ## Installation
 
 <!--
-You can install the released version of diseq from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of *diseq* from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diseq")
@@ -44,8 +44,8 @@ package is loaded in the standard way.
 library(diseq)
 ```
 
-The example uses simulated data. The diseq package offers a function to
-simulate data from data generating processes that correspond to the
+The example uses simulated data. The *diseq* package offers a function
+to simulate data from data generating processes that correspond to the
 models that the package provides.
 
 ``` r

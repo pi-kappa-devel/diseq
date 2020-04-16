@@ -156,7 +156,7 @@ setGeneric("get_prefixed_control_variables", function(object) {
 #' Variance variable name.
 #'
 #' The variance variables is constructed by concatenating the equation prefix with
-#' 'VARIANCE'.
+#' "VARIANCE".
 #' @param object An equation object.
 #' @return The variable name for the variance of the shock of the equation.
 #' @rdname get_prefixed_variance_variable
@@ -173,8 +173,8 @@ setGeneric("calculate_equation_loglikelihood", function(object) {
   standardGeneric("calculate_equation_loglikelihood")
 })
 
-setGeneric("get_estimated_quantities", function(object) {
-  standardGeneric("get_estimated_quantities")
+setGeneric("get_quantities", function(object) {
+  standardGeneric("get_quantities")
 })
 
 setGeneric("get_aggregate", function(object) {
@@ -223,10 +223,10 @@ setMethod("set_parameters", signature(object = "equation_base"), function(object
   object
 })
 
-setMethod("get_estimated_quantities", signature(object = "equation_base"), function(object) {
+setMethod("get_quantities", signature(object = "equation_base"), function(object) {
   object@independent_matrix %*% object@alpha_beta
 })
 
 setMethod("get_aggregate", signature(object = "equation_base"), function(object) {
-  sum(get_estimated_quantities(object))
+  sum(get_quantities(object))
 })

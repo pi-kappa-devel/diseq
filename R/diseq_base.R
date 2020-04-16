@@ -46,11 +46,35 @@ setGeneric("get_shortage_variance", function(object) {
 
 #' Normalized shortages.
 #'
-#' Returns the estimated shortages normalized by the variance of the difference of the shocks.
+#' Returns the shortages normalized by the variance of the difference of the shocks at a
+#' given point.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
 #' @return A vector with the estimated normalized shortages.
 #' @rdname get_normalized_shortages
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#'
+#' # estimate a model object
+#' est <- estimate(model)
+#'
+#' # get estimated normalized shortages
+#' nshort <- get_normalized_shortages(model, est@coef)
+#' }
 #' @export
 setGeneric("get_normalized_shortages", function(object, parameters) {
   standardGeneric("get_normalized_shortages")
@@ -58,11 +82,34 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 
 #' Relative shortages.
 #'
-#' Returns the estimated shortages normalized by the estimated supplied quantity.
+#' Returns the shortages normalized by the supplied quantity at a given point.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
 #' @return A vector with the estimated normalized shortages.
 #' @rdname get_relative_shortages
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#' 
+#' # estimate a model object
+#' est <- estimate(model)
+#' 
+#' # get estimated relative shortages
+#' rshort <- get_relative_shortages(model, est@coef)
+#' }
 #' @export
 setGeneric("get_relative_shortages", function(object, parameters) {
   standardGeneric("get_relative_shortages")
@@ -70,12 +117,35 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 
 #' Shortage probabilities.
 #'
-#' Returns the estimated shortage probabilities, i.e. the estimated probabilities of an
-#' observation coming from an excess demand regime.
+#' Returns the shortage probabilities, i.e. the probabilities of an
+#' observation coming from an excess demand regime, at the given point.
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortage probabilities are evaluated.
 #' @return A vector with the estimated shortage probabilities.
 #' @rdname get_shortage_probabilities
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#' 
+#' # estimate a model object
+#' est <- estimate(model)
+#' 
+#' # get the estimated shortage probabilities
+#' probs <- get_shortage_probabilities(model, est@coef)
+#' }
 #' @export
 setGeneric("get_shortage_probabilities", function(object, parameters) {
   standardGeneric("get_shortage_probabilities")
@@ -87,12 +157,35 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 
 #' Mean marginal effects
 #'
-#' Returns the average estimated marginal effect.
+#' Returns the average estimated marginal effect a variable.
 #' @param object A disequilibrium model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
 #' @return The mean of the estimated marginal effects of the passed variable.
 #' @rdname get_mean_marginal_effect
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#' 
+#' # estimate a model object
+#' est <- estimate(model)
+#' 
+#' # get the mean marginal effects of variable "X1"
+#' get_mean_marginal_effect(model, est, "X1")
+#' }
 #' @export
 setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
   standardGeneric("get_mean_marginal_effect")
@@ -100,12 +193,35 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 
 #' Marginal effects at the mean.
 #'
-#' Returns the estimated marginal effects evaluated at the mean.
+#' Returns the estimated marginal effects evaluated at the mean of a variable.
 #' @param object A disequilibrium model object.
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
-#' @return The marginal effects of the passed variable evaluated at the estimated mean.
+#' @return The marginal effect of the passed variable evaluated at the estimated mean.
 #' @rdname get_marginal_effect_at_mean
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#' 
+#' # estimate a model object
+#' est <- estimate(model)
+#' 
+#' # get the marginal effects at the mean of variable "X1"
+#' get_marginal_effect_at_mean(model, est, "X1")
+#' }
 #' @export
 setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable) {
   standardGeneric("get_marginal_effect_at_mean")
@@ -119,16 +235,41 @@ setGeneric("hessian", function(object, parameters) {
   standardGeneric("hessian")
 })
 
-#' Indices of estimated shortages.
+#' Checks if an observation is in a shortage stage.
 #'
-#' Returns the indices for which the estimated shortages of the market are non-negative.
+#' Returns TRUE for the indices at which the shortages of the market are non-negative, i.e. the
+#' market is in an excess demand state. Returns FALSE for the remaining indices. The evaluation
+#' of the shortages is performed using the passed parameter vector.
 #' @param object A disequilibrium model object.
-#' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
-#' @return A vector of indices.
-#' @rdname get_estimated_shortage_indices
+#' @param parameters A vector of parameters at which the shortage probabilities are evaluated.
+#' @return A vector of Boolean values indicating observations with shortages.
+#' @rdname has_shortage
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#' 
+#' # estimate a model object
+#' est <- estimate(model)
+#' 
+#' # get the indices of  estimated shortages
+#' has_short <- has_shortage(model, est@coef)
+#' }
 #' @export
-setGeneric("get_estimated_shortage_indices", function(object, estimation) {
-  standardGeneric("get_estimated_shortage_indices")
+setGeneric("has_shortage", function(object, parameters) {
+  standardGeneric("has_shortage")
 })
 
 setMethod(
@@ -275,10 +416,10 @@ setMethod(
   }
 )
 
-#' @rdname get_estimated_shortage_indices
+#' @rdname has_shortage
 setMethod(
-  "get_estimated_shortage_indices", signature(object = "diseq_base"),
-  function(object, estimation) {
-    get_normalized_shortages(object, estimation@coef) >= 0
+  "has_shortage", signature(object = "diseq_base"),
+  function(object, parameters) {
+    get_normalized_shortages(object, parameters) >= 0
   }
 )

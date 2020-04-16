@@ -5,22 +5,45 @@
 \alias{get_aggregate_demand,model_base-method}
 \title{Demand aggregation.}
 \usage{
-get_aggregate_demand(object, estimation)
+get_aggregate_demand(object, parameters)
 
-\S4method{get_aggregate_demand}{model_base}(object, estimation)
+\S4method{get_aggregate_demand}{model_base}(object, parameters)
 }
 \arguments{
 \item{object}{A model object.}
 
-\item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
+\item{parameters}{A vector of model's parameters.}
 }
 \value{
-The sum of the estimated demanded quantities.
+The sum of the demanded quantities evaluated at the given parameters.
 }
 \description{
-Sets the model's parameters given in the estimation object and calculates the
-sample's aggregate demand.
+Calculates the sample's aggregate demand at the passed set of parameters.
+}
+\examples{
+\donttest{
+simulated_data <- simulate_model_data(
+  "diseq_basic", 500, 3, # model type, observed entities, observed time points
+  -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+  0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+)
+
+# initialize the model
+model <- new(
+  "diseq_basic", # model type
+  c("id", "date"), "Q", "P", # keys, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+  simulated_data, # data
+  use_correlated_shocks = TRUE # allow shocks to be correlated
+)
+
+# estimate the model object
+est <- estimate(model)
+
+# get estimated aggregate demand
+get_aggregate_demand(model, est@coef)
+}
 }
 \seealso{
-get_estimated_demanded_quantities
+get_demanded_quantities
 }

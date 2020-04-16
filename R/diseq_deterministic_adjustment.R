@@ -14,6 +14,22 @@
 #' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
 #' \deqn{\Delta P_{nt} = \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right).}
 #'
+#' @examples
+#' simulated_data <- simulate_model_data(
+#'   "diseq_deterministic_adjustment", 500, 3, # model type, observed entities and time points
+#'   -0.9, 8.9, c(0.03, -0.02), c(-0.03, -0.01), # demand coefficients
+#'   0.9, 4.2, c(0.03), c(0.05, 0.02), # supply coefficients
+#'   1.4 # price adjustment coefficient
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_deterministic_adjustment", # model type
+#'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
 #' @export
 setClass(
   "diseq_deterministic_adjustment",
@@ -28,11 +44,10 @@ setMethod(
   "initialize", "diseq_deterministic_adjustment",
   function(
            .Object,
-           verbose = 0,
-           key_columns, time_column,
-           quantity_column, price_column, demand_specification, supply_specification,
-           use_correlated_shocks = TRUE,
-           data) {
+           key_columns, time_column, quantity_column, price_column,
+           demand_specification, supply_specification,
+           data,
+           use_correlated_shocks = TRUE, verbose = 0) {
     .Object <- callNextMethod(
       .Object,
       "Deterministic Adjustment", verbose,

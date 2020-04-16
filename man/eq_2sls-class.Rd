@@ -24,3 +24,18 @@ that is exclusively part of the supply equation.
 \code{\link[systemfit]{systemfit}}.}
 }}
 
+\examples{
+simulated_data <- simulate_model_data(
+  "eq_2sls", 500, 3, # model type, observed entities and time points
+  -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+  0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
+)
+
+# initialize the model
+model <- new(
+  "eq_2sls", # model type
+  c("id", "date"), "Q", "P", # keys, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+  simulated_data # data
+)
+}

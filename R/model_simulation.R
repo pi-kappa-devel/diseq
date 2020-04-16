@@ -107,12 +107,12 @@ setMethod("get_common_controls", signature(object = "simulated_model"), function
   as.matrix(object@simulation_tbl[, grep("X\\d", names(object@simulation_tbl))])
 })
 
-setGeneric("get_demanded_quantities", function(object, prices) {
-  standardGeneric("get_demanded_quantities")
+setGeneric("get_simulated_demanded_quantities", function(object, prices) {
+  standardGeneric("get_simulated_demanded_quantities")
 })
 
 setMethod(
-  "get_demanded_quantities", signature(object = "simulated_model"),
+  "get_simulated_demanded_quantities", signature(object = "simulated_model"),
   function(object, prices) {
     as.vector(
       prices * object@alpha_d +
@@ -123,12 +123,12 @@ setMethod(
   }
 )
 
-setGeneric("get_supplied_quantities", function(object, prices) {
-  standardGeneric("get_supplied_quantities")
+setGeneric("get_simulated_supplied_quantities", function(object, prices) {
+  standardGeneric("get_simulated_supplied_quantities")
 })
 
 setMethod(
-  "get_supplied_quantities", signature(object = "simulated_model"),
+  "get_simulated_supplied_quantities", signature(object = "simulated_model"),
   function(object, prices) {
     as.vector(
       prices * object@alpha_s +
@@ -248,8 +248,8 @@ setMethod(
         object@simulation_tbl$u_s - object@simulation_tbl$u_d
       ) / scale
     )
-    demanded_quantities <- get_demanded_quantities(object, prices)
-    supplied_quantities <- get_supplied_quantities(object, prices)
+    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
+    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }
@@ -266,8 +266,8 @@ setMethod(
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     prices <- object@price_generator(nrow(object@simulation_tbl))
-    demanded_quantities <- get_demanded_quantities(object, prices)
-    supplied_quantities <- get_supplied_quantities(object, prices)
+    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
+    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }
@@ -284,8 +284,8 @@ setMethod(
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     starting_prices <- object@price_generator(object@nobs)
-    r_d <- get_demanded_quantities(object, 0)
-    r_s <- get_supplied_quantities(object, 0)
+    r_d <- get_simulated_demanded_quantities(object, 0)
+    r_s <- get_simulated_supplied_quantities(object, 0)
 
     demand_columns <- grep("Xd", names(object@simulation_tbl))
     supply_columns <- grep("Xs", names(object@simulation_tbl))
@@ -354,8 +354,8 @@ setMethod(
   "simulate_quantities_and_prices", signature(object = "simulated_deterministic_adjustment_model"),
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
-    r_d <- get_demanded_quantities(object, 0)
-    r_s <- get_supplied_quantities(object, 0)
+    r_d <- get_simulated_demanded_quantities(object, 0)
+    r_s <- get_simulated_supplied_quantities(object, 0)
     dr <- r_d - r_s
 
     if (class(object) == "simulated_stochastic_adjustment_model") {
@@ -377,8 +377,8 @@ setMethod(
       }
     }
 
-    demanded_quantities <- get_demanded_quantities(object, prices)
-    supplied_quantities <- get_supplied_quantities(object, prices)
+    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
+    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }

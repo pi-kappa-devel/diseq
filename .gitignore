@@ -21,3 +21,5 @@ README.html
 dev/
 doc
 Meta
+tests/testthat/*.rda
+tests/testthat/devel-environment

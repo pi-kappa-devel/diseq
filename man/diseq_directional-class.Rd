@@ -18,3 +18,21 @@ model is estimated using full information maximum likelihood.
 \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
 \deqn{\Delta P_{nt} \ge 0 \Longrightarrow D_{nt} \ge S_{nt}.}
 }
+\examples{
+\donttest{
+simulated_data <- simulate_model_data(
+  "diseq_directional", 500, 3, # model type, observed entities, observed time points
+  -0.2, 4.3, c(0.03, 0.02), c(0.03, 0.01), # demand coefficients
+  0.0, 4.0, c(0.03), c(0.05, 0.02) # supply coefficients
+)
+
+# in the directional model prices cannot be included in both demand and supply
+model <- new(
+  "diseq_directional", # model type
+  c("id", "date"), "date", "Q", "P", # keys, time point, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2", # equation specifications
+  simulated_data, # data
+  use_correlated_shocks = TRUE # allow shocks to be correlated
+)
+}
+}

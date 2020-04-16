@@ -1,3 +1,19 @@
+# diseq 0.0.9
+
+* Ignoring README.html from build.
+
+# diseq 0.0.8
+
+* Added examples to constructors, estimation, aggregation, and marginal effect functions.
+
+# diseq 0.0.7.9002
+
+* Skipping directional and stochastic adjustment tests on CRAN to reduce build time.
+
+# diseq 0.0.7.9001
+
+* Quoted all package names in DESCRIPTION. To reduce build time: 1. Removed direction model estimation from equilibrium assessment vignette, 2. Decreased estimation accuracy of basic usage vignette to six digits.
+
 # diseq 0.0.7
 
 * Fixed order of arguments in web-link of estimation documentation. Improved simulation documentation.
