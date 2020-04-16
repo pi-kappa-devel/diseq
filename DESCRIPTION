@@ -5,16 +5,16 @@ Date: 2020-04-16
 Authors@R: person(
     "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908"))
-Description: Provides a toolkit of methods that can be used to 
-    estimate markets in equilibrium and disequilibrium. Specifically, it allows the
-    estimation of an equilibrium and four disequilibrium model specifications. It
-    also provides post-estimation analysis tools, such as aggregation and marginal
-    effects calculations. The estimation methods are based on full information
-    maximum likelihood techniques. The equilibrium estimation constitutes a special
-    case of a system of simultaneous equations. The disequilibrium estimation is
-    based on Maddala and Nelson (1974) <doi:10.2307/1914215>. The package is
-    using the expressions of the gradients of the likelihoods derived in
-    Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>.
+Description: Provides estimation methods for markets in equilibrium and
+    disequilibrium. Specifically, it supports the estimation an equilibrium and
+    four disequilibrium models with both correlated and independent shocks.
+    It also provides post-estimation analysis tools, such as aggregation and
+    marginal effects calculations. The estimation methods are based on full
+    information maximum likelihood techniques with analytically calculated
+    derivatives. The equilibrium estimation constitutes a special case of
+    a system of simultaneous equations. The disequilibrium models replace
+    the market clearing condition with a short side rule and
+    allow for different specifications of price dynamics. 
 Language: en-US
 URL: https://github.com/pi-kappa-devel/diseq/
 BugReports: https://github.com/pi-kappa-devel/diseq/issues
