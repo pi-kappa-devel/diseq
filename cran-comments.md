@@ -13,60 +13,46 @@
 6. (rhub) Fedora Linux, R-devel, clang, gfortran
 
 ## R CMD check results in (1)
-Duration: 4m 57.1s
+Duration: 5m 54.5s
 
 0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
 R CMD check succeeded
 
 ## R CMD check results in (2)
-Duration: 7m 15.2s
+Duration: 7m 05.2s
 
 0 errors v | 0 warnings v | 0 notes v
 
 R CMD check succeeded
 
 ## R CMD check results in (3)
-Installation time in seconds: 93
-Check time in seconds: 313
-Status: 1 NOTE
+Installation time in seconds: 105
+Check time in seconds: 280
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
-a. Possibly mis-spelled words in DESCRIPTION:
-  Karapanagiotis (17:5)
-  Maddala (15:14)
-
-b.Found the following (possibly) invalid DOIs:
-  DOI: 10.2307/1914215
-    From: DESCRIPTION
-    Status: Forbidden
-    Message: 403
+New submission
 
 ## R CMD check results in (4)
-Build time:	11m 2.5s
-checking CRAN incoming feasibility ... NOTE
-  
-a. Possibly mis-spelled words in DESCRIPTION:
-  Karapanagiotis (17:5)
-  Maddala (15:14)
+Build time:	10 minutes 53.6 seconds
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
+
+New submission
 
 ## R CMD check results in (5)
-Build time:	1 hour 5 minutes 21.2 seconds
-checking CRAN incoming feasibility ... NOTE
-  
-b. Found the following (possibly) invalid DOIs:
-  DOI: 10.2307/1914215
-    From: DESCRIPTION
-    Status: Forbidden
-    Message: 403
+Build time:	53 minutes 58.2 seconds
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
+
+New submission
 
 ## R CMD check results in (6)
-Build time:	1 hour 26 minutes 10 seconds
-checking CRAN incoming feasibility ... NOTE
+1 hour 3 minutes 25.3 seconds
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
+
+New submission
   
-a. Possibly mis-spelled words in DESCRIPTION:
-  Karapanagiotis (17:5)
-  Maddala (15:14)
-  diseq (8:18)
-  
-## Justifications for notes in (3), (4), (5), (6)
-All the words in (a) are names. The DOI in (b) is valid but authentication is required to access the article.

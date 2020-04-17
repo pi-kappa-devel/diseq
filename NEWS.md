@@ -1,3 +1,7 @@
+# diseq 0.0.10
+
+* Removed references from description to avoid CRAN notes.
+
 # diseq 0.0.9
 
 * Ignoring README.html from build. Removed links from description. Improved documentation examples.
