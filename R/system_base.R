@@ -66,11 +66,6 @@ setGeneric("get_price_differences_variable", function(object) {
   standardGeneric("get_price_differences_variable")
 })
 
-#' Correlation variable name.
-#'
-#' Returns the variable name for the correlation coefficient parameter of the model.
-#' @param object A system object.
-#' @rdname get_correlation_variable
 setGeneric("get_correlation_variable", function(object) {
   standardGeneric("get_correlation_variable")
 })
@@ -99,7 +94,6 @@ setMethod("get_price_differences_variable", signature(object = "system_base"), f
   paste0(object@price_variable, "_DIFF")
 })
 
-#' @rdname get_correlation_variable
 setMethod("get_correlation_variable", signature(object = "system_base"), function(object) {
   "RHO"
 })

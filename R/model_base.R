@@ -225,10 +225,15 @@ setMethod(
 
 #' Minus log-likelihood.
 #'
-#' Returns the opposite of the log-likelihood. The package uses the likelihoods expressions that
-#' are derived in \href{https://dx.doi.org/10.2139/ssrn.3525622}{Karapanagiotis (2020)}.
+#' Returns the opposite of the log-likelihood. The likelihood functions are based on
+#' \href{https://doi.org/10.2307/1914215}{Maddala and Nelson (1974)}. The likelihoods expressions
+#' that the function uses are derived in
+#' \href{https://dx.doi.org/10.2139/ssrn.3525622}{Karapanagiotis (2020)}. The function calculates
+#' the model's log likelihood by evaluating the log likelihood of each observation in the sample
+#' and summing the evaluation results.
 #' @param object A model object.
 #' @param parameters A vector of parameters at which the function is to be evaluated.
+#' @return The opposite of the sum of the likelihoods evaluated for each observation.
 #' @rdname minus_log_likelihood
 #' @export
 setGeneric("minus_log_likelihood", function(object, parameters) {

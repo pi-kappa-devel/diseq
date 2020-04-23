@@ -68,7 +68,7 @@ setMethod(
       print_error(
         .Object@logger,
         "Price cannot be part of both the demand and supply equations here ",
-        "(See Maddala, 1974, pp1021)"
+        "(See Maddala, (1974) <https://doi.org/10.2307/1914215>, pp1021)"
       )
     }
 

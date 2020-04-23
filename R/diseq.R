@@ -6,7 +6,7 @@
 #' The methods are asymptotically equivalent. The disequilibrium models are estimated using full
 #' information maximum likelihood. All maximum likelihood models can be estimated both with
 #' independent and correlated demand and supply shocks. The disequilibrium estimation is
-#' based on Maddala and Nelson (1974), \code{https://doi.org/10.2307/1914215}. The package is
+#' based on \href{https://doi.org/10.2307/1914215}{Maddala and Nelson (1974)}. The package is
 #' using the expressions of the gradients of the likelihoods derived in
 #' \href{http://dx.doi.org/10.2139/ssrn.3525622}{Karapanagiotis (2020)}.
 #'

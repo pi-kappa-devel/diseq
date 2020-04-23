@@ -1,3 +1,7 @@
+# diseq 0.0.11
+
+* Removed "get_correlation_variable" from exported functions. Improved the documentation of "minus_log_likelihood". Reintroduced references in description.
+
 # diseq 0.0.10
 
 * Removed references from description to avoid CRAN notes.
