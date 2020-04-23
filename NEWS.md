@@ -1,3 +1,7 @@
+# diseq 0.0.11.9000
+
+* Corrected punctuation errors in documentation.
+
 # diseq 0.0.11
 
 * Removed "get_correlation_variable" from exported functions. Improved the documentation of "minus_log_likelihood". Reintroduced references in description.

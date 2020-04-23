@@ -319,7 +319,7 @@ setGeneric("get_descriptives", function(object, variables) {
 #' Calculates and returns basic descriptive statistics for the model's demand data. Factor
 #' variables are excluded from the calculations.
 #' @param object A model object.
-#' @return A data \code{tibble} containing descriptive statistics..
+#' @return A data \code{tibble} containing descriptive statistics.
 #' @rdname get_demand_descriptives
 #' @export
 setGeneric("get_demand_descriptives", function(object) {
@@ -331,7 +331,7 @@ setGeneric("get_demand_descriptives", function(object) {
 #' Calculates and returns basic descriptive statistics for the model's supply data. Factor
 #' variables are excluded from  the calculations.
 #' @param object A model object.
-#' @return A data \code{tibble} containing descriptive statistics..
+#' @return A data \code{tibble} containing descriptive statistics.
 #' @rdname get_supply_descriptives
 #' @export
 setGeneric("get_supply_descriptives", function(object) {
