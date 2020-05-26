@@ -103,10 +103,10 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 #'   simulated_data, # data
 #'   use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' 
+#'
 #' # estimate a model object
 #' est <- estimate(model)
-#' 
+#'
 #' # get estimated relative shortages
 #' rshort <- get_relative_shortages(model, est@coef)
 #' }
@@ -139,10 +139,10 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 #'   simulated_data, # data
 #'   use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' 
+#'
 #' # estimate a model object
 #' est <- estimate(model)
-#' 
+#'
 #' # get the estimated shortage probabilities
 #' probs <- get_shortage_probabilities(model, est@coef)
 #' }
@@ -179,10 +179,10 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 #'   simulated_data, # data
 #'   use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' 
+#'
 #' # estimate a model object
 #' est <- estimate(model)
-#' 
+#'
 #' # get the mean marginal effects of variable "X1"
 #' get_mean_marginal_effect(model, est, "X1")
 #' }
@@ -215,10 +215,10 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 #'   simulated_data, # data
 #'   use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' 
+#'
 #' # estimate a model object
 #' est <- estimate(model)
-#' 
+#'
 #' # get the marginal effects at the mean of variable "X1"
 #' get_marginal_effect_at_mean(model, est, "X1")
 #' }
@@ -260,10 +260,10 @@ setGeneric("hessian", function(object, parameters) {
 #'   simulated_data, # data
 #'   use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' 
+#'
 #' # estimate a model object
 #' est <- estimate(model)
-#' 
+#'
 #' # get the indices of  estimated shortages
 #' has_short <- has_shortage(model, est@coef)
 #' }
@@ -288,12 +288,15 @@ setMethod(
 )
 
 #' @describeIn estimate Disequilibrium model estimation.
+#' @param use_numerical_gradient If true, the gradient is calculated numerically. By default,
+#' all the models are estimated using the analytic expressions of their likelihoods'
+#' gradients.
 #' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
 #' the numerically approximated Hessian. Calculated Hessians are available for the basic
 #' and directional models.
 setMethod(
   "estimate", signature(object = "diseq_base"),
-  function(object, use_numerical_hessian = TRUE, ...) {
+  function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE, ...) {
     va_args <- list(...)
 
     va_args$skip.hessian <- !use_numerical_hessian
@@ -314,8 +317,10 @@ setMethod(
 
     va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
     bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
-    va_args$gr <- function(...) gradient(object, ...)
-    bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
+    if (!use_numerical_gradient) {
+      va_args$gr <- function(...) gradient(object, ...)
+      bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
+    }
 
     est <- do.call(bbmle::mle2, va_args)
     est@call.orig <- call("bbmle::mle2", va_args)
