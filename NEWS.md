@@ -1,3 +1,7 @@
+# diseq 0.0.11.9001
+
+* Enabled BFGS-based estimation with numerical gradient. Added CRAN installation instructions in README.
+
 # diseq 0.0.11.9000
 
 * Corrected punctuation errors in documentation.

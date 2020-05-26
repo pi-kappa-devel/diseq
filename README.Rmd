@@ -19,16 +19,16 @@ knitr::opts_chunk$set(
 The *diseq* package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. All maximum likelihood models can be estimated both with independent and correlated demand and supply shocks.
 
 ## Installation
-<!--
-You can install the released version of *diseq* from [CRAN](https://CRAN.R-project.org) with:
+
+The released version of *diseq* can be installed from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diseq")
 ```
---> 
-You can download the source code of the development version from [GitHub](https://github.com/pi-kappa-devel/diseq).
 
-After you install it, there is a basic-usage example installed with it. To see it type the command
+The source code of the in-development version can be download from [GitHub](https://github.com/pi-kappa-devel/diseq).
+
+After installing it, there is a basic-usage example installed with it. To see it type the command
 ```
 vignette('basic_usage')
 ```

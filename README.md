@@ -1,54 +1,48 @@
+---
+output: github_document
+---
 
-# Models for Markets in Disequilibrium <img src='man/figures/logo.png' align="right" height="36" />
+
+
+# Models for Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-The *diseq* package provides tools to estimate and analyze an
-equilibrium and four disequilibrium models. The equilibrium model can be
-estimated with either two-stage least squares or with full information
-maximum likelihood. The methods are asymptotically equivalent. The
-disequilibrium models are estimated using full information maximum
-likelihood. All maximum likelihood models can be estimated both with
-independent and correlated demand and supply shocks.
+The *diseq* package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. All maximum likelihood models can be estimated both with independent and correlated demand and supply shocks.
 
 ## Installation
 
-<!--
-You can install the released version of *diseq* from [CRAN](https://CRAN.R-project.org) with:
+The released version of *diseq* can be installed from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diseq")
 ```
--->
 
-You can download the source code of the development version from
-[GitHub](https://github.com/pi-kappa-devel/diseq).
+The source code of the in-development version can be download from [GitHub](https://github.com/pi-kappa-devel/diseq).
 
-After you install it, there is a basic-usage example installed with it.
-To see it type the command
-
-    vignette('basic_usage')
+After installing it, there is a basic-usage example installed with it. To see it type the command
+```
+vignette('basic_usage')
+```
 
 You can find the documentation of the package by typing
-
-    ?? diseq
+```
+?? diseq
+```
 
 ## Example
 
-This is a basic example which shows you how to estimate a model. The
-package is loaded in the standard way.
+This is a basic example which shows you how to estimate a model. The package is loaded in the standard way.
 
-``` r
+
+```r
 library(diseq)
 ```
 
-The example uses simulated data. The *diseq* package offers a function
-to simulate data from data generating processes that correspond to the
-models that the package provides.
+The example uses simulated data. The *diseq* package offers a function to simulate data from data generating processes that correspond to the models that the package provides.
 
-``` r
+```r
 model_tbl <- simulate_model_data(
   "diseq_basic", 10000, 5,
   -1.9, 12.9, c(2.1, -0.7), c(3.5, 6.25),
@@ -58,76 +52,52 @@ model_tbl <- simulate_model_data(
 )
 ```
 
-Models are initialized by a constructor. In this example, a basic
-disequilibrium model is estimated. There are also other models available
-(see [Design and functionality](#design-and-functionality)). The
-constructor sets the model’s parameters and performs the necessary
-initialization processes. The following variables specify this example’s
-parameterization.
+Models are initialized by a constructor. In this example, a basic disequilibrium model is estimated. There are also other models available (see [Design and functionality]). The constructor sets the model's parameters and performs the necessary initialization processes. The following variables specify this example's parameterization.
 
-  - The key is the combination of columns that uniquely identify a
-    record of the dataset. For panel data, this should be a vector of
-    the entity identifier and the time columns.
+ * The key is the combination of columns that uniquely identify a record of the dataset. For panel data, this should be a vector of the entity identifier and the time columns.
 
-<!-- end list -->
-
-``` r
+```r
 key_columns <- c("id", "date")
 ```
+ 
+ * The quantity variable.
 
-  - The quantity variable.
-
-<!-- end list -->
-
-``` r
+```r
 quantity_column <- "Q"
 ```
 
-  - The price variable.
+ * The price variable. 
 
-<!-- end list -->
-
-``` r
+```r
 price_column <- "P"
 ```
 
-  - The specification of the system’s equations. Each specification sets
-    the right hand side of one system equation. The expressions are
-    specified similarly to the expressions of formulas of linear models.
-    Indicator variables and interactions are created automatically by
-    the constructor.
+ * The specification of the system's equations. Each specification sets the right hand side of one system equation. The expressions are specified similarly to the expressions of formulas of linear models. Indicator variables and interactions are created automatically by the constructor. 
 
-<!-- end list -->
-
-``` r
+```r
 demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
 supply_specification <- "Xs1 + X1 + X2"
 ```
 
-  - The verbosity level controls the level of messaging. The object
-    displays
-      - error: always,
-      - warning: \(\ge\) 1,
-      - info: \(\ge\) 2,
-      - verbose: \(\ge\) 3 and
-      - debug: \(\ge\) 4.
+ * The verbosity level controls the level of messaging. The object displays
+     * error: always,
+     * warning: $\ge$ 1, 
+     * info: $\ge$ 2, 
+     * verbose: $\ge$ 3 and
+     * debug: $\ge$ 4.
 
-<!-- end list -->
-
-``` r
+```r
 verbose <- 0
 ```
 
-  - Should the model estimation allow for correlated demand and supply
-    shocks?
+ * Should the model estimation allow for correlated demand and supply shocks?
 
-<!-- end list -->
-
-``` r
+```r
 use_correlated_shocks <- TRUE
 ```
 
-``` r
+
+```r
 mdl <- new(
   "diseq_basic",
   key_columns,
@@ -137,10 +107,10 @@ mdl <- new(
 )
 ```
 
-The model is estimated with default options by a simple call. See the
-documentation of `estimate` for more details and options.
+The model is estimated with default options by a simple call. See the documentation of `estimate` for more 
+details and options.
 
-``` r
+```r
 est <- estimate(mdl)
 bbmle::summary(est)
 #> Maximum likelihood estimation
@@ -181,36 +151,35 @@ bbmle::summary(est)
 
 There are two equilibrium models available, namely
 
-  - `eq_2sls` and
-  - `eq_fiml`.
+* `eq_2sls` and
+* `eq_fiml`.
 
 In total, there are four disequilibrium models, i.e.
 
-  - `diseq_basic`,
-  - `diseq_directional`,
-  - `diseq_deterministic_adjustment`, and
-  - `diseq_stochastic_adjustment`.
+* `diseq_basic`, 
+* `diseq_directional`, 
+* `diseq_deterministic_adjustment`, and
+* `diseq_stochastic_adjustment`.
 
-The package organizes the models in a simple object oriented hierarchy.
+The package organizes the models in a simple object oriented hierarchy. 
 
 <img src='man/figures/design.png' align="center" />
 
-Concerning post estimation analysis, the package offers functionality to
-calculate
+Concerning post estimation analysis, the package offers functionality to calculate
 
-  - shortage probabilities,
-  - marginal effects on shortage probabilities,
-  - point estimates of normalized shortages,
-  - point estimates of relative shortages,
-  - aggregate demand and supply,
-  - post-estimation classification of observations in demand and supply.
+* shortage probabilities,
+* marginal effects on shortage probabilities,
+* point estimates of normalized shortages,
+* point estimates of relative shortages,
+* aggregate demand and supply,
+* post-estimation classification of observations in demand and supply.
 
 ## Contributors
 
-Pantelis Karapanagiotis
+Pantelis Karapanagiotis 
 
 Feel free to join, share, contribute, distribute.
 
 ## License
 
-The code is distributed under the MIT License.
+The code is distributed under the MIT License. 
