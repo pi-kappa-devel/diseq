@@ -10,7 +10,12 @@
 \usage{
 estimate(object, ...)
 
-\S4method{estimate}{diseq_base}(object, use_numerical_hessian = TRUE, ...)
+\S4method{estimate}{diseq_base}(
+  object,
+  use_numerical_gradient = FALSE,
+  use_numerical_hessian = TRUE,
+  ...
+)
 
 \S4method{estimate}{eq_2sls}(object, ...)
 
@@ -23,6 +28,10 @@ estimate(object, ...)
 to the estimation call. For the \code{\linkS4class{eq_2sls}} model, the parameters a passed
 to \code{\link[systemfit]{systemfit}}. For the rest of the models, the parameters are passed
 to \code{\link[bbmle]{mle2}}.}
+
+\item{use_numerical_gradient}{If true, the gradient is calculated numerically. By default,
+all the models are estimated using the analytic expressions of their likelihoods'
+gradients.}
 
 \item{use_numerical_hessian}{If true, the variance-covariance matrix is calculated using
 the numerically approximated Hessian. Calculated Hessians are available for the basic

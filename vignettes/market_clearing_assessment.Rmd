@@ -1,5 +1,5 @@
 ---
-title: "Assessing market equilibrium"
+title: "Assessing market-clearing"
 output:
   rmarkdown::html_vignette:
     toc: false

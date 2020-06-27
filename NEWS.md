@@ -1,3 +1,11 @@
+# diseq 0.0.12
+
+* Fixed 'noLD' issues.
+
+# diseq 0.0.11.9002
+
+* Renamed assessment vignette.
+
 # diseq 0.0.11.9001
 
 * Enabled BFGS-based estimation with numerical gradient. Added CRAN installation instructions in README.

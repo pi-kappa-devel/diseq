@@ -1,5 +1,5 @@
 #' @importFrom rlang .data
-
+#' @importFrom tidyr crossing
 
 setClass(
   "simulated_model",

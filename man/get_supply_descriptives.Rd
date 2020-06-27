@@ -13,7 +13,7 @@ get_supply_descriptives(object)
 \item{object}{A model object.}
 }
 \value{
-A data \code{tibble} containing descriptive statistics..
+A data \code{tibble} containing descriptive statistics.
 }
 \description{
 Calculates and returns basic descriptive statistics for the model's supply data. Factor
