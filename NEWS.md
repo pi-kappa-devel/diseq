@@ -1,3 +1,7 @@
+# diseq 0.0.12.9001
+
+* Added noLD in word exceptions list.
+
 # diseq 0.0.12
 
 * Fixed 'noLD' issues.
