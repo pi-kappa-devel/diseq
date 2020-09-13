@@ -4,7 +4,7 @@ output:
   rmarkdown::html_vignette:
     toc: false
 vignette: >
-  %\VignetteIndexEntry{An example of equilibrium assessment}
+  %\VignetteIndexEntry{An example of market-clearing assessment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

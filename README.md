@@ -105,7 +105,7 @@ Q_{nt} &= \min\{D_{nt},S_{nt}\}, \\
 
 ## Installation
 
-The released version of *diseq* can be installed from [CRAN](https://CRAN.R-project.org) with:
+The released version of [*diseq*](https://CRAN.R-project.org/package=diseq) can be installed from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diseq")
@@ -268,7 +268,7 @@ Concerning post estimation analysis, the package offers functionality to calcula
 
 ## Alternative packages
 
-The estimation of the basic model is also supported by the package [_Disequilibrium_](https://cran.r-project.org/web/packages/Disequilibrium/index.html). By default the _Disequilibrium_ package numerically approximates the gradient when optimizing the likelihood. In contrast, _diseq_ uses analytically calculated expressions for the likelihood, which can reduce the duration of estimating the model. In addition, it allows the user to override this behavior and use the numerically approximated gradient. There is no alternative package that supports the out-of-the-box estimation of the other three disequilibrium models of _diseq_. 
+The estimation of the basic model is also supported by the package [_Disequilibrium_](https://CRAN.R-project.org/package=Disequilibrium). By default the _Disequilibrium_ package numerically approximates the gradient when optimizing the likelihood. In contrast, _diseq_ uses analytically calculated expressions for the likelihood, which can reduce the duration of estimating the model. In addition, it allows the user to override this behavior and use the numerically approximated gradient. There is no alternative package that supports the out-of-the-box estimation of the other three disequilibrium models of _diseq_. 
 
 ## Planned extensions
 
