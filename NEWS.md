@@ -1,3 +1,7 @@
+# diseq 0.0.12.9002
+
+* Added sections `A quick model tour`, `Alternative packages`, and `Planned extensions` in README.
+
 # diseq 0.0.12.9001
 
 * Added noLD in word exceptions list.

@@ -1,3 +1,7 @@
+## Change in version 0.0.13
+- Added sections `A quick model tour`, `Alternative packages`, and `Planned extensions` in README.
+- Reconfirmed that there are 'noLD' issues. I have sent emails to both CRAN-submissions@R-project.org and CRAN@r-project.org removal of the package from the repository, despite that I have addressed the problem well in advance from the deadline. I did not receive any feedback, but please let me know If I should do something more.
+
 ## Changes in version 0.0.12
 - Adressed 'noLD' issues.
 - Minor changes and in documentation (see NEWS.md for details). 
