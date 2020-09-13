@@ -1,9 +1,5 @@
 
 
-<style>
-body { text-align:justify; }
-</style>
-
 # Models for Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
 
 <style>
