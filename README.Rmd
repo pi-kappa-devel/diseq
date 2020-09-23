@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Models for Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
+# Models For Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
 
 <style>
 body { text-align:justify; }
@@ -244,7 +244,7 @@ The estimation of the basic model is also supported by the package [_Disequilibr
 The package is planned to be expanded in two ways. 
 
 * Firstly, it should become more inclusive by adding additional models and methods for the estimation of markets and their forces. 
-* Secondly, the implementation is currently written directly in _R_ and is single-threaded using only one processor for the estimations of the models. For the numerically intensive likelihood optimizations that the package employs, this results to extended execution times when the models are estimated using large dataset. The estimation of the models should be gradually re-implemented in _C++_ using a concurrent design. 
+* Secondly, the implementation is currently written directly in _R_ and is single-threaded using only one processor for the estimations of the models. For the numerically intensive likelihood optimizations that the package employs, this results to extended execution times when the models are estimated using large datasets. The estimation of the models should be gradually re-implemented in _C++_ using a concurrent design. 
 
 ## Contributors
 

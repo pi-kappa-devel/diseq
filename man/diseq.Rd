@@ -45,7 +45,7 @@ the documentation of the classes for initialization details.
 
 \describe{
   \item{\code{\linkS4class{diseq_basic}}}{
-    Disequilibrium model with a only basic short side rule}
+    Disequilibrium model only with a basic short side rule}
   \item{\code{\linkS4class{diseq_directional}}}{
     Disequilibrium model with directional sample separation}
   \item{\code{\linkS4class{diseq_deterministic_adjustment}}}{

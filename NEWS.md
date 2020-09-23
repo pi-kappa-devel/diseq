@@ -1,3 +1,7 @@
+# diseq 0.0.13.9001
+
+* Corrected documentation typos.
+
 # diseq 0.0.13
 
 * Corrections of non-canonical web-links in README. Adjustments before CRAN submission.

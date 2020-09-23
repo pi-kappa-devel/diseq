@@ -1,6 +1,10 @@
+---
+title: "README"
+---
 
 
-# Models for Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
+
+# Models For Markets in Disequilibrium  <img src='man/figures/logo.png' align="right" height="36" />
 
 <style>
 body { text-align:justify; }
