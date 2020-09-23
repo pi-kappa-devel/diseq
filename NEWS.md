@@ -1,4 +1,4 @@
-# diseq 0.0.13.9001
+# diseq 0.0.13.9000
 
 * Corrected documentation typos.
 
