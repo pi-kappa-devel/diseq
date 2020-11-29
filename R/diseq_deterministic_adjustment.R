@@ -87,3 +87,12 @@ setMethod(
     -object@system@gradient
   }
 )
+
+#' @rdname scores
+setMethod(
+  "scores", signature(object = "diseq_deterministic_adjustment"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    -calculate_system_scores(object@system)
+  }
+)

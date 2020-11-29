@@ -397,3 +397,59 @@ setMethod(
     object
   }
 )
+
+setMethod(
+  "calculate_system_scores", signature(object = "system_stochastic_adjustment"),
+  function(object) {
+    object@partial_own_price <- partial_own_price(object)
+    object@partial_own_controls <- partial_own_controls(object)
+    object@partial_other_price <- partial_other_price(object)
+    object@partial_other_controls <- partial_other_controls(object)
+    object@partial_lagged_price <- partial_lagged_price(object)
+    object@partial_price_controls <- partial_price_controls(object)
+    object@partial_own_variance <- partial_own_variance(object)
+    object@partial_other_variance <- partial_other_variance(object)
+    object@partial_price_variance <- partial_price_variance(object)
+    object@partial_own_other_correlation <- partial_own_other_correlation(object)
+    object@partial_own_price_correlation <- partial_own_price_correlation(object)
+    object@partial_other_price_correlation <- partial_other_price_correlation(object)
+
+    denominator <- c(object@L_D + object@L_S)
+
+    if (!is.null(get_prefixed_price_variable(object@demand))) {
+      p_dprice <- object@partial_own_price
+    }
+    else {
+      p_dprice <- NULL
+    }
+    p_dcontrols <- object@partial_own_controls
+    if (!is.null(get_prefixed_price_variable(object@supply))) {
+      p_sprice <- object@partial_other_price
+    }
+    else {
+      p_sprice <- NULL
+    }
+    p_scontrols <- object@partial_other_controls
+    p_pdiff <- object@partial_lagged_price
+    p_pcontrols <- object@partial_price_controls
+    p_vard <- object@partial_own_variance
+    p_vars <- object@partial_other_variance
+    p_varp <- object@partial_price_variance
+    p_corrd <- object@partial_own_other_correlation
+    p_corrs <- object@partial_own_price_correlation
+    p_corrp <- object@partial_other_price_correlation
+
+    scores <- cbind(
+      p_dprice, p_dcontrols, p_sprice, p_scontrols, p_pdiff, p_pcontrols,
+      p_vard, p_vars, p_varp
+    )
+    if (object@correlated_shocks) {
+      scores <- cbind(scores, p_corrd, p_corrs, p_corrp)
+    }
+
+    scores <- scores / denominator
+    colnames(scores) <- get_likelihood_variables(object)
+
+    scores
+  }
+)

@@ -83,6 +83,22 @@ setMethod("gradient", signature(object = "diseq_basic"), function(object, parame
   as.matrix(-g)
 })
 
+#' @rdname scores
+setMethod("scores", signature(object = "diseq_basic"), function(object, parameters) {
+  object@system <- set_parameters(object@system, parameters)
+
+  scores <- cbind(
+    partial_beta_d_of_loglh(object@system), partial_beta_s_of_loglh(object@system),
+    partial_var_d_of_loglh(object@system), partial_var_s_of_loglh(object@system)
+  )
+  if (object@system@correlated_shocks) {
+    scores <- cbind(scores, partial_rho_of_loglh(object@system))
+  }
+  colnames(scores) <- get_likelihood_variables(object@system)
+
+  -scores
+})
+
 setMethod("hessian", signature(object = "diseq_basic"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
 

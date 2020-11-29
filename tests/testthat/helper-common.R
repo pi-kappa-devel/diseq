@@ -77,6 +77,15 @@ test_aggregation <- function(aggregation, mdl, params) {
 }
 
 
+test_scores <- function(mdl, params) {
+  scores <- scores(mdl, params)
+  n <- diseq::get_number_of_observations(mdl)
+  k <- length(get_likelihood_variables(mdl@system))
+  testthat::expect(any(dim(scores) == c(n,k)), sprintf("Score has wrong dimensions"))
+  testthat::expect(!any(is.na(scores(mdl, params))), sprintf("Failed to calculate scores"))
+}
+
+
 test_estimation_accuracy <- function(estimation, parameters, tolerance) {
   errors <- abs(estimation - parameters)
 

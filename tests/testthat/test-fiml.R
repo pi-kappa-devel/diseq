@@ -27,6 +27,10 @@ test_that(paste0("Aggregation can be calculated"), {
   test_aggregation(get_aggregate_supply, mdl, est@coef)
 })
 
+test_that(paste0("Scores can be calculated"), {
+  test_scores(mdl, est@coef)
+})
+
 test_that(paste0(
   "Calculated gradient of '", get_model_description(mdl),
   "' matches the numerical approximation"

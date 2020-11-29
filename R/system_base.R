@@ -86,6 +86,10 @@ setGeneric("calculate_system_gradient", function(object) {
   standardGeneric("calculate_system_gradient")
 })
 
+setGeneric("calculate_system_scores", function(object) {
+  standardGeneric("calculate_system_scores")
+})
+
 setMethod("get_lagged_price_variable", signature(object = "system_base"), function(object) {
   paste0("LAGGED_", object@demand@price_variable)
 })

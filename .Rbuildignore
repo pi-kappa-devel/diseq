@@ -9,4 +9,4 @@
 ^.Rhistory
 ^tests/testthat/.+\.rda$
 ^tests/testthat/devel-environment$
-^README\.html$
+^README.+\.html$

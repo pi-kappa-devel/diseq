@@ -139,6 +139,38 @@ setMethod("gradient", signature(object = "diseq_directional"), function(object, 
   as.matrix(-g)
 })
 
+#' @rdname scores
+setMethod("scores", signature(object = "diseq_directional"), function(object, parameters) {
+  object@system <- set_parameters(object@system, parameters)
+
+  nd <- object@system@demand@separation_subset
+  pd <- object@system@supply@separation_subset
+
+  l_pbd <- partial_beta_d_of_loglh_d(object@system)
+  l_pbd[pd, ] <- partial_beta_d_of_loglh_s(object@system)[pd, ]
+
+  l_pbs <- partial_beta_s_of_loglh_d(object@system)
+  l_pbs[pd, ] <- partial_beta_s_of_loglh_d(object@system)[pd, ]
+
+  l_pvard <- partial_var_d_of_loglh_d(object@system)
+  l_pvard[pd] <- partial_var_d_of_loglh_s(object@system)[pd]
+
+  l_pvars <- partial_var_s_of_loglh_d(object@system)
+  l_pvars[pd] <- partial_var_s_of_loglh_s(object@system)[pd]
+
+  scores <- cbind(l_pbd, l_pbs, l_pvard, l_pvars)
+
+  if (object@system@correlated_shocks) {
+    l_prho <- partial_rho_of_loglh_d(object@system)
+    l_prho[pd] <- partial_rho_of_loglh_s(object@system)[pd]
+
+    scores <- cbind(scores, as.matrix(l_prho))
+  }
+  colnames(scores) <- get_likelihood_variables(object@system)
+
+  -scores
+})
+
 setMethod("hessian", signature(object = "diseq_directional"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
 

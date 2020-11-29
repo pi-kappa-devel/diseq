@@ -268,3 +268,51 @@ setMethod(
     object
   }
 )
+
+setMethod(
+  "calculate_system_scores", signature(object = "system_deterministic_adjustment"),
+  function(object) {
+    pd_alpha_d <- partial_alpha_d_of_loglh_D(object)
+    pd_beta_d <- partial_beta_d_of_loglh_D(object)
+    pd_alpha_s <- partial_alpha_s_of_loglh_D(object)
+    pd_beta_s <- partial_beta_s_of_loglh_D(object)
+    pd_gamma <- partial_gamma_of_loglh_D(object)
+    pd_sigma_d <- partial_sigma_d_of_loglh_D(object)
+    pd_sigma_s <- partial_sigma_s_of_loglh_D(object)
+    pd_rho <- partial_rho_of_loglh_D(object)
+    ps_alpha_d <- partial_alpha_d_of_loglh_S(object)
+    ps_beta_d <- partial_beta_d_of_loglh_S(object)
+    ps_alpha_s <- partial_alpha_s_of_loglh_S(object)
+    ps_beta_s <- partial_beta_s_of_loglh_S(object)
+    ps_gamma <- partial_gamma_of_loglh_S(object)
+    ps_sigma_d <- partial_sigma_d_of_loglh_S(object)
+    ps_sigma_s <- partial_sigma_s_of_loglh_S(object)
+    ps_rho <- partial_rho_of_loglh_S(object)
+
+    di <- c(object@demand@separation_subset)
+    si <- c(object@supply@separation_subset)
+
+    scores <- pd_beta_d * di + ps_beta_d * si
+
+    if (!is.null(get_prefixed_price_variable(object@demand))) {
+      scores <- cbind(pd_alpha_d * di + ps_alpha_d * si, scores)
+    }
+    if (!is.null(get_prefixed_price_variable(object@supply))) {
+      scores <- cbind(scores, pd_alpha_s * di + ps_alpha_s * si)
+    }
+    scores <- cbind(
+      scores,
+      pd_beta_s * di + ps_beta_s * si,
+      pd_gamma * di + ps_gamma * si,
+      pd_sigma_d * di + ps_sigma_d * si,
+      pd_sigma_s * di + ps_sigma_s * si
+    )
+    if (object@correlated_shocks) {
+      scores <- cbind(scores, pd_rho * di + ps_rho * si)
+    }
+
+    colnames(scores) <- get_likelihood_variables(object)
+
+    scores
+  }
+)

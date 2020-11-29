@@ -1,7 +1,7 @@
 Package: diseq
 Title: Estimation Methods for Markets in Disequilibrium
-Version: 0.0.13.9000
-Date: 2020-09-23
+Version: 0.0.13.9002
+Date: 2020-11-29
 Authors@R: person(
     "Pantelis", "Karapanagiotis", email = "pikappa.devel@gmail.com", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9871-1908"))

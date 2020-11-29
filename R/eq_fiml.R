@@ -63,7 +63,6 @@ setMethod("minus_log_likelihood", signature(object = "eq_fiml"), function(object
 })
 
 
-
 setMethod("gradient", signature(object = "eq_fiml"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
 
@@ -91,31 +90,56 @@ setMethod("gradient", signature(object = "eq_fiml"), function(object, parameters
   as.matrix(-g)
 })
 
-#' @describeIn estimate Equilibrium model estimation.
-setMethod("estimate", signature(object = "eq_fiml"), function(object, ...) {
-  va_args <- list(...)
+#' @rdname scores
+setMethod("scores", signature(object = "eq_fiml"), function(object, parameters) {
+  object@system <- set_parameters(object@system, parameters)
 
-  if (is.null(va_args$start)) {
-    print_verbose(object@logger, "Initializing using linear regression estimations.")
-    va_args$start <- get_initializing_values(object)
-  }
-  names(va_args$start) <- get_likelihood_variables(object@system)
-  print_debug(
-    object@logger, "Using starting values: ",
-    paste(names(va_args$start), va_args$start, sep = " = ", collapse = ", ")
+  scores <- cbind(
+    partial_alpha_d(object@system), partial_beta_d(object@system),
+    partial_alpha_s(object@system), partial_beta_s(object@system),
+    partial_var_d(object@system), partial_var_s(object@system)
   )
 
-  if (is.null(va_args$method)) {
-    va_args$method <- "BFGS"
+  if (object@system@correlated_shocks) {
+    scores <- cbind(scores, partial_rho(object@system))
   }
+  colnames(scores) <- get_likelihood_variables(object@system)
 
-  va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
-  bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
-  va_args$gr <- function(...) gradient(object, ...)
-  bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
-
-  est <- do.call(bbmle::mle2, va_args)
-  est@call.orig <- call("bbmle::mle2", va_args)
-
-  est
+  -scores
 })
+
+#' @describeIn estimate Equilibrium model estimation.
+setMethod(
+  "estimate", signature(object = "eq_fiml"),
+  function(object, use_heteroskedasticity_consistent_errors = FALSE, ...) {
+    va_args <- list(...)
+
+    if (is.null(va_args$start)) {
+      print_verbose(object@logger, "Initializing using linear regression estimations.")
+      va_args$start <- get_initializing_values(object)
+    }
+    names(va_args$start) <- get_likelihood_variables(object@system)
+    print_debug(
+      object@logger, "Using starting values: ",
+      paste(names(va_args$start), va_args$start, sep = " = ", collapse = ", ")
+    )
+
+    if (is.null(va_args$method)) {
+      va_args$method <- "BFGS"
+    }
+
+    va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
+    bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
+    va_args$gr <- function(...) gradient(object, ...)
+    bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
+
+    est <- do.call(bbmle::mle2, va_args)
+    est@call.orig <- call("bbmle::mle2", va_args)
+
+    if (use_heteroskedasticity_consistent_errors) {
+      set_heteroskedasticity_consistent_errors(object, est)
+    }
+
+    est
+  }
+)

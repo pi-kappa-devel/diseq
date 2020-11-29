@@ -1,5 +1,5 @@
 ---
-title: "Assessing market-clearing"
+title: "An example of market-clearing assessment"
 output:
   rmarkdown::html_vignette:
     toc: false

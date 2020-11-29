@@ -14,12 +14,13 @@ estimate(object, ...)
   object,
   use_numerical_gradient = FALSE,
   use_numerical_hessian = TRUE,
+  set_heteroskedasticity_consistent_errors = FALSE,
   ...
 )
 
 \S4method{estimate}{eq_2sls}(object, ...)
 
-\S4method{estimate}{eq_fiml}(object, ...)
+\S4method{estimate}{eq_fiml}(object, use_heteroskedasticity_consistent_errors = FALSE, ...)
 }
 \arguments{
 \item{object}{A model object.}

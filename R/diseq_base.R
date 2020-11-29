@@ -296,7 +296,8 @@ setMethod(
 #' and directional models.
 setMethod(
   "estimate", signature(object = "diseq_base"),
-  function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE, ...) {
+  function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE,
+           set_heteroskedasticity_consistent_errors = FALSE, ...) {
     va_args <- list(...)
 
     va_args$skip.hessian <- !use_numerical_hessian
@@ -332,6 +333,10 @@ setMethod(
         est@vcov <- MASS::ginv(est@details$hessian),
         error = function(e) print_warning(object@logger, e$message)
       )
+    }
+
+    if (set_heteroskedasticity_consistent_errors) {
+      set_heteroskedasticity_consistent_errors(object, est)
     }
 
     est

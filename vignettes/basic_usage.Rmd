@@ -1,5 +1,5 @@
 ---
-title: "Basic usage"
+title: "An example of estimations using the market models of the package"
 output:
   rmarkdown::html_vignette:
     toc: false
@@ -185,6 +185,7 @@ Set the estimation parameters. The only model that is estimated by least squares
 ```{r estimation.parameters.method}
 optimization_method <- "BFGS"
 optimization_controls <- list(REPORT = 10, maxit = 10000, reltol = 1e-6)
+use_robust_errors <- TRUE
 ```
 
 Then, estimate the models. See the documentation for more options.
@@ -192,25 +193,20 @@ Then, estimate the models. See the documentation for more options.
 ```{r estimation.execution}
 eq2sls <- estimate(eq2sls)
 eqfiml_est <- estimate(eqfiml,
-  control = optimization_controls,
-  method = optimization_method
-)
+                       control = optimization_controls, method = optimization_method,
+                       use_robust_errors = use_robust_errors)
 bsmdl_est <- estimate(bsmdl,
-  control = optimization_controls,
-  method = optimization_method
-)
+                       control = optimization_controls, method = optimization_method,
+                       use_robust_errors = use_robust_errors)
 drmdl_est <- estimate(drmdl,
-  control = optimization_controls,
-  method = optimization_method
-)
+                       control = optimization_controls, method = optimization_method,
+                       use_robust_errors = use_robust_errors)
 damdl_est <- estimate(damdl,
-  control = optimization_controls,
-  method = optimization_method
-)
+                       control = optimization_controls, method = optimization_method,
+                       use_robust_errors = use_robust_errors)
 samdl_est <- estimate(samdl,
-  control = optimization_controls,
-  method = optimization_method
-)
+                       control = optimization_controls, method = optimization_method,
+                       use_robust_errors = use_robust_errors)
 ```
 ## Post estimation analysis 
 

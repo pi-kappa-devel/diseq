@@ -15,7 +15,7 @@
 vignettes/*.html
 vignettes/*.R
 vignettes/*.pdf
-README.html
+README*.html
 
 # Development files
 dev/
