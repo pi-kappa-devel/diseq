@@ -1,10 +1,10 @@
 ---
-title: "An example of estimations using the market models of the package"
+title: "Some examples of estimations using the market models of the package"
 output:
   rmarkdown::html_vignette:
     toc: false
 vignette: >
-  %\VignetteIndexEntry{An example of estimations using the market models of the package}
+  %\VignetteIndexEntry{Some examples of estimations using the market models of the package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

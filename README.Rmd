@@ -203,7 +203,7 @@ mdl <- new(
 The model is estimated with default options by a simple call. See the documentation of `estimate` for more 
 details and options.
 ```{r model.estimation}
-est <- estimate(mdl, use_heteroscedasticity_consistent_errors = TRUE)
+est <- estimate(mdl)
 bbmle::summary(est)
 ```
 ## Design and functionality
@@ -233,7 +233,8 @@ Concerning post estimation analysis, the package offers functionality to calcula
 * point estimates of relative shortages,
 * aggregate demand and supply,
 * post-estimation classification of observations in demand and supply,
-* heteroscedasticity adjusted (Huber-White) standard errors. 
+* heteroscedasticity-adjusted (Huber-White) standard errors, and 
+* clustered standard errors.
 
 ## Alternative packages
 

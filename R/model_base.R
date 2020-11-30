@@ -390,7 +390,8 @@ setMethod(
   function(object, est) {
     est@details$original_hessian <- est@details$hessian
     scores <- scores(object, est@coef)
-    adjustment <- MASS::ginv(t(scores) %*% scores)
+    nobs <- nrow(scores)
+    adjustment <- MASS::ginv(t(scores) %*% scores) / nobs
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
     est@vcov <- MASS::ginv(est@details$hessian)
     est
@@ -409,14 +410,20 @@ setMethod(
     est@details$original_hessian <- est@details$hessian
     clustered_scores <- tibble::tibble(
       object@model_tibble %>% dplyr::select(!!!cluster_var),
-      as.tibble(scores(object, est@coef))
+      tibble::as_tibble(scores(object, est@coef))
     ) %>%
       dplyr::group_by(!!!cluster_var) %>%
-      dplyr::summarise_each(funs(sum)) %>%
+      dplyr::summarise_all(~ sum(.) / sqrt(length(.))) %>%
       dplyr::ungroup() %>%
       dplyr::select(!(!!!cluster_var)) %>%
       as.matrix()
-    adjustment <- MASS::ginv(t(clustered_scores) %*% clustered_scores)
+    nobs <- nrow(object@model_tibble)
+    npars <- ncol(clustered_scores)
+    ncls <- object@model_tibble %>%
+      dplyr::distinct(!!!cluster_var) %>%
+      dplyr::count() %>%
+      as.integer()
+    adjustment <- MASS::ginv(t(clustered_scores) %*% clustered_scores) / ncls
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
     est@vcov <- MASS::ginv(est@details$hessian)
     est

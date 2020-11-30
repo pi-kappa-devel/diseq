@@ -1,3 +1,11 @@
+# diseq 0.0.14.9002
+
+* Corrected calculation of clustered standard errors by accounting for the number of used classes. 
+
+# diseq 0.0.14.9001
+
+* Changes to adjust for depreciating functionality of `dplyr` (as of 0.7.0)
+
 # diseq 0.0.14
 
 * Added option and documentation for estimating clustered standards errors.

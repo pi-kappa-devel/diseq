@@ -209,7 +209,7 @@ parameterization.
 The model is estimated with default options by a simple call. See the
 documentation of `estimate` for more details and options.
 
-    est <- estimate(mdl, use_heteroscedasticity_consistent_errors = TRUE)
+    est <- estimate(mdl)
     bbmle::summary(est)
     #> Maximum likelihood estimation
     #> 
@@ -224,21 +224,21 @@ documentation of `estimate` for more details and options.
     #> gradient(object, ...)))
     #> 
     #> Coefficients:
-    #>              Estimate Std. Error z value  Pr(z)    
-    #> D_P        -1.9277826  0.0510701 -37.748 <2e-16 ***
-    #> D_CONST    12.7187450  0.0197082 645.355 <2e-16 ***
-    #> D_Xd1       2.1041794  0.0381257  55.191 <2e-16 ***
-    #> D_Xd2      -0.6396308  0.0247871 -25.805 <2e-16 ***
-    #> D_X1        3.4902260  0.0382151  91.331 <2e-16 ***
-    #> D_X2        6.2935478  0.0370947 169.661 <2e-16 ***
-    #> S_P         2.8065335  0.0103567 270.988 <2e-16 ***
-    #> S_CONST    10.1644425  0.0178579 569.184 <2e-16 ***
-    #> S_Xs1       0.6782140  0.0086938  78.011 <2e-16 ***
-    #> S_X1        1.1295126  0.0095559 118.201 <2e-16 ***
-    #> S_X2        4.1981877  0.0093709 448.003 <2e-16 ***
-    #> D_VARIANCE  1.0177756  0.0295029  34.497 <2e-16 ***
-    #> S_VARIANCE  1.0026251  0.0074412 134.740 <2e-16 ***
-    #> RHO        -0.0238756  0.0355301  -0.672 0.5016    
+    #>              Estimate Std. Error  z value  Pr(z)    
+    #> D_P        -1.9277826  0.0643871 -29.9405 <2e-16 ***
+    #> D_CONST    12.7187450  0.1665723  76.3557 <2e-16 ***
+    #> D_Xd1       2.1041794  0.0386208  54.4831 <2e-16 ***
+    #> D_Xd2      -0.6396308  0.0293756 -21.7742 <2e-16 ***
+    #> D_X1        3.4902260  0.0398746  87.5300 <2e-16 ***
+    #> D_X2        6.2935478  0.0385864 163.1028 <2e-16 ***
+    #> S_P         2.8065335  0.0120090 233.7023 <2e-16 ***
+    #> S_CONST    10.1644425  0.0494381 205.5993 <2e-16 ***
+    #> S_Xs1       0.6782140  0.0097622  69.4737 <2e-16 ***
+    #> S_X1        1.1295126  0.0104475 108.1137 <2e-16 ***
+    #> S_X2        4.1981877  0.0103540 405.4635 <2e-16 ***
+    #> D_VARIANCE  1.0177756  0.0303119  33.5767 <2e-16 ***
+    #> S_VARIANCE  1.0026251  0.0074199 135.1273 <2e-16 ***
+    #> RHO        -0.0238756  0.0376718  -0.6338 0.5262    
     #> ---
     #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     #> 
@@ -280,7 +280,8 @@ calculate
 -   point estimates of relative shortages,
 -   aggregate demand and supply,
 -   post-estimation classification of observations in demand and supply,
--   heteroscedasticity adjusted (Huber-White) standard errors.
+-   heteroscedasticity-adjusted (Huber-White) standard errors, and
+-   clustered standard errors.
 
 Alternative packages
 --------------------
