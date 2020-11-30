@@ -36,7 +36,7 @@ supply side and vice versa. This model assumes that the market
 observations always represent equilibrium points in which the demanded
 and supplied quantities are equal.
 
-<img src='man/figures/equilibrium.png' align="center" style='float:left;margin:0 5%;max-width:30%;'/>
+<img src='man/figures/equilibrium.png' align="center" style='float:left;margin:2% 0 2% 2%;max-width:40%;'/>
 
 ### The basic disequilibrium model
 
@@ -50,7 +50,7 @@ observation belongs to the demand or the supply side since the
 estimation of the model will allocate the observations on the demand or
 supply side so that the likelihood is maximized.
 
-<img src='man/figures/diseq_basic_model.png' align="center" style='float:left;margin:0 5%;max-width:30%;'/>
+<img src='man/figures/diseq_basic_model.png' align="center" style='float:left;margin:2% 0 2% 2%;max-width:40%;'/>
 
 ### The directional disequilibrium model
 
@@ -66,7 +66,7 @@ estimations, it also, when inaccurate, intensifies misspecification
 problems. Therefore, the additional structure of the directional model
 does not guarantee better estimates in comparison with the basic model.
 
-<img src='man/figures/diseq_directional_model.png' align="center" style='float:left;margin:0 5%;max-width:30%;'/>
+<img src='man/figures/diseq_directional_model.png' align="center" style='float:left;margin:2% 0 2% 2%;max-width:40%;'/>
 
 ### A disequilibrium model with deterministic price dynamics
 
@@ -84,7 +84,7 @@ in alignment with standard economic reasoning. By letting *γ* approach
 zero, the equilibrium model can be obtained as a limiting case of this
 model.
 
-<img src='man/figures/diseq_deterministic_adjustment_model.png' align="center" style='float:left;margin:0 5%;max-width:30%;'/>
+<img src='man/figures/diseq_deterministic_adjustment_model.png' align="center" style='float:left;margin:2% 0 2% 2%;max-width:40%;'/>
 
 ### A disequilibrium model with stochastic price dynamics
 
@@ -98,7 +98,7 @@ the highest degree of freedom, accompanied, however, by a significant
 increase in estimation complexity, which can hinder the stability of the
 procedure and the numerical accuracy of the outcomes.
 
-<img src='man/figures/diseq_stochastic_adjustment_model.png' align="center" style='float:left;margin:0 5%;max-width:30%;'/>
+<img src='man/figures/diseq_stochastic_adjustment_model.png' align="center" style='float:left;margin:2% 0 2% 2%;max-width:40%;'/>
 
 Installation
 ------------

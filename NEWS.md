@@ -1,3 +1,7 @@
+# diseq 0.0.14.9003
+
+* Corrected style attributes of README file.
+
 # diseq 0.0.14.9002
 
 * Corrected calculation of clustered standard errors by accounting for the number of used classes. 
