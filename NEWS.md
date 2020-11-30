@@ -1,3 +1,7 @@
+# diseq 0.0.14.9004
+
+* Improved README file style.
+
 # diseq 0.0.14.9003
 
 * Corrected style attributes of README file.
