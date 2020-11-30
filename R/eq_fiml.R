@@ -109,9 +109,15 @@ setMethod("scores", signature(object = "eq_fiml"), function(object, parameters) 
 })
 
 #' @describeIn estimate Equilibrium model estimation.
+#' @param use_heteroscedasticity_consistent_errors If true, the variance-covariance matrix is
+#' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
+#' @param cluster_errors_by A vector with names of variables belonging in the data of the
+#' model. If the vector is supplied, the variance-covariance matrix is calculated by
+#' grouping the score matrix based on the passed variables.
 setMethod(
   "estimate", signature(object = "eq_fiml"),
-  function(object, use_heteroskedasticity_consistent_errors = FALSE, ...) {
+  function(object, use_heteroscedasticity_consistent_errors = FALSE,
+           cluster_errors_by = NA, ...) {
     va_args <- list(...)
 
     if (is.null(va_args$start)) {
@@ -136,8 +142,12 @@ setMethod(
     est <- do.call(bbmle::mle2, va_args)
     est@call.orig <- call("bbmle::mle2", va_args)
 
-    if (use_heteroskedasticity_consistent_errors) {
-      set_heteroskedasticity_consistent_errors(object, est)
+    if (use_heteroscedasticity_consistent_errors) {
+      est <- set_heteroscedasticity_consistent_errors(object, est)
+    }
+
+    if (!is.na(cluster_errors_by)) {
+      est <- set_clustered_errors(object, est, cluster_errors_by)
     }
 
     est

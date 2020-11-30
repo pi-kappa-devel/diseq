@@ -294,10 +294,15 @@ setMethod(
 #' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
 #' the numerically approximated Hessian. Calculated Hessians are available for the basic
 #' and directional models.
+#' @param use_heteroscedasticity_consistent_errors If true, the variance-covariance matrix is
+#' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
+#' @param cluster_errors_by A vector with names of variables belonging in the data of the
+#' model. If the vector is supplied, the variance-covariance matrix is calculated by
+#' grouping the score matrix based on the passed variables.
 setMethod(
   "estimate", signature(object = "diseq_base"),
   function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE,
-           set_heteroskedasticity_consistent_errors = FALSE, ...) {
+           use_heteroscedasticity_consistent_errors = FALSE, cluster_errors_by = NA, ...) {
     va_args <- list(...)
 
     va_args$skip.hessian <- !use_numerical_hessian
@@ -335,8 +340,12 @@ setMethod(
       )
     }
 
-    if (set_heteroskedasticity_consistent_errors) {
-      set_heteroskedasticity_consistent_errors(object, est)
+    if (use_heteroscedasticity_consistent_errors) {
+      est <- set_heteroscedasticity_consistent_errors(object, est)
+    }
+
+    if (!is.na(cluster_errors_by)) {
+      est <- set_clustered_errors(object, est, cluster_errors_by)
     }
 
     est

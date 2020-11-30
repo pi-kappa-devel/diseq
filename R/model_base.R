@@ -324,8 +324,12 @@ setGeneric("scores", function(object, parameters) {
   standardGeneric("scores")
 })
 
-setGeneric("set_heteroskedasticity_consistent_errors", function(object, ...) {
-  standardGeneric("set_heteroskedasticity_consistent_errors")
+setGeneric("set_heteroscedasticity_consistent_errors", function(object, ...) {
+  standardGeneric("set_heteroscedasticity_consistent_errors")
+})
+
+setGeneric("set_clustered_errors", function(object, ...) {
+  standardGeneric("set_clustered_errors")
 })
 
 #' Model description.
@@ -382,13 +386,40 @@ setGeneric("get_supply_descriptives", function(object) {
 })
 
 setMethod(
-  "set_heteroskedasticity_consistent_errors", signature(object = "model_base"),
+  "set_heteroscedasticity_consistent_errors", signature(object = "model_base"),
   function(object, est) {
     est@details$original_hessian <- est@details$hessian
     scores <- scores(object, est@coef)
     adjustment <- MASS::ginv(t(scores) %*% scores)
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
     est@vcov <- MASS::ginv(est@details$hessian)
+    est
+  }
+)
+
+setMethod(
+  "set_clustered_errors", signature(object = "model_base"),
+  function(object, est, cluster_errors_by) {
+    if (!(cluster_errors_by %in% names(object@model_tibble))) {
+      print_error(
+        object@logger, "Cluster variable is not among model data variables."
+      )
+    }
+    cluster_var <- rlang::syms(cluster_errors_by)
+    est@details$original_hessian <- est@details$hessian
+    clustered_scores <- tibble::tibble(
+      object@model_tibble %>% dplyr::select(!!!cluster_var),
+      as.tibble(scores(object, est@coef))
+    ) %>%
+      dplyr::group_by(!!!cluster_var) %>%
+      dplyr::summarise_each(funs(sum)) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(!(!!!cluster_var)) %>%
+      as.matrix()
+    adjustment <- MASS::ginv(t(clustered_scores) %*% clustered_scores)
+    est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
+    est@vcov <- MASS::ginv(est@details$hessian)
+    est
   }
 )
 

@@ -14,13 +14,19 @@ estimate(object, ...)
   object,
   use_numerical_gradient = FALSE,
   use_numerical_hessian = TRUE,
-  set_heteroskedasticity_consistent_errors = FALSE,
+  use_heteroscedasticity_consistent_errors = FALSE,
+  cluster_errors_by = NA,
   ...
 )
 
 \S4method{estimate}{eq_2sls}(object, ...)
 
-\S4method{estimate}{eq_fiml}(object, use_heteroskedasticity_consistent_errors = FALSE, ...)
+\S4method{estimate}{eq_fiml}(
+  object,
+  use_heteroscedasticity_consistent_errors = FALSE,
+  cluster_errors_by = NA,
+  ...
+)
 }
 \arguments{
 \item{object}{A model object.}
@@ -37,6 +43,13 @@ gradients.}
 \item{use_numerical_hessian}{If true, the variance-covariance matrix is calculated using
 the numerically approximated Hessian. Calculated Hessians are available for the basic
 and directional models.}
+
+\item{use_heteroscedasticity_consistent_errors}{If true, the variance-covariance matrix is
+calculated using heteroscedasticity adjusted (Huber-White) standard errors.}
+
+\item{cluster_errors_by}{A vector with names of variables belonging in the data of the
+model. If the vector is supplied, the variance-covariance matrix is calculated by
+grouping the score matrix based on the passed variables.}
 }
 \value{
 The object that holds the estimation result.

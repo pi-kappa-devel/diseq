@@ -1,10 +1,14 @@
+# diseq 0.0.14
+
+* Added option and documentation for estimating clustered standards errors.
+
 # diseq 0.0.13.9002
 
 * Added documentation for the function that return the scores.
 
 # diseq 0.0.13.9001
 
-* Added option for estimating robust (Huber-White) standard errors. 
+* Added option for estimating heteroscedasticity-consistent (Huber-White) standard errors. 
 * Added functionality for extracting the score matrices of the estimated models. 
 
 # diseq 0.0.13.9000
