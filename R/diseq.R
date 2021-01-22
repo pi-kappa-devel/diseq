@@ -52,3 +52,8 @@
 #' @docType package
 #' @name diseq
 NULL
+
+## usethis namespace: start
+#' @useDynLib diseq, .registration = TRUE
+## usethis namespace: end
+NULL

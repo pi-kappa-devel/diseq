@@ -21,7 +21,7 @@ Language: en-US
 URL: https://github.com/pi-kappa-devel/diseq/
 BugReports: https://github.com/pi-kappa-devel/diseq/issues
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.5.0),
 Imports:
     bbmle (>= 1.0.20),
     dplyr (>= 0.7.6),
@@ -31,7 +31,10 @@ Imports:
     rlang (>= 0.2.1),
     systemfit (>= 1.1),
     tibble (>= 1.4.2),
-    tidyr (>= 1.0.2)
+    tidyr (>= 1.0.2),
+    Rcpp,
+    RcppGSL,
+    RcppParallel
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -47,6 +50,12 @@ Collate:
     'equation_base.R'
     'system_base.R'
     'equation_basic.R'
+    'cpp_system_fiml.R'
+    'cpp_derivatives_fiml.R'
+    'model_logger.R'
+    'model_base.R'
+    'eq_base.R'
+    'cpp_eq_fiml.R'
     'system_basic.R'
     'derivatives_basic.R'
     'equation_deterministic_adjustment.R'
@@ -61,14 +70,16 @@ Collate:
     'system_stochastic_adjustment.R'
     'derivatives_stochastic_adjustment.R'
     'diseq.R'
-    'model_logger.R'
-    'model_base.R'
     'diseq_base.R'
     'diseq_basic.R'
     'diseq_deterministic_adjustment.R'
     'diseq_directional.R'
     'diseq_stochastic_adjustment.R'
-    'eq_base.R'
     'eq_2sls.R'
     'eq_fiml.R'
     'model_simulation.R'
+LinkingTo: 
+    Rcpp,
+    RcppGSL
+SystemRequirements:
+    C++20

@@ -564,7 +564,7 @@ setMethod(
            sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
            seed,
            price_generator, control_generator) {
-    if (model_string %in% c("eq_2sls", "eq_fiml")) {
+    if (model_string %in% c("eq_2sls", "eq_fiml", "cpp_eq_fiml")) {
       sim_mdl <- new(
         "simulated_equilibrium_model",
         nobs, tobs,

@@ -1,4 +1,4 @@
-context("Equilibrium FIML Model's Tests\n")
+context("Equilibrium Cpp FIML Model's Tests\n")
 
 parameters <- list(
   nobs = 20000, tobs = 10,
@@ -7,7 +7,7 @@ parameters <- list(
   sigma_d = 0.9, sigma_s = 1.2, rho_ds = 0.5
 )
 
-mdl <- load_or_simulate_model("eq_fiml", parameters)
+mdl <- load_or_simulate_model("cpp_eq_fiml", parameters)
 
 # Estimation setup
 reltol <- 1e-12

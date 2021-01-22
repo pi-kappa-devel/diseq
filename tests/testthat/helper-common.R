@@ -133,7 +133,7 @@ load_or_simulate_model <- function(model_string, parameters) {
       verbose = verbose
     )
   }
-  else if (model_string %in% c("eq_fiml", "diseq_basic")) {
+  else if (model_string %in% c("cpp_eq_fiml", "eq_fiml", "diseq_basic")) {
     mdl <- new(
       model_string,
       c("id", "date"),

@@ -240,6 +240,14 @@ setGeneric("minus_log_likelihood", function(object, parameters) {
   standardGeneric("minus_log_likelihood")
 })
 
+setGeneric("gradient", function(object, parameters) {
+  standardGeneric("gradient")
+})
+
+setGeneric("hessian", function(object, parameters) {
+  standardGeneric("hessian")
+})
+
 #' Model estimation.
 #'
 #' With the exception of \code{\linkS4class{eq_2sls}} all model are estimated by maximum

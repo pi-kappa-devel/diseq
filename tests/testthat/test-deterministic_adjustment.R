@@ -1,3 +1,4 @@
+skip("temporary")
 context("Deterministic Adjustment Model's Tests\n")
 
 parameters <- list(

@@ -227,14 +227,6 @@ setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable)
   standardGeneric("get_marginal_effect_at_mean")
 })
 
-setGeneric("gradient", function(object, parameters) {
-  standardGeneric("gradient")
-})
-
-setGeneric("hessian", function(object, parameters) {
-  standardGeneric("hessian")
-})
-
 #' Checks if an observation is in a shortage stage.
 #'
 #' Returns TRUE for the indices at which the shortages of the market are non-negative, i.e. the
