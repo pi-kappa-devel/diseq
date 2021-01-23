@@ -1,5 +1,5 @@
 #' @include eq_base.R
-#' @include cpp_derivatives_fiml.R 
+#' @include cpp_derivatives_fiml.R
 
 #' @title Equilibrium model estimated using full-information maximum likelihood.
 #'
@@ -51,7 +51,7 @@ setMethod(
       data,
       function(...) new("cpp_system_fiml", ...)
     )
-    
+
     .Object
   }
 )
@@ -64,44 +64,51 @@ setMethod("minus_log_likelihood", signature(object = "cpp_eq_fiml"), function(ob
 
 
 setMethod("gradient", signature(object = "cpp_eq_fiml"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  object@system <- object@system@eq_fiml_cpp_impl$gradient(object@system)
+    object@system <- set_parameters(object@system, parameters)
+    object@system <- object@system@eq_fiml_cpp_impl$gradient(object@system)
 
-  g <- rep(NA, length(get_likelihood_variables(object@system)))
-  names(g) <- get_likelihood_variables(object@system)
+    g <- rep(NA, length(get_likelihood_variables(object@system)))
+    names(g) <- get_likelihood_variables(object@system)
 
-  g[get_prefixed_price_variable(object@system@demand)] <- sum(object@system@eq_fiml_cpp_impl$partial_alpha_d)
-  g[get_prefixed_control_variables(object@system@demand)] <- colSums(object@system@eq_fiml_cpp_impl$partial_beta_d)
-  g[get_prefixed_price_variable(object@system@supply)] <- sum(object@system@eq_fiml_cpp_impl$partial_alpha_s)
-  g[get_prefixed_control_variables(object@system@supply)] <- colSums(object@system@eq_fiml_cpp_impl$partial_beta_s)
-  g[get_prefixed_variance_variable(object@system@demand)] <- sum(object@system@eq_fiml_cpp_impl$partial_var_d)
-  g[get_prefixed_variance_variable(object@system@supply)] <- sum(object@system@eq_fiml_cpp_impl$partial_var_s)
-  if (object@system@correlated_shocks) {
-    g[get_correlation_variable(object@system)] <- sum(object@system@eq_fiml_cpp_impl$partial_rho)
-  }
+    g[get_prefixed_price_variable(object@system@demand)] <-
+        sum(object@system@eq_fiml_cpp_impl$partial_alpha_d)
+    g[get_prefixed_control_variables(object@system@demand)] <-
+        colSums(object@system@eq_fiml_cpp_impl$partial_beta_d)
+    g[get_prefixed_price_variable(object@system@supply)] <-
+        sum(object@system@eq_fiml_cpp_impl$partial_alpha_s)
+    g[get_prefixed_control_variables(object@system@supply)] <-
+        colSums(object@system@eq_fiml_cpp_impl$partial_beta_s)
+    g[get_prefixed_variance_variable(object@system@demand)] <-
+        sum(object@system@eq_fiml_cpp_impl$partial_var_d)
+    g[get_prefixed_variance_variable(object@system@supply)] <-
+        sum(object@system@eq_fiml_cpp_impl$partial_var_s)
+    if (object@system@correlated_shocks) {
+        g[get_correlation_variable(object@system)] <-
+            sum(object@system@eq_fiml_cpp_impl$partial_rho)
+    }
 
-  as.matrix(-g)
+    as.matrix(-g)
 })
 
 #' @rdname scores
 setMethod("scores", signature(object = "cpp_eq_fiml"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
+    object@system <- set_parameters(object@system, parameters)
 
-  scores <- cbind(
-    object@system@eq_fiml_cpp_impl$partial_alpha_d,
-    object@system@eq_fiml_cpp_impl$partial_beta_d,
-    object@system@eq_fiml_cpp_impl$partial_alpha_s,
-    object@system@eq_fiml_cpp_impl$partial_beta_s,
-    object@system@eq_fiml_cpp_impl$partial_var_d,
-    object@system@eq_fiml_cpp_impl$partial_alpha_s
-  )
+    scores <- cbind(
+        object@system@eq_fiml_cpp_impl$partial_alpha_d,
+        object@system@eq_fiml_cpp_impl$partial_beta_d,
+        object@system@eq_fiml_cpp_impl$partial_alpha_s,
+        object@system@eq_fiml_cpp_impl$partial_beta_s,
+        object@system@eq_fiml_cpp_impl$partial_var_d,
+        object@system@eq_fiml_cpp_impl$partial_alpha_s
+    )
 
-  if (object@system@correlated_shocks) {
-    scores <- cbind(scores, object@system@eq_fiml_cpp_impl$partial_rho)
-  }
-  colnames(scores) <- get_likelihood_variables(object@system)
+    if (object@system@correlated_shocks) {
+        scores <- cbind(scores, object@system@eq_fiml_cpp_impl$partial_rho)
+    }
+    colnames(scores) <- get_likelihood_variables(object@system)
 
-  -scores
+    -scores
 })
 
 #' @describeIn estimate Equilibrium model estimation.
@@ -146,10 +153,48 @@ setMethod(
       est <- set_clustered_errors(object, est, cluster_errors_by)
     }
 
-    object@system@eq_fiml_gsl_impl$minimize(va_args$start)
-    print(bbmle::summary(est))
-
-
     est
+  }
+)
+
+
+#' Maximize the log-likelihood.
+#'
+#' Maximizes the log-likelihood using the
+#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{GSL} implementation of
+#' the BFGS algorithm. This function is primarily intended for advanced usage. The
+#' \code{\link{estimate}} functionality is a fast analysis-oriented alternative.
+#' @param object A model object.
+#' @param start Initializing vector.
+#' @param step Optimization step.
+#' @param objective_tolerance Objective optimization tolerance.
+#' @param gradient_tolerance Gradient optimization tolerance.
+#' @return A list with the optimization output.
+#' @rdname maximize_log_likelihood
+#' @seealso estimate
+#' @export
+setGeneric("maximize_log_likelihood", function(object, start, step, objective_tolerance,
+                                               gradient_tolerance) {
+  standardGeneric("maximize_log_likelihood")
+})
+
+#' @rdname maximize_log_likelihood
+setMethod(
+  "maximize_log_likelihood", signature(object = "cpp_eq_fiml"),
+  function(object, start, step, objective_tolerance, gradient_tolerance) {
+    if (is.null(start)) {
+      print_verbose(object@logger, "Initializing using linear regression estimations.")
+      start <- get_initializing_values(object)
+    }
+    names(start) <- get_likelihood_variables(object@system)
+    print_debug(
+      object@logger, "Using starting values: ",
+      paste(names(start), start, sep = " = ", collapse = ", ")
+    )
+
+    object@system@eq_fiml_gsl_impl$minimize(
+      start, step, objective_tolerance,
+      gradient_tolerance
+    )
   }
 )

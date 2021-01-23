@@ -17,6 +17,14 @@ optimization_method <- "BFGS"
 optimization_controls <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 est <- estimate(mdl, control = optimization_controls, method = optimization_method)
 
+print(bbmle::summary(est))
+mout <- maximize_log_likelihood(mdl, start = NULL, step = 1e-5,
+                              objective_tolerance = 1e-4,
+                              gradient_tolerance = 1e-3)
+print(mout)
+print(cbind(unlist(parameters[names(parameters) != c("nobs", "tobs")],
+              recursive=FALSE), est@coef, mout$optimizer))
+
 # Test
 test_that(paste0("Estimates of '", get_model_description(mdl), "' are accurate"), {
   test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)

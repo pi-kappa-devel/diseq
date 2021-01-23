@@ -539,7 +539,8 @@ void test_df(const gsl_vector *x, double step, void *params) {
   }
 }
 
-void minimize(gsl_eq_fiml_impl *obj, Rcpp::NumericVector &start) {
+Rcpp::List minimize(gsl_eq_fiml_impl *objective, Rcpp::NumericVector &start, double step,
+                    double objective_tolerance, double gradient_tolerance) {
   size_t iter = 0;
   int status;
 
@@ -553,7 +554,7 @@ void minimize(gsl_eq_fiml_impl *obj, Rcpp::NumericVector &start) {
   my_func.f = my_f;
   my_func.df = my_df;
   my_func.fdf = my_fdf;
-  my_func.params = obj;
+  my_func.params = objective;
 
   /* Starting point, x = (5,7) */
   x = gsl_vector_alloc(start.length());
@@ -564,43 +565,54 @@ void minimize(gsl_eq_fiml_impl *obj, Rcpp::NumericVector &start) {
   T = gsl_multimin_fdfminimizer_vector_bfgs2;
   s = gsl_multimin_fdfminimizer_alloc(T, start.length());
 
-  double step = 1e+4;
-  printf("step: %f", step);
-  gsl_multimin_fdfminimizer_set(s, &my_func, x, step, 1e-4);
+  // printf("step: %f", step);
+  gsl_multimin_fdfminimizer_set(s, &my_func, x, step, objective_tolerance);
 
-  gsl_vector *xx = gsl_vector_alloc(x->size);
+  // gsl_vector *xx = gsl_vector_alloc(x->size);
 
   do {
     iter++;
     status = gsl_multimin_fdfminimizer_iterate(s);
-    gsl_vector_memcpy(xx, x);
+    // gsl_vector_memcpy(xx, x);
     // test_df(xx, 1e-4, my_func.params);
 
     if (status) {
-      printf("status %d: %s\n", status, gsl_strerror(status));
-      printf("objective = %f\n", s->f);
+      // printf("status %d: %s\n", status, gsl_strerror(status));
+      // printf("objective = %f\n", s->f);
       break;
     }
 
-    status = gsl_multimin_test_gradient(s->gradient, 1e-3);
+    status = gsl_multimin_test_gradient(s->gradient, gradient_tolerance);
     // printf("gradient: ");
     // for (size_t i = 0; i < s->gradient->size; i++)
     //   printf("%10.5f ", s->gradient->data[i]);
     // printf("\n");
 
-    if (status == GSL_SUCCESS)
-      printf("Minimum found at:\n");
+    // if (status == GSL_SUCCESS)
+    //   printf("Minimum found at:\n");
 
-    printf("%5zu ", iter);
-    for (size_t i = 0; i < s->x->size; i++)
-      printf("%10.5f ", s->x->data[i]);
-    printf("%10.5f\n", s->f);
+    // printf("%5zu ", iter);
+    // for (size_t i = 0; i < s->x->size; i++)
+    //   printf("%10.5f ", s->x->data[i]);
+    // printf("%10.5f\n", s->f);
 
   } while (status == GSL_CONTINUE && iter < 1e+5);
 
+  Rcpp::NumericVector optimizer(s->x->size);
+  std::copy(std::execution::par_unseq, s->x->data, s->x->data + s->x->size, optimizer.begin());
+  Rcpp::NumericVector gradient(s->gradient->size);
+  std::copy(std::execution::par_unseq, s->gradient->data, s->gradient->data + s->gradient->size,
+            gradient.begin());
+  double log_likelihood = s->f;
+
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x);
-  printf("Exiting minimize.\n");
+
+  return Rcpp::List::create(
+      Rcpp::_["step"] = step, Rcpp::_["objective_tolerance"] = objective_tolerance,
+      Rcpp::_["gradient_tolerance"] = gradient_tolerance, Rcpp::_["status"] = status,
+      Rcpp::_["optimizer"] = optimizer, Rcpp::_["gradient"] = gradient,
+      Rcpp::_["log_likelihood"] = log_likelihood, Rcpp::_["iterations"] = iter);
 }
 
 RCPP_MODULE(diseq_module_2) {

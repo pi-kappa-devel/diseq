@@ -1,7 +1,7 @@
 [
 {
   "directory": "/home/ntelispak/Cloud/PowerFolders/Disequilibrium/src/diseq/src/",
-  "command": "/usr/bin/c++   -I/home/ntelispak/R/x86_64-redhat-linux-gnu-library/4.0/Rcpp/include/ -I/usr/include/R/ -O3 -std=gnu++2a -o RcppExports.o -c RcppExports.cpp",
+  "command": "/usr/bin/c++   -I/home/ntelispak/R/x86_64-redhat-linux-gnu-library/4.0/Rcpp/include/ -I/home/ntelispak/R/x86_64-redhat-linux-gnu-library/4.0/RcppGSL/include/ -I/usr/include/R/ -O3 -std=gnu++2a -o RcppExports.o -c RcppExports.cpp",
   "file": "/home/ntelispak/Cloud/PowerFolders/Disequilibrium/src/diseq/src//RcppExports.cpp"
 }
 ]
