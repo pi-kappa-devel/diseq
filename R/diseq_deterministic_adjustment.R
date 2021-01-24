@@ -1,4 +1,4 @@
-#' @include diseq_base.R
+#' @include disequilibrium_model.R
 #' @include derivatives_deterministic_adjustment.R
 
 #' @title Disequilibrium model with deterministic price dynamics.
@@ -33,12 +33,12 @@
 #' @export
 setClass(
   "diseq_deterministic_adjustment",
-  contains = "diseq_base",
+  contains = "disequilibrium_model",
   representation(),
   prototype()
 )
 
-#' @describeIn initialize_model_base Disequilibrium model with deterministic price
+#' @describeIn initialize_market_model Disequilibrium model with deterministic price
 #'   adjustment constructor
 setMethod(
   "initialize", "diseq_deterministic_adjustment",

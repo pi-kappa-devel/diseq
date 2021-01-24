@@ -1,14 +1,14 @@
 ^diseq\.Rproj$
 ^\.Rproj\.user$
 ^cran-comments\.md$
-^dev$
+^rsc$
 ^README\.Rmd$
-^doc$
 ^Meta$
 ^CRAN-RELEASE$
 ^.Rhistory
 ^tests/testthat/.+\.rda$
 ^tests/testthat/devel-environment$
 ^README.+\.html$
+^src/compile_commands.json$
 ^\.clang-format$
 ^\.lintr$

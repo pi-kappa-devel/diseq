@@ -2,5 +2,5 @@
 *.so
 *.dll
 
-.clang-format
+compile_commands.json
 .clangd/*

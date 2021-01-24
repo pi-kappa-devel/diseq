@@ -18,8 +18,6 @@ vignettes/*.pdf
 README*.html
 
 # Development files
-dev/
-doc
 Meta
 tests/testthat/*.rda
 tests/testthat/devel-environment

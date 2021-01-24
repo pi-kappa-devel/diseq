@@ -1,12 +1,12 @@
-#include <Rcpp.h>
-#include <RcppGSL.h>
-
 #include "gsl/gsl_multimin.h"
 #include "gsl/gsl_vector.h"
+
 #include <execution>
 #include <numeric>
 
-class gsl_eq_fiml_impl {
+#include <Rcpp.h>
+
+class gsl_equilibrium_model_impl {
 public:
   Rcpp::CharacterVector demand_independent_variables;
   std::string demand_price_variable;
@@ -27,6 +27,7 @@ public:
   size_t supply_control_variables_size;
   size_t supply_variance_variable_size;
   size_t correlation_variable_size;
+  size_t independent_variable_size;
   size_t gradient_size;
 
   gsl_vector *alphad_betad;
@@ -92,7 +93,7 @@ public:
 
   bool has_correlated_shocks{false};
 
-  gsl_eq_fiml_impl(Rcpp::S4 system) {
+  gsl_equilibrium_model_impl(Rcpp::S4 system) {
     Rcpp::Environment diseq = Rcpp::Environment::namespace_env("diseq");
     Rcpp::S4 demand = system.slot("demand");
     Rcpp::S4 supply = system.slot("supply");
@@ -191,12 +192,13 @@ public:
     h_P2.assign(Xd.size(), 0.0);
     h_Q2.assign(Xd.size(), 0.0);
 
-    gradient_size = demand_independent_variables_size + supply_independent_variables_size +
-                    demand_variance_variable_size + supply_variance_variable_size +
-                    correlation_variable_size;
+    independent_variable_size =
+        demand_independent_variables_size + supply_independent_variables_size;
+    gradient_size = independent_variable_size + demand_variance_variable_size +
+                    supply_variance_variable_size + correlation_variable_size;
   }
 
-  ~gsl_eq_fiml_impl() {
+  ~gsl_equilibrium_model_impl() {
     gsl_vector_free(alphad_betad);
     gsl_vector_free(alphas_betas);
 
@@ -281,7 +283,7 @@ public:
     // Rcpp::Rcout << "rho = " << rho << std::endl;
   }
 
-  void system_eq_fiml_set_parameters(const gsl_vector *v) {
+  void system_equilibrium_model_set_parameters(const gsl_vector *v) {
     system_base_set_parameters(v);
 
     std::ranges::iota_view row_indices{size_t(0), Xd.size()};
@@ -342,7 +344,9 @@ public:
       h_Q2[r] = std::pow(h_Q[r], 2);
     });
 
-    sum_llh = std::reduce(std::execution::par_unseq, llh.begin(), llh.end(), 0.0);
+    // Floating point addition is not commutative. For deterministic output the summation has to
+    // be performed in a prespecified order.
+    sum_llh = std::reduce(std::execution::seq, llh.begin(), llh.end());
   }
 
   void calculate_gradient(gsl_vector *df) {
@@ -437,34 +441,22 @@ public:
                        (delta2 * sigma_P2 * sigma_Q2);
     });
 
-    size_t offset{0};
-    gsl_vector_set(df, offset++,
-                   -std::reduce(std::execution::par_unseq, partial_alpha_d.begin(),
-                                partial_alpha_d.end(), 0.0));
-    for (size_t count = 0; count < demand_control_variables_size; ++count) {
-      gsl_vector_set(df, offset++,
-                     -std::reduce(std::execution::par_unseq, partial_beta_d[count].begin(),
-                                  partial_beta_d[count].end(), 0.0));
+    // Floating point addition is not commutative. For deterministic output the summation has to
+    // be performed in a prespecified order.
+    std::memset(df->data, 0, sizeof(df->data[0]) * df->size);
+    for (size_t r = 0; r < partial_alpha_d.size(); ++r) {
+      df->data[0] -= partial_alpha_d[r];
+      for (size_t c = 0; c < demand_control_variables_size; ++c) {
+        df->data[c + 1] -= partial_beta_d[c][r];
+      }
+      df->data[demand_independent_variables_size] -= partial_alpha_s[r];
+      for (size_t c = 0; c < supply_control_variables_size; ++c) {
+        df->data[c + demand_independent_variables_size + 1] -= partial_beta_s[c][r];
+      }
+      df->data[independent_variable_size] -= partial_var_d[r];
+      df->data[independent_variable_size + 1] -= partial_var_s[r];
+      df->data[independent_variable_size + 2] -= partial_rho[r];
     }
-
-    gsl_vector_set(df, offset++,
-                   -std::reduce(std::execution::par_unseq, partial_alpha_s.begin(),
-                                partial_alpha_s.end(), 0.0));
-    for (size_t count = 0; count < supply_control_variables_size; ++count) {
-      gsl_vector_set(df, offset++,
-                     -std::reduce(std::execution::par_unseq, partial_beta_s[count].begin(),
-                                  partial_beta_s[count].end(), 0.0));
-    }
-
-    gsl_vector_set(
-        df, offset++,
-        -std::reduce(std::execution::par_unseq, partial_var_d.begin(), partial_var_d.end(), 0.0));
-    gsl_vector_set(
-        df, offset++,
-        -std::reduce(std::execution::par_unseq, partial_var_s.begin(), partial_var_s.end(), 0.0));
-    gsl_vector_set(
-        df, offset++,
-        -std::reduce(std::execution::par_unseq, partial_rho.begin(), partial_rho.end(), 0.0));
   }
 };
 
@@ -476,8 +468,8 @@ double my_f(const gsl_vector *v, void *params) {
   //   printf("%10.5f ", v->data[i]);
   // printf("\n");
 
-  gsl_eq_fiml_impl *obj = static_cast<gsl_eq_fiml_impl *>(params);
-  obj->system_eq_fiml_set_parameters(v);
+  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  obj->system_equilibrium_model_set_parameters(v);
   // printf("llh = %f\n", -obj->sum_llh);
 
   return -obj->sum_llh;
@@ -490,8 +482,8 @@ void my_df(const gsl_vector *v, void *params, gsl_vector *df) {
   //   printf("%10.5f ", v->data[i]);
   // printf("\n");
 
-  gsl_eq_fiml_impl *obj = static_cast<gsl_eq_fiml_impl *>(params);
-  obj->system_eq_fiml_set_parameters(v);
+  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  obj->system_equilibrium_model_set_parameters(v);
   obj->calculate_gradient(df);
 }
 
@@ -502,8 +494,8 @@ void my_fdf(const gsl_vector *v, void *params, double *f, gsl_vector *df) {
   //   printf("%10.5f ", v->data[i]);
   // printf("\n");
 
-  gsl_eq_fiml_impl *obj = static_cast<gsl_eq_fiml_impl *>(params);
-  obj->system_eq_fiml_set_parameters(v);
+  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  obj->system_equilibrium_model_set_parameters(v);
 
   *f = -obj->sum_llh;
   obj->calculate_gradient(df);
@@ -539,7 +531,7 @@ void test_df(const gsl_vector *x, double step, void *params) {
   }
 }
 
-Rcpp::List minimize(gsl_eq_fiml_impl *objective, Rcpp::NumericVector &start, double step,
+Rcpp::List minimize(gsl_equilibrium_model_impl *objective, Rcpp::NumericVector &start, double step,
                     double objective_tolerance, double gradient_tolerance) {
   size_t iter = 0;
   int status;
@@ -599,9 +591,9 @@ Rcpp::List minimize(gsl_eq_fiml_impl *objective, Rcpp::NumericVector &start, dou
   } while (status == GSL_CONTINUE && iter < 1e+5);
 
   Rcpp::NumericVector optimizer(s->x->size);
-  std::copy(std::execution::par_unseq, s->x->data, s->x->data + s->x->size, optimizer.begin());
+  std::copy(std::execution::seq, s->x->data, s->x->data + s->x->size, optimizer.begin());
   Rcpp::NumericVector gradient(s->gradient->size);
-  std::copy(std::execution::par_unseq, s->gradient->data, s->gradient->data + s->gradient->size,
+  std::copy(std::execution::seq, s->gradient->data, s->gradient->data + s->gradient->size,
             gradient.begin());
   double log_likelihood = s->f;
 
@@ -615,15 +607,15 @@ Rcpp::List minimize(gsl_eq_fiml_impl *objective, Rcpp::NumericVector &start, dou
       Rcpp::_["log_likelihood"] = log_likelihood, Rcpp::_["iterations"] = iter);
 }
 
-RCPP_MODULE(diseq_module_2) {
-  Rcpp::class_<gsl_eq_fiml_impl>("gsl_eq_fiml_impl")
+RCPP_MODULE(diseq_module) {
+  Rcpp::class_<gsl_equilibrium_model_impl>("gsl_equilibrium_model_impl")
       .constructor<Rcpp::S4>()
       .method("minimize", &minimize)
-      .field("partial_alpha_d", &gsl_eq_fiml_impl::partial_alpha_d)
-      .field("partial_beta_d", &gsl_eq_fiml_impl::partial_beta_d)
-      .field("partial_alpha_s", &gsl_eq_fiml_impl::partial_alpha_s)
-      .field("partial_beta_s", &gsl_eq_fiml_impl::partial_beta_s)
-      .field("partial_var_d", &gsl_eq_fiml_impl::partial_var_d)
-      .field("partial_var_s", &gsl_eq_fiml_impl::partial_var_s)
-      .field("partial_rho", &gsl_eq_fiml_impl::partial_rho);
+      .field("partial_alpha_d", &gsl_equilibrium_model_impl::partial_alpha_d)
+      .field("partial_beta_d", &gsl_equilibrium_model_impl::partial_beta_d)
+      .field("partial_alpha_s", &gsl_equilibrium_model_impl::partial_alpha_s)
+      .field("partial_beta_s", &gsl_equilibrium_model_impl::partial_beta_s)
+      .field("partial_var_d", &gsl_equilibrium_model_impl::partial_var_d)
+      .field("partial_var_s", &gsl_equilibrium_model_impl::partial_var_s)
+      .field("partial_rho", &gsl_equilibrium_model_impl::partial_rho);
 }

@@ -1,4 +1,4 @@
-#' @include diseq_base.R
+#' @include disequilibrium_model.R
 
 #' @title Disequilibrium model with stochastic price dynamics.
 #'
@@ -33,12 +33,12 @@
 #' @export
 setClass(
   "diseq_stochastic_adjustment",
-  contains = "diseq_base",
+  contains = "disequilibrium_model",
   representation(),
   prototype()
 )
 
-#' @describeIn initialize_model_base Disequilibrium model with stochastic price
+#' @describeIn initialize_market_model Disequilibrium model with stochastic price
 #'   adjustment constructor
 setMethod(
   "initialize", "diseq_stochastic_adjustment",
@@ -72,7 +72,7 @@ setMethod(
 )
 
 setMethod(
-  "get_initializing_values", signature(object = "diseq_stochastic_adjustment"),
+  "calculate_initializing_values", signature(object = "diseq_stochastic_adjustment"),
   function(object) {
     start <- callNextMethod(object)
 

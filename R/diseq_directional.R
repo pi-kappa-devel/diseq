@@ -1,4 +1,4 @@
-#' @include diseq_base.R
+#' @include disequilibrium_model.R
 #' @include derivatives_directional.R
 
 #' @title Directional disequilibrium model with sample separation.
@@ -36,12 +36,12 @@
 #' @export
 setClass(
   "diseq_directional",
-  contains = "diseq_base",
+  contains = "disequilibrium_model",
   representation(),
   prototype()
 )
 
-#' @describeIn initialize_model_base Directional disequilibrium model base constructor
+#' @describeIn initialize_market_model Directional disequilibrium model base constructor
 setMethod(
   "initialize", "diseq_directional",
   function(
