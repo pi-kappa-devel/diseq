@@ -1,15 +1,15 @@
-#' @include model_base.R
+#' @include market_model.R
 
 #' @title Equilibrium model base class
 setClass(
-  "diseq_base",
-  contains = "model_base",
+  "disequilibrium_model",
+  contains = "market_model",
   representation(),
   prototype()
 )
 
 setMethod(
-  "initialize", "diseq_base",
+  "initialize", "disequilibrium_model",
   function(
            .Object,
            model_type_string, verbose,
@@ -227,14 +227,6 @@ setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable)
   standardGeneric("get_marginal_effect_at_mean")
 })
 
-setGeneric("gradient", function(object, parameters) {
-  standardGeneric("gradient")
-})
-
-setGeneric("hessian", function(object, parameters) {
-  standardGeneric("hessian")
-})
-
 #' Checks if an observation is in a shortage stage.
 #'
 #' Returns TRUE for the indices at which the shortages of the market are non-negative, i.e. the
@@ -287,79 +279,14 @@ setMethod(
   }
 )
 
-#' @describeIn estimate Disequilibrium model estimation.
-#' @param use_numerical_gradient If true, the gradient is calculated numerically. By default,
-#' all the models are estimated using the analytic expressions of their likelihoods'
-#' gradients.
-#' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
-#' the numerically approximated Hessian. Calculated Hessians are available for the basic
-#' and directional models.
-#' @param use_heteroscedasticity_consistent_errors If true, the variance-covariance matrix is
-#' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
-#' @param cluster_errors_by A vector with names of variables belonging in the data of the
-#' model. If the vector is supplied, the variance-covariance matrix is calculated by
-#' grouping the score matrix based on the passed variables.
-setMethod(
-  "estimate", signature(object = "diseq_base"),
-  function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE,
-           use_heteroscedasticity_consistent_errors = FALSE, cluster_errors_by = NA, ...) {
-    va_args <- list(...)
-
-    va_args$skip.hessian <- !use_numerical_hessian
-
-    if (is.null(va_args$start)) {
-      print_verbose(object@logger, "Initializing using linear regression estimations.")
-      va_args$start <- get_initializing_values(object)
-    }
-    names(va_args$start) <- get_likelihood_variables(object@system)
-    print_debug(
-      object@logger, "Using starting values: ",
-      paste(names(va_args$start), va_args$start, sep = " = ", collapse = ", ")
-    )
-
-    if (is.null(va_args$method)) {
-      va_args$method <- "BFGS"
-    }
-
-    va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
-    bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
-    if (!use_numerical_gradient) {
-      va_args$gr <- function(...) gradient(object, ...)
-      bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
-    }
-
-    est <- do.call(bbmle::mle2, va_args)
-    est@call.orig <- call("bbmle::mle2", va_args)
-
-    if ((object@model_type_string %in% c("Basic", "Directional")) && va_args$skip.hessian) {
-      print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
-      est@details$hessian <- hessian(object, est@coef)
-      tryCatch(
-        est@vcov <- MASS::ginv(est@details$hessian),
-        error = function(e) print_warning(object@logger, e$message)
-      )
-    }
-
-    if (use_heteroscedasticity_consistent_errors) {
-      est <- set_heteroscedasticity_consistent_errors(object, est)
-    }
-
-    if (!is.na(cluster_errors_by)) {
-      est <- set_clustered_errors(object, est, cluster_errors_by)
-    }
-
-    est
-  }
-)
-
-setMethod("get_shortage_variance", signature(object = "diseq_base"), function(object) {
+setMethod("get_shortage_variance", signature(object = "disequilibrium_model"), function(object) {
   sqrt(object@system@demand@var + object@system@supply@var - 2 * object@system@demand@sigma *
     object@system@supply@sigma * object@system@rho)
 })
 
 #' @rdname get_normalized_shortages
 setMethod(
-  "get_normalized_shortages", signature(object = "diseq_base"),
+  "get_normalized_shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     (
@@ -370,7 +297,7 @@ setMethod(
 )
 
 #' @rdname get_relative_shortages
-setMethod("get_relative_shortages", signature(object = "diseq_base"), function(object, parameters) {
+setMethod("get_relative_shortages", signature(object = "disequilibrium_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
   (
     object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
@@ -380,14 +307,14 @@ setMethod("get_relative_shortages", signature(object = "diseq_base"), function(o
 
 #' @rdname get_shortage_probabilities
 setMethod(
-  "get_shortage_probabilities", signature(object = "diseq_base"),
+  "get_shortage_probabilities", signature(object = "disequilibrium_model"),
   function(object, parameters) {
     pnorm(get_normalized_shortages(object, parameters))
   }
 )
 
 setMethod(
-  "get_scaled_effect", signature(object = "diseq_base"),
+  "get_scaled_effect", signature(object = "disequilibrium_model"),
   function(object, estimation, variable, scale_function) {
     object@system <- set_parameters(object@system, estimation@coef)
     dvar <- paste0(object@system@demand@variable_prefix, variable)
@@ -415,7 +342,7 @@ setMethod(
 
 #' @rdname get_mean_marginal_effect
 setMethod(
-  "get_mean_marginal_effect", signature(object = "diseq_base"),
+  "get_mean_marginal_effect", signature(object = "disequilibrium_model"),
   function(object, estimation, variable) {
     get_scaled_effect(
       object, estimation, variable,
@@ -426,7 +353,7 @@ setMethod(
 
 #' @rdname get_marginal_effect_at_mean
 setMethod(
-  "get_marginal_effect_at_mean", signature(object = "diseq_base"),
+  "get_marginal_effect_at_mean", signature(object = "disequilibrium_model"),
   function(object, estimation, variable) {
     get_scaled_effect(
       object, estimation, variable,
@@ -437,7 +364,7 @@ setMethod(
 
 #' @rdname has_shortage
 setMethod(
-  "has_shortage", signature(object = "diseq_base"),
+  "has_shortage", signature(object = "disequilibrium_model"),
   function(object, parameters) {
     get_normalized_shortages(object, parameters) >= 0
   }

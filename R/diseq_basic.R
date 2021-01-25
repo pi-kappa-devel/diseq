@@ -1,4 +1,4 @@
-#' @include diseq_base.R
+#' @include disequilibrium_model.R
 #' @include derivatives_basic.R
 
 #' @title Basic disequilibrium model with unknown sample separation.
@@ -29,12 +29,12 @@
 #' @export
 setClass(
   "diseq_basic",
-  contains = "diseq_base",
+  contains = "disequilibrium_model",
   representation(),
   prototype()
 )
 
-#' @describeIn initialize_model_base Basic disequilibrium model base constructor
+#' @describeIn initialize_market_model Basic disequilibrium model base constructor
 setMethod(
   "initialize", "diseq_basic",
   function(

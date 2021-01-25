@@ -37,8 +37,8 @@ the documentation of the classes for initialization details.
 ### Equilibrium model classes:
 
 \describe{
-  \item{\code{\linkS4class{eq_2sls}}}{Equilibrium two-stage least square model}
-  \item{\code{\linkS4class{eq_fiml}}}{Equilibrium full information maximum likelihood}
+  \item{\code{\linkS4class{equilibrium_model}}}{Equilibrium model that can be estimated
+using full information maximum likelihood or two-stage least squares}
 }
 
 ### Disequilibrium model classes:

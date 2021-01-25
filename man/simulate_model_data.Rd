@@ -58,7 +58,7 @@ simulate_model_data(
 )
 }
 \arguments{
-\item{model_string}{Model type. It should be among \code{eq_2sls}, \code{eq_fiml},
+\item{model_string}{Model type. It should be among \code{equilibrium_model},
 \code{diseq_basic}, \code{diseq_directional}, \code{diseq_deterministic_adjustment}, and
 \code{diseq_stochastic_adjustment}.}
 

@@ -32,8 +32,8 @@
 #' ### Equilibrium model classes:
 #'
 #' \describe{
-#'   \item{\code{\linkS4class{eq_2sls}}}{Equilibrium two-stage least square model}
-#'   \item{\code{\linkS4class{eq_fiml}}}{Equilibrium full information maximum likelihood}
+#'   \item{\code{\linkS4class{equilibrium_model}}}{Equilibrium model that can be estimated
+#' using full information maximum likelihood or two-stage least squares}
 #' }
 #'
 #' ### Disequilibrium model classes:
@@ -52,3 +52,11 @@
 #' @docType package
 #' @name diseq
 NULL
+
+## usethis namespace: start
+#' @useDynLib diseq, .registration = TRUE
+## usethis namespace: end
+NULL
+
+#' @importFrom Rcpp loadModule
+Rcpp::loadModule("diseq_module", TRUE)

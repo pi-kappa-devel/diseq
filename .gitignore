@@ -19,8 +19,6 @@ vignettes/*.pdf
 vignettes/*.R
 
 # Development files
-dev/
-doc
 Meta
 tests/testthat/*.rda
 tests/testthat/devel-environment

@@ -510,7 +510,7 @@ setMethod(
 #' Returns a data \code{tibble} with simulated data from a generating process that matches the
 #' passed model string. By default, the simulated observations of the controls are drawn from a
 #' normal distribution.
-#' @param model_string Model type. It should be among \code{eq_2sls}, \code{eq_fiml},
+#' @param model_string Model type. It should be among \code{equilibrium_model},
 #'   \code{diseq_basic}, \code{diseq_directional}, \code{diseq_deterministic_adjustment}, and
 #'   \code{diseq_stochastic_adjustment}.
 #' @param nobs Number of simulated entities.
@@ -564,7 +564,7 @@ setMethod(
            sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
            seed,
            price_generator, control_generator) {
-    if (model_string %in% c("eq_2sls", "eq_fiml")) {
+    if (model_string == "equilibrium_model") {
       sim_mdl <- new(
         "simulated_equilibrium_model",
         nobs, tobs,
@@ -697,16 +697,7 @@ setMethod(
     use_correlated_shocks <- TRUE
 
 
-    if (model_string == "eq_2sls") {
-      model <- new(
-        model_string,
-        key_columns,
-        quantity_column, price_column, demand_specification, supply_specification,
-        sdt,
-        verbose = verbose
-      )
-    }
-    else if (model_string %in% c("eq_fiml", "diseq_basic")) {
+    if (model_string %in% c("equilibrium_model", "diseq_basic")) {
       model <- new(
         model_string,
         key_columns,
@@ -742,21 +733,9 @@ setMethod(
   }
 )
 
-simulate_eq_2sls_model <- function(parameters, seed, verbose) {
+simulate_equilibrium_model_model <- function(parameters, seed, verbose) {
   simulate_model(
-    "eq_2sls", parameters$nobs, parameters$tobs,
-    parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
-    parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
-    NA, NA, c(NA),
-    sigma_d = 1, sigma_s = 1, sigma_p = NA,
-    rho_ds = 0, rho_dp = NA, rho_sp = NA,
-    seed = seed, verbose = verbose
-  )
-}
-
-simulate_eq_fiml_model <- function(parameters, seed, verbose) {
-  simulate_model(
-    "eq_fiml", parameters$nobs, parameters$tobs,
+    "equilibrium_model", parameters$nobs, parameters$tobs,
     parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
     parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
     NA, NA, c(NA),

@@ -31,7 +31,10 @@ Imports:
     rlang (>= 0.2.1),
     systemfit (>= 1.1),
     tibble (>= 1.4.2),
-    tidyr (>= 1.0.2)
+    tidyr (>= 1.0.2),
+    Rcpp,
+    RcppGSL,
+    RcppParallel
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -62,13 +65,15 @@ Collate:
     'derivatives_stochastic_adjustment.R'
     'diseq.R'
     'model_logger.R'
-    'model_base.R'
-    'diseq_base.R'
+    'market_model.R'
+    'disequilibrium_model.R'
     'diseq_basic.R'
     'diseq_deterministic_adjustment.R'
     'diseq_directional.R'
     'diseq_stochastic_adjustment.R'
-    'eq_base.R'
-    'eq_2sls.R'
     'eq_fiml.R'
     'model_simulation.R'
+LinkingTo: 
+    Rcpp
+SystemRequirements:
+    C++20
