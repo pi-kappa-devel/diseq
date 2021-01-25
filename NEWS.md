@@ -1,3 +1,7 @@
+# diseq 0.1.0.9004
+
+* Adjusted file names so that they are consistent with the  API changes.
+
 # diseq 0.1.0.9003
 
 * Fixed `M1mac` issues. Adjusted README to API changes. Replaced `href` with `doi` whenever relevant. 

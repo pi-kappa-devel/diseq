@@ -2,10 +2,6 @@
 #' @include derivatives_fiml.R
 #' @importFrom systemfit systemfit
 
-
-setOldClass(c("systemfit"))
-
-
 #' @title Equilibrium model estimated using full-information maximum likelihood.
 #'
 #' @description The equilibrium model consists of thee equations. The demand, the
@@ -182,8 +178,8 @@ setMethod(
     function(object, start, step, objective_tolerance, gradient_tolerance) {
         start <- prepare_initializing_values(object, NULL)
 
-        equilibrium_model_gsl_impl <- new(gsl_equilibrium_model_impl, object@system)
-        equilibrium_model_gsl_impl$minimize(
+        cpp_model <- new(cpp_equilibrium_model, object@system)
+        cpp_model$minimize(
             start, step, objective_tolerance,
             gradient_tolerance
         )

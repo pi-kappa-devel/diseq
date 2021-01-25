@@ -16,7 +16,7 @@
 
 static gsl_error_handler_t *defaul_gsl_error_handler = gsl_set_error_handler_off();
 
-class gsl_equilibrium_model_impl {
+class equilibrium_model {
 public:
   Rcpp::CharacterVector demand_independent_variables;
   std::string demand_price_variable;
@@ -106,7 +106,7 @@ public:
   std::vector<size_t> row_indices;
   std::vector<size_t> col_indices;
 
-  gsl_equilibrium_model_impl(Rcpp::S4 system) {
+  equilibrium_model(Rcpp::S4 system) {
     Rcpp::Environment diseq = Rcpp::Environment::namespace_env("diseq");
     Rcpp::S4 demand = system.slot("demand");
     Rcpp::S4 supply = system.slot("supply");
@@ -214,7 +214,7 @@ public:
     std::iota(col_indices.begin(), col_indices.end(), 0);
   }
 
-  ~gsl_equilibrium_model_impl() {
+  ~equilibrium_model() {
     gsl_vector_free(alphad_betad);
     gsl_vector_free(alphas_betas);
 
@@ -460,20 +460,20 @@ public:
 };
 
 double my_f(const gsl_vector *v, void *params) {
-  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  equilibrium_model *obj = static_cast<equilibrium_model *>(params);
   obj->system_equilibrium_model_set_parameters(v);
 
   return -obj->sum_llh;
 }
 
 void my_df(const gsl_vector *v, void *params, gsl_vector *df) {
-  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  equilibrium_model *obj = static_cast<equilibrium_model *>(params);
   obj->system_equilibrium_model_set_parameters(v);
   obj->calculate_gradient(df);
 }
 
 void my_fdf(const gsl_vector *v, void *params, double *f, gsl_vector *df) {
-  gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
+  equilibrium_model *obj = static_cast<equilibrium_model *>(params);
   obj->system_equilibrium_model_set_parameters(v);
 
   *f = -obj->sum_llh;
@@ -504,7 +504,7 @@ std::vector<double> test_df(const gsl_vector *x, double step, void *params) {
   return qs;
 }
 
-Rcpp::List minimize(gsl_equilibrium_model_impl *model, Rcpp::NumericVector &start, double step,
+Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double step,
                     double objective_tolerance, double gradient_tolerance) {
   size_t iter = 0;
   int status;
@@ -565,7 +565,7 @@ Rcpp::List minimize(gsl_equilibrium_model_impl *model, Rcpp::NumericVector &star
 }
 
 RCPP_MODULE(diseq_module) {
-  Rcpp::class_<gsl_equilibrium_model_impl>("gsl_equilibrium_model_impl")
+  Rcpp::class_<equilibrium_model>("cpp_equilibrium_model")
       .constructor<Rcpp::S4>()
       .method("minimize", &minimize);
 }
