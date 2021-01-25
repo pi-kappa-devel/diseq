@@ -35,10 +35,10 @@
 #' }
 #' @export
 setClass(
-  "diseq_directional",
-  contains = "disequilibrium_model",
-  representation(),
-  prototype()
+    "diseq_directional",
+    contains = "disequilibrium_model",
+    representation(),
+    prototype()
 )
 
 #' @describeIn initialize_market_model Directional disequilibrium model base constructor

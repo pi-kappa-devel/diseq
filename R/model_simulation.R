@@ -555,91 +555,91 @@ setGeneric(
 
 #' @rdname simulate_model_data
 setMethod(
-  "simulate_model_data", signature(),
-  function(
-           model_string, nobs, tobs,
-           alpha_d, beta_d0, beta_d, eta_d,
-           alpha_s, beta_s0, beta_s, eta_s,
-           gamma, beta_p0, beta_p,
-           sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
-           seed,
-           price_generator, control_generator) {
-    if (model_string == "equilibrium_model") {
-      sim_mdl <- new(
-        "simulated_equilibrium_model",
-        nobs, tobs,
-        alpha_d, beta_d0, beta_d, eta_d,
-        alpha_s, beta_s0, beta_s, eta_s,
-        sigma_d, sigma_s, rho_ds,
-        seed,
-        price_generator, control_generator
-      )
-      stopifnot(abs(sim_mdl@simulation_tbl$XD) < sqrt(.Machine$double.eps))
-    }
-    else if (model_string == "diseq_basic") {
-      sim_mdl <- new(
-        "simulated_basic_model",
-        nobs, tobs,
-        alpha_d, beta_d0, beta_d, eta_d,
-        alpha_s, beta_s0, beta_s, eta_s,
-        sigma_d, sigma_s, rho_ds,
-        seed,
-        price_generator, control_generator
-      )
-      xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
-      stopifnot(xd_share < 0.9 && xd_share > 0.1)
-    }
-    else if (model_string == "diseq_directional") {
-      sim_mdl <- new(
-        "simulated_directional_model",
-        nobs, tobs,
-        alpha_d, beta_d0, beta_d, eta_d,
-        alpha_s, beta_s0, beta_s, eta_s,
-        sigma_d, sigma_s, rho_ds,
-        seed,
-        price_generator, control_generator
-      )
-      stopifnot(sim_mdl@simulation_tbl$DP * sim_mdl@simulation_tbl$XD >= 0)
-      xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
-      stopifnot(xd_share < 0.9 && xd_share > 0.1)
-    }
-    else if (model_string == "diseq_deterministic_adjustment") {
-      sim_mdl <- new(
-        "simulated_deterministic_adjustment_model",
-        nobs, tobs,
-        alpha_d, beta_d0, beta_d, eta_d,
-        alpha_s, beta_s0, beta_s, eta_s,
-        gamma,
-        sigma_d, sigma_s, rho_ds,
-        seed,
-        price_generator, control_generator
-      )
-      stopifnot(abs(
-        sim_mdl@gamma * sim_mdl@simulation_tbl$DP - sim_mdl@simulation_tbl$XD
-      ) < sqrt(.Machine$double.eps))
-      xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
-      stopifnot(xd_share < 0.9 && xd_share > 0.1)
-    }
-    else if (model_string == "diseq_stochastic_adjustment") {
-      sim_mdl <- new(
-        "simulated_stochastic_adjustment_model",
-        nobs, tobs,
-        alpha_d, beta_d0, beta_d, eta_d,
-        alpha_s, beta_s0, beta_s, eta_s,
-        gamma, beta_p0, beta_p,
-        sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
-        seed,
-        price_generator, control_generator
-      )
-      xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
-      stopifnot(xd_share < 0.9 && xd_share > 0.1)
-    }
-    else {
-      stop("Unhandled model type.")
-    }
+    "simulate_model_data", signature(),
+    function(
+             model_string, nobs, tobs,
+             alpha_d, beta_d0, beta_d, eta_d,
+             alpha_s, beta_s0, beta_s, eta_s,
+             gamma, beta_p0, beta_p,
+             sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
+             seed,
+             price_generator, control_generator) {
+        if (model_string == "equilibrium_model") {
+            sim_mdl <- new(
+                "simulated_equilibrium_model",
+                nobs, tobs,
+                alpha_d, beta_d0, beta_d, eta_d,
+                alpha_s, beta_s0, beta_s, eta_s,
+                sigma_d, sigma_s, rho_ds,
+                seed,
+                price_generator, control_generator
+            )
+            stopifnot(abs(sim_mdl@simulation_tbl$XD) < sqrt(.Machine$double.eps))
+        }
+        else if (model_string == "diseq_basic") {
+            sim_mdl <- new(
+                "simulated_basic_model",
+                nobs, tobs,
+                alpha_d, beta_d0, beta_d, eta_d,
+                alpha_s, beta_s0, beta_s, eta_s,
+                sigma_d, sigma_s, rho_ds,
+                seed,
+                price_generator, control_generator
+            )
+            xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
+            stopifnot(xd_share < 0.9 && xd_share > 0.1)
+        }
+        else if (model_string == "diseq_directional") {
+            sim_mdl <- new(
+                "simulated_directional_model",
+                nobs, tobs,
+                alpha_d, beta_d0, beta_d, eta_d,
+                alpha_s, beta_s0, beta_s, eta_s,
+                sigma_d, sigma_s, rho_ds,
+                seed,
+                price_generator, control_generator
+            )
+            stopifnot(sim_mdl@simulation_tbl$DP * sim_mdl@simulation_tbl$XD >= 0)
+            xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
+            stopifnot(xd_share < 0.9 && xd_share > 0.1)
+        }
+        else if (model_string == "diseq_deterministic_adjustment") {
+            sim_mdl <- new(
+                "simulated_deterministic_adjustment_model",
+                nobs, tobs,
+                alpha_d, beta_d0, beta_d, eta_d,
+                alpha_s, beta_s0, beta_s, eta_s,
+                gamma,
+                sigma_d, sigma_s, rho_ds,
+                seed,
+                price_generator, control_generator
+            )
+            stopifnot(abs(
+                sim_mdl@gamma * sim_mdl@simulation_tbl$DP - sim_mdl@simulation_tbl$XD
+            ) < sqrt(.Machine$double.eps))
+            xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
+            stopifnot(xd_share < 0.9 && xd_share > 0.1)
+        }
+        else if (model_string == "diseq_stochastic_adjustment") {
+            sim_mdl <- new(
+                "simulated_stochastic_adjustment_model",
+                nobs, tobs,
+                alpha_d, beta_d0, beta_d, eta_d,
+                alpha_s, beta_s0, beta_s, eta_s,
+                gamma, beta_p0, beta_p,
+                sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
+                seed,
+                price_generator, control_generator
+            )
+            xd_share <- sum(sim_mdl@simulation_tbl$XD > 0) / nrow(sim_mdl@simulation_tbl)
+            stopifnot(xd_share < 0.9 && xd_share > 0.1)
+        }
+        else {
+            stop("Unhandled model type.")
+        }
 
-    sim_mdl@simulation_tbl
-  }
+        sim_mdl@simulation_tbl
+    }
 )
 
 
@@ -658,91 +658,91 @@ setGeneric(
 
 
 setMethod(
-  "simulate_model", signature(),
-  function(
-           model_string, nobs, tobs,
-           alpha_d, beta_d0, beta_d, eta_d,
-           alpha_s, beta_s0, beta_s, eta_s,
-           gamma, beta_p0, beta_p,
-           sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
-           seed, verbose) {
-    sdt <- simulate_model_data(
-      model_string, nobs, tobs,
-      alpha_d, beta_d0, beta_d, eta_d,
-      alpha_s, beta_s0, beta_s, eta_s,
-      gamma, beta_p0, beta_p,
-      sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
-      seed
-    )
+    "simulate_model", signature(),
+    function(
+             model_string, nobs, tobs,
+             alpha_d, beta_d0, beta_d, eta_d,
+             alpha_s, beta_s0, beta_s, eta_s,
+             gamma, beta_p0, beta_p,
+             sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
+             seed, verbose) {
+        sdt <- simulate_model_data(
+            model_string, nobs, tobs,
+            alpha_d, beta_d0, beta_d, eta_d,
+            alpha_s, beta_s0, beta_s, eta_s,
+            gamma, beta_p0, beta_p,
+            sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
+            seed
+        )
 
-    key_columns <- c("id", "date")
-    time_column <- c("date")
-    quantity_column <- "Q"
-    price_column <- "P"
-    demand_specification <- paste(
-      price_column, paste("Xd", seq_along(beta_d), sep = "", collapse = " + "),
-      paste("X", seq_along(eta_d), sep = "", collapse = " + "),
-      sep = " + "
-    )
-    supply_specification <- paste(
-      paste("Xs", seq_along(beta_s), sep = "", collapse = " + "),
-      paste("X", seq_along(eta_s), sep = "", collapse = " + "),
-      sep = " + "
-    )
-    if (model_string != "diseq_directional") {
-      supply_specification <- paste0(price_column, " + ", supply_specification)
-    }
-    price_specification <- paste("Xp", seq_along(beta_p), sep = "", collapse = " + ")
+        key_columns <- c("id", "date")
+        time_column <- c("date")
+        quantity_column <- "Q"
+        price_column <- "P"
+        demand_specification <- paste(
+            price_column, paste("Xd", seq_along(beta_d), sep = "", collapse = " + "),
+            paste("X", seq_along(eta_d), sep = "", collapse = " + "),
+            sep = " + "
+        )
+        supply_specification <- paste(
+            paste("Xs", seq_along(beta_s), sep = "", collapse = " + "),
+            paste("X", seq_along(eta_s), sep = "", collapse = " + "),
+            sep = " + "
+        )
+        if (model_string != "diseq_directional") {
+            supply_specification <- paste0(price_column, " + ", supply_specification)
+        }
+        price_specification <- paste("Xp", seq_along(beta_p), sep = "", collapse = " + ")
 
-    use_correlated_shocks <- TRUE
+        use_correlated_shocks <- TRUE
 
 
-    if (model_string %in% c("equilibrium_model", "diseq_basic")) {
-      model <- new(
-        model_string,
-        key_columns,
-        quantity_column, price_column, demand_specification, supply_specification,
-        sdt,
-        use_correlated_shocks = use_correlated_shocks, verbose = verbose
-      )
-    }
-    else if (model_string %in% c("diseq_directional", "diseq_deterministic_adjustment")) {
-      model <- new(
-        model_string,
-        key_columns, time_column,
-        quantity_column, price_column, demand_specification, supply_specification,
-        sdt,
-        use_correlated_shocks = use_correlated_shocks, verbose = verbose
-      )
-    }
-    else if (model_string %in% c("diseq_stochastic_adjustment")) {
-      model <- new(
-        model_string,
-        key_columns, time_column,
-        quantity_column, price_column,
-        demand_specification, supply_specification, price_specification,
-        sdt,
-        use_correlated_shocks = use_correlated_shocks, verbose = verbose
-      )
-    }
-    else {
-      stop("Unhandled model type.")
-    }
+        if (model_string %in% c("equilibrium_model", "diseq_basic")) {
+            model <- new(
+                model_string,
+                key_columns,
+                quantity_column, price_column, demand_specification, supply_specification,
+                sdt,
+                use_correlated_shocks = use_correlated_shocks, verbose = verbose
+            )
+        }
+        else if (model_string %in% c("diseq_directional", "diseq_deterministic_adjustment")) {
+            model <- new(
+                model_string,
+                key_columns, time_column,
+                quantity_column, price_column, demand_specification, supply_specification,
+                sdt,
+                use_correlated_shocks = use_correlated_shocks, verbose = verbose
+            )
+        }
+        else if (model_string %in% c("diseq_stochastic_adjustment")) {
+            model <- new(
+                model_string,
+                key_columns, time_column,
+                quantity_column, price_column,
+                demand_specification, supply_specification, price_specification,
+                sdt,
+                use_correlated_shocks = use_correlated_shocks, verbose = verbose
+            )
+        }
+        else {
+            stop("Unhandled model type.")
+        }
 
-    model
-  }
+        model
+    }
 )
 
 simulate_equilibrium_model_model <- function(parameters, seed, verbose) {
-  simulate_model(
-    "equilibrium_model", parameters$nobs, parameters$tobs,
-    parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
-    parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
-    NA, NA, c(NA),
-    sigma_d = parameters$sigma_d, sigma_s = parameters$sigma_s, sigma_p = NA,
-    rho_ds = parameters$rho_ds, rho_dp = NA, rho_sp = NA,
-    seed = seed, verbose = verbose
-  )
+    simulate_model(
+        "equilibrium_model", parameters$nobs, parameters$tobs,
+        parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
+        parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
+        NA, NA, c(NA),
+        sigma_d = parameters$sigma_d, sigma_s = parameters$sigma_s, sigma_p = NA,
+        rho_ds = parameters$rho_ds, rho_dp = NA, rho_sp = NA,
+        seed = seed, verbose = verbose
+    )
 }
 
 simulate_basic_model <- function(parameters, seed, verbose) {

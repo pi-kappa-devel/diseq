@@ -6,7 +6,6 @@ output:
 vignette: >
   %\VignetteIndexEntry{Some examples of estimations using the market models of the package}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 This short tutorial covers the very basic use cases to get you started with *diseq*. More usage details can be found in the documentation of the package.
@@ -118,24 +117,16 @@ verbose <- 2
 use_correlated_shocks <- TRUE
 ```
 
-Using the above parameterization, construct the model objects. Here, we construct two equilibrium models and and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per entity. 
+Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per entity. 
 
 ```{r model.constructor}
-eq2sls <- new(
-  "eq_2sls",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  stochastic_adjustment_data,
-  verbose = verbose
-)
-eqfiml <- new(
-  "eq_fiml",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  stochastic_adjustment_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+eqmdl <- new(
+    "equilibrium_model",
+    key_columns,
+    quantity_column, price_column,
+    demand_specification, paste0(price_column, " + ", supply_specification),
+    stochastic_adjustment_data,
+    use_correlated_shocks = use_correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
@@ -174,7 +165,7 @@ samdl <- new(
 
 ## Estimation 
 
-Set the estimation parameters. The only model that is estimated by least squares is `eq_2sls`. The remaining models are estimated using full information maximum likelihood. First choose an optimization method and the corresponding optimization controls. The available methods are:
+First, we need to set the estimation parameters and choose and estimation method. The only model that can be estimated by least squares is the `equilibrium_model`. To estimate the model with this methodology call `diseq::estimate` with `method = 2SLS` set. The `equilibrium_model` can also be estimated using full information maximum likelihood, as it is the case for all the disequilibrium models. One may choose an optimization method and the corresponding optimization controls. The available methods are:
 
  * `Nelder-Mead`: Does not require the gradient of the likelihood to be known.
 
@@ -192,14 +183,14 @@ cluster_errors_by <- c("id")
 Then, estimate the models. See the documentation for more options.
 
 ```{r estimation.execution}
-eq2sls <- estimate(eq2sls)
-eqfiml_est <- estimate(eqfiml,
-  control = optimization_controls, method = optimization_method,
-  cluster_errors_by = cluster_errors_by
+eqmdl_reg <- estimate(eqmdl, method = "2SLS")
+eqmdl_est <- estimate(eqmdl,
+    control = optimization_controls, method = optimization_method,
+    cluster_errors_by = cluster_errors_by
 )
 bsmdl_est <- estimate(bsmdl,
-  control = optimization_controls, method = optimization_method,
-  use_heteroscedasticity_consistent_errors = use_heteroscedasticity_consistent_errors
+    control = optimization_controls, method = optimization_method,
+    use_heteroscedasticity_consistent_errors = use_heteroscedasticity_consistent_errors
 )
 drmdl_est <- estimate(drmdl,
   control = optimization_controls, method = optimization_method,
@@ -310,9 +301,9 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 All the model estimates support the `summary` function. The `eq_2sls` provides also the first stage estimation. The `summary` output comes from `systemfit`. The remaining models are estimated using maximum likelihood and the `summary` functionality is based on `bbmle`. 
 
 ```{r analysis.summaries}
-summary(eq2sls@first_stage_model)
-summary(eq2sls@system_model)
-bbmle::summary(eqfiml_est)
+summary(eqmdl_reg$first_stage_model)
+summary(eqmdl_reg$system_model)
+bbmle::summary(eqmdl_est)
 bbmle::summary(bsmdl_est)
 bbmle::summary(damdl_est)
 bbmle::summary(samdl_est)

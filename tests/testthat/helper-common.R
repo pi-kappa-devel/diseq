@@ -1,5 +1,5 @@
 test_calculated_gradient <- function(mdl, params, tolerance) {
-    cg <- as.matrix(gradient(mdl, params))
+    cg <- as.matrix(diseq:::gradient(mdl, params))
     ng <- as.matrix(numDeriv::grad(
         function(p) minus_log_likelihood(mdl, p), params,
         method = "Richardson"
@@ -35,8 +35,11 @@ test_convergence <- function(est) {
 }
 
 test_calculated_hessian <- function(mdl, params, tolerance) {
-    nh <- as.matrix(numDeriv::jacobian(function(p) gradient(mdl, p), params, method = "Richardson"))
-    ch <- hessian(mdl, params)
+    nh <- as.matrix(numDeriv::jacobian(function(p) diseq:::gradient(mdl, p),
+        params,
+        method = "Richardson"
+    ))
+    ch <- diseq:::hessian(mdl, params)
     pnames <- rownames(ch)
     max_diff <- 0
 
@@ -80,7 +83,7 @@ test_aggregation <- function(aggregation, mdl, params) {
 test_scores <- function(mdl, params) {
     scores <- scores(mdl, params)
     n <- diseq::get_number_of_observations(mdl)
-    k <- length(get_likelihood_variables(mdl@system))
+    k <- length(diseq:::get_likelihood_variables(mdl@system))
     testthat::expect(any(dim(scores) == c(n, k)), sprintf("Score has wrong dimensions"))
     testthat::expect(!any(is.na(scores(mdl, params))), sprintf("Failed to calculate scores"))
 }

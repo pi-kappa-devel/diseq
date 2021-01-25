@@ -37,32 +37,34 @@ A list with the optimization output.
 }
 \description{
 Maximizes the log-likelihood using the
-\href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{GSL} implementation of
+\href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} implementation of
 the BFGS algorithm. This function is primarily intended for advanced usage. The
 \code{\link{estimate}} functionality is a fast, analysis-oriented alternative.
 }
 \examples{
 \donttest{
 simulated_data <- simulate_model_data(
-  "equilibrium_model", 500, 3, # model type, observed entities, observed time points
-  -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-  0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
+    "equilibrium_model", 500, 3, # model type, observed entities, observed time points
+    -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+    0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
 )
 
 # initialize the model
 model <- new(
-  "equilibrium_model", # model type
-  c("id", "date"), "Q", "P", # keys, quantity, and price variables
-  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-  simulated_data, # data
-  use_correlated_shocks = TRUE # allow shocks to be correlated
+    "equilibrium_model", # model type
+    c("id", "date"), "Q", "P", # keys, quantity, and price variables
+    "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+    simulated_data, # data
+    use_correlated_shocks = TRUE # allow shocks to be correlated
 )
 
 # maximize the model's log-likelihood
 mll <- maximize_log_likelihood(
-    model, start = NULL, step = 1e-5,
+    model,
+    start = NULL, step = 1e-5,
     objective_tolerance = 1e-4, gradient_tolerance = 1e-3
 )
+print(mll)
 }
 }
 \seealso{

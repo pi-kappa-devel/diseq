@@ -32,10 +32,10 @@
 #' )
 #' @export
 setClass(
-  "diseq_deterministic_adjustment",
-  contains = "disequilibrium_model",
-  representation(),
-  prototype()
+    "diseq_deterministic_adjustment",
+    contains = "disequilibrium_model",
+    representation(),
+    prototype()
 )
 
 #' @describeIn initialize_market_model Disequilibrium model with deterministic price

@@ -1,10 +1,20 @@
+#include <Rcpp.h>
+
 #include "gsl/gsl_multimin.h"
 #include "gsl/gsl_vector.h"
 
+#if __cplusplus > 201703L && !defined(__MINGW32__)
+#define _DISEQ_HAS_EXECUTION_POLICIES_ 1
+#else
+#define _DISEQ_HAS_EXECUTION_POLICIES_ 0
+#endif
+
+#if _DISEQ_HAS_EXECUTION_POLICIES_
 #include <execution>
+#endif
 #include <numeric>
 
-#include <Rcpp.h>
+static gsl_error_handler_t *defaul_gsl_error_handler = gsl_set_error_handler_off();
 
 class gsl_equilibrium_model_impl {
 public:
@@ -93,6 +103,9 @@ public:
 
   bool has_correlated_shocks{false};
 
+  std::vector<size_t> row_indices;
+  std::vector<size_t> col_indices;
+
   gsl_equilibrium_model_impl(Rcpp::S4 system) {
     Rcpp::Environment diseq = Rcpp::Environment::namespace_env("diseq");
     Rcpp::S4 demand = system.slot("demand");
@@ -160,8 +173,6 @@ public:
     buffer = Rcpp::as<Rcpp::NumericMatrix>(system.slot("quantity_vector"));
     Q.assign(buffer.begin(), buffer.end());
 
-    assert(Xd.size() == Xs.size());
-
     mu_P.assign(Xd.size(), 0.0);
     mu_Q.assign(Xd.size(), 0.0);
 
@@ -196,6 +207,11 @@ public:
         demand_independent_variables_size + supply_independent_variables_size;
     gradient_size = independent_variable_size + demand_variance_variable_size +
                     supply_variance_variable_size + correlation_variable_size;
+
+    row_indices.assign(Xd.size(), 0);
+    std::iota(row_indices.begin(), row_indices.end(), 0);
+    col_indices.assign(gradient_size, 0);
+    std::iota(col_indices.begin(), col_indices.end(), 0);
   }
 
   ~gsl_equilibrium_model_impl() {
@@ -210,11 +226,6 @@ public:
     size_t offsetd = 0;
     size_t offsets = demand_independent_variables_size;
     gsl_vector view_vector;
-
-    // printf("system_base_set_parameters.v: ");
-    // for (size_t i = 0; i < v->size; i++)
-    //   printf("%10.5f ", v->data[i]);
-    // printf("\n");
 
     view_vector = gsl_vector_const_subvector(v, offsetd, demand_independent_variables_size).vector;
     gsl_vector_memcpy(alphad_betad, &view_vector);
@@ -234,23 +245,11 @@ public:
       alphas = GSL_NAN;
     }
     delta = alphas - alphad;
-    // Rcpp::Rcout << "alphad = " << alphad << std::endl;
-    // Rcpp::Rcout << "alphas = " << alphas << std::endl;
-    // Rcpp::Rcout << "delta = " << delta << std::endl;
 
     view_vector = gsl_vector_const_subvector(v, offsetd, demand_control_variables_size).vector;
     gsl_vector_memcpy(betad, &view_vector);
     view_vector = gsl_vector_const_subvector(v, offsets, supply_control_variables_size).vector;
     gsl_vector_memcpy(betas, &view_vector);
-
-    // printf("betad = ");
-    // for (size_t i = 0; i < betad->size; i++)
-    //   printf("%10.5f ", betad->data[i]);
-    // printf("\n");
-    // printf("betas = ");
-    // for (size_t i = 0; i < betas->size; i++)
-    //   printf("%10.5f ", betas->data[i]);
-    // printf("\n");
 
     offsets += supply_control_variables_size;
     offsetd = offsets++;
@@ -277,16 +276,10 @@ public:
         rho2 = rho * rho1;
       }
     }
-
-    // Rcpp::Rcout << "sigmad = " << sigmad << std::endl;
-    // Rcpp::Rcout << "sigmas = " << sigmas << std::endl;
-    // Rcpp::Rcout << "rho = " << rho << std::endl;
   }
 
   void system_equilibrium_model_set_parameters(const gsl_vector *v) {
     system_base_set_parameters(v);
-
-    std::ranges::iota_view row_indices{size_t(0), Xd.size()};
 
     rho_sigmad_sigmas = rho * sigmad * sigmas;
     sigmad2 = std::pow(sigmad, 2);
@@ -318,128 +311,134 @@ public:
     rho1_QP2 = std::pow(rho1_QP, 2);
     rho2_QP2 = std::pow(rho2_QP, 2);
 
-    std::for_each(std::execution::par_unseq, row_indices.begin(), row_indices.end(), [&](size_t r) {
-      Xdbetad[r] = 0;
-      for (size_t c = 0; c < Xd[r].size(); ++c) {
-        Xdbetad[r] += Xd[r][c] * gsl_vector_get(betad, c);
-      }
-      Xsbetas[r] = 0;
-      for (size_t c = 0; c < Xs[r].size(); ++c) {
-        Xsbetas[r] += Xs[r][c] * gsl_vector_get(betas, c);
-      }
-      mu_P[r] = (Xdbetad[r] - Xsbetas[r]) / delta;
-      mu_Q[r] = (Xdbetad[r] * alphas - Xsbetas[r] * alphad) / (-alphad + alphas);
-      h_P[r] = (P[r] - mu_P[r]) / sigma_P;
-      h_Q[r] = (Q[r] - mu_Q[r]) / sigma_Q;
+    std::for_each(
+#if _DISEQ_HAS_EXECUTION_POLICIES_
+        std::execution::par_unseq,
+#endif
+        row_indices.begin(), row_indices.end(), [&](size_t r) {
+          Xdbetad[r] = 0;
+          for (size_t c = 0; c < Xd[r].size(); ++c) {
+            Xdbetad[r] += Xd[r][c] * gsl_vector_get(betad, c);
+          }
+          Xsbetas[r] = 0;
+          for (size_t c = 0; c < Xs[r].size(); ++c) {
+            Xsbetas[r] += Xs[r][c] * gsl_vector_get(betas, c);
+          }
+          mu_P[r] = (Xdbetad[r] - Xsbetas[r]) / delta;
+          mu_Q[r] = (Xdbetad[r] * alphas - Xsbetas[r] * alphad) / (-alphad + alphas);
+          h_P[r] = (P[r] - mu_P[r]) / sigma_P;
+          h_Q[r] = (Q[r] - mu_Q[r]) / sigma_Q;
 
-      z_PQ[r] = rho1_QP * h_P[r] - rho2_QP * h_Q[r];
-      z_QP[r] = rho1_QP * h_Q[r] - rho2_QP * h_P[r];
+          z_PQ[r] = rho1_QP * h_P[r] - rho2_QP * h_Q[r];
+          z_QP[r] = rho1_QP * h_Q[r] - rho2_QP * h_P[r];
 
-      llh[r] = -std::log(2 * M_PI) - std::log(sigma_P_sigma_Q / rho1_QP) -
-               (std::pow(rho1_QP, 2) *
-                (std::pow(h_P[r], 2) - 2 * h_P[r] * h_Q[r] * rho_QP + std::pow(h_Q[r], 2))) /
-                   2;
+          llh[r] = -std::log(2 * M_PI) - std::log(sigma_P_sigma_Q / rho1_QP) -
+                   (std::pow(rho1_QP, 2) *
+                    (std::pow(h_P[r], 2) - 2 * h_P[r] * h_Q[r] * rho_QP + std::pow(h_Q[r], 2))) /
+                       2;
 
-      h_P2[r] = std::pow(h_P[r], 2);
-      h_Q2[r] = std::pow(h_Q[r], 2);
-    });
+          h_P2[r] = std::pow(h_P[r], 2);
+          h_Q2[r] = std::pow(h_Q[r], 2);
+        });
 
     // Floating point addition is not commutative. For deterministic output the summation has to
     // be performed in a prespecified order.
-    sum_llh = std::reduce(std::execution::seq, llh.begin(), llh.end());
+  sum_llh = std::accumulate(llh.begin(), llh.end(), 0.0);
   }
 
   void calculate_gradient(gsl_vector *df) {
-    std::ranges::iota_view row_indices{size_t(0), Xd.size()};
+    std::for_each(
+#if _DISEQ_HAS_EXECUTION_POLICIES_
+        std::execution::par_unseq,
+#endif
+        row_indices.begin(), row_indices.end(), [&](size_t r) {
+          double Xdbetadr = Xdbetad[r];
+          double Xsbetasr = Xsbetas[r];
+          double mu_Pr = mu_P[r];
+          double mu_Qr = mu_Q[r];
+          double h_Pr = h_P[r];
+          double h_Qr = h_Q[r];
+          double z_PQr = z_PQ[r];
+          double z_QPr = z_QP[r];
+          double h_P2r = h_P2[r];
+          double h_Q2r = h_Q2[r];
 
-    std::for_each(std::execution::par_unseq, row_indices.begin(), row_indices.end(), [&](size_t r) {
-      double Xdbetadr = Xdbetad[r];
-      double Xsbetasr = Xsbetas[r];
-      double mu_Pr = mu_P[r];
-      double mu_Qr = mu_Q[r];
-      double h_Pr = h_P[r];
-      double h_Qr = h_Q[r];
-      double z_PQr = z_PQ[r];
-      double z_QPr = z_QP[r];
-      double h_P2r = h_P2[r];
-      double h_Q2r = h_Q2[r];
+          partial_alpha_d[r] =
+              (delta2 * mu_Pr * rho1_QP * sigma_Q2 * z_PQr -
+               delta2 * rho1_QP * sigma_P_sigma_Q * z_QPr * (Xsbetasr - mu_Qr) +
+               delta2 * sigma_P * sigma_Q2 * (h_Pr * rho1_QP * z_PQr - 1) +
+               delta * sigma_P * (h_Qr * rho1_QP * z_QPr - 1) *
+                   (alphad * sigmas2 - alphas * rho_sigmad_sigmas + delta * sigma_Q2) -
+               rho1_QP *
+                   (delta * rho_QP * sigma_P *
+                        (alphad * sigmas2 - alphas * rho_sigmad_sigmas + 2 * delta * sigma_Q2) +
+                    sigma_Q * (-2 * alphas * sigmad2 + rho_sigmad_sigmas * (alphad + 3 * alphas) -
+                               sigmas2 * (alphad + alphas))) *
+                   (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
+                    rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP)) /
+              (std::pow(delta, 3) * sigma_P * sigma_Q2);
 
-      partial_alpha_d[r] =
-          (delta2 * mu_Pr * rho1_QP * sigma_Q2 * z_PQr -
-           delta2 * rho1_QP * sigma_P_sigma_Q * z_QPr * (Xsbetasr - mu_Qr) +
-           delta2 * sigma_P * sigma_Q2 * (h_Pr * rho1_QP * z_PQr - 1) +
-           delta * sigma_P * (h_Qr * rho1_QP * z_QPr - 1) *
-               (alphad * sigmas2 - alphas * rho_sigmad_sigmas + delta * sigma_Q2) -
-           rho1_QP *
-               (delta * rho_QP * sigma_P *
-                    (alphad * sigmas2 - alphas * rho_sigmad_sigmas + 2 * delta * sigma_Q2) +
-                sigma_Q * (-2 * alphas * sigmad2 + rho_sigmad_sigmas * (alphad + 3 * alphas) -
-                           sigmas2 * (alphad + alphas))) *
-               (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
-                rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP)) /
-          (std::pow(delta, 3) * sigma_P * sigma_Q2);
+          partial_alpha_s[r] =
+              (-delta2 * mu_Pr * rho1_QP * sigma_Q2 * z_PQr +
+               delta2 * rho1_QP * sigma_P_sigma_Q * z_QPr * (Xdbetadr - mu_Qr) +
+               delta2 * sigma_P * sigma_Q2 * (-h_Pr * rho1_QP * z_PQr + 1) -
+               delta * sigma_P * (h_Qr * rho1_QP * z_QPr - 1) *
+                   (alphad * rho_sigmad_sigmas - alphas * sigmad2 + delta * sigma_Q2) +
+               rho1_QP *
+                   (delta * rho_QP * sigma_P *
+                        (alphad * rho_sigmad_sigmas - alphas * sigmad2 + 2 * delta * sigma_Q2) +
+                    sigma_Q * (-2 * alphad * sigmas2 + rho_sigmad_sigmas * (3 * alphad + alphas) -
+                               sigmad2 * (alphad + alphas))) *
+                   (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
+                    rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP)) /
+              (std::pow(delta, 3) * sigma_P * sigma_Q2);
 
-      partial_alpha_s[r] =
-          (-delta2 * mu_Pr * rho1_QP * sigma_Q2 * z_PQr +
-           delta2 * rho1_QP * sigma_P_sigma_Q * z_QPr * (Xdbetadr - mu_Qr) +
-           delta2 * sigma_P * sigma_Q2 * (-h_Pr * rho1_QP * z_PQr + 1) -
-           delta * sigma_P * (h_Qr * rho1_QP * z_QPr - 1) *
-               (alphad * rho_sigmad_sigmas - alphas * sigmad2 + delta * sigma_Q2) +
-           rho1_QP *
-               (delta * rho_QP * sigma_P *
-                    (alphad * rho_sigmad_sigmas - alphas * sigmad2 + 2 * delta * sigma_Q2) +
-                sigma_Q * (-2 * alphad * sigmas2 + rho_sigmad_sigmas * (3 * alphad + alphas) -
-                           sigmad2 * (alphad + alphas))) *
-               (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
-                rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP)) /
-          (std::pow(delta, 3) * sigma_P * sigma_Q2);
+          double partial_beta_d_scale =
+              rho1_QP * (alphas * sigma_P * z_QPr + sigma_Q * z_PQr) / (delta * sigma_P_sigma_Q);
+          for (size_t c = 0; c < partial_beta_d.size(); ++c) {
+            partial_beta_d[c][r] = Xd[r][c] * partial_beta_d_scale;
+          }
 
-      double partial_beta_d_scale =
-          rho1_QP * (alphas * sigma_P * z_QPr + sigma_Q * z_PQr) / (delta * sigma_P_sigma_Q);
-      for (size_t c = 0; c < partial_beta_d.size(); ++c) {
-        partial_beta_d[c][r] = Xd[r][c] * partial_beta_d_scale;
-      }
+          double partial_beta_s_scale =
+              -rho1_QP * (alphad * sigma_P * z_QPr + sigma_Q * z_PQr) / (delta * sigma_P_sigma_Q);
+          for (size_t c = 0; c < partial_beta_s.size(); ++c) {
+            partial_beta_s[c][r] = Xs[r][c] * partial_beta_s_scale;
+          }
 
-      double partial_beta_s_scale =
-          -rho1_QP * (alphad * sigma_P * z_QPr + sigma_Q * z_PQr) / (delta * sigma_P_sigma_Q);
-      for (size_t c = 0; c < partial_beta_s.size(); ++c) {
-        partial_beta_s[c][r] = Xs[r][c] * partial_beta_s_scale;
-      }
+          partial_var_d[r] =
+              (-alphas * sigma_P2 * (alphad * rho * sigmas - alphas * sigmad) *
+                   (h_Qr * rho1_QP * z_QPr - 1) +
+               rho1_QP *
+                   (rho_QP * (alphas * sigma_P2 * (alphad * rho * sigmas - alphas * sigmad) +
+                              sigma_Q2 * (rho * sigmas - sigmad)) +
+                    sigma_P_sigma_Q * (2 * alphas * sigmad - rho * sigmas * (alphad + alphas))) *
+                   (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
+                    rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
+               sigma_Q2 * (rho * sigmas - sigmad) * (h_Pr * rho1_QP * z_PQr - 1)) /
+              (2 * delta2 * sigma_P2 * sigma_Q2 * sigmad);
 
-      partial_var_d[r] =
-          (-alphas * sigma_P2 * (alphad * rho * sigmas - alphas * sigmad) *
-               (h_Qr * rho1_QP * z_QPr - 1) +
-           rho1_QP *
-               (rho_QP * (alphas * sigma_P2 * (alphad * rho * sigmas - alphas * sigmad) +
-                          sigma_Q2 * (rho * sigmas - sigmad)) +
-                sigma_P_sigma_Q * (2 * alphas * sigmad - rho * sigmas * (alphad + alphas))) *
-               (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
-                rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
-           sigma_Q2 * (rho * sigmas - sigmad) * (h_Pr * rho1_QP * z_PQr - 1)) /
-          (2 * delta2 * sigma_P2 * sigma_Q2 * sigmad);
+          partial_var_s[r] =
+              (alphad * sigma_P2 * (alphad * sigmas - alphas * rho * sigmad) *
+                   (h_Qr * rho1_QP * z_QPr - 1) -
+               rho1_QP *
+                   (rho_QP * (alphad * sigma_P2 * (alphad * sigmas - alphas * rho * sigmad) +
+                              sigma_Q2 * (-rho * sigmad + sigmas)) +
+                    sigma_P_sigma_Q * (-2 * alphad * sigmas + rho * sigmad * (alphad + alphas))) *
+                   (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
+                    rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
+               sigma_Q2 * (rho * sigmad - sigmas) * (h_Pr * rho1_QP * z_PQr - 1)) /
+              (2 * delta2 * sigma_P2 * sigma_Q2 * sigmas);
 
-      partial_var_s[r] =
-          (alphad * sigma_P2 * (alphad * sigmas - alphas * rho * sigmad) *
-               (h_Qr * rho1_QP * z_QPr - 1) -
-           rho1_QP *
-               (rho_QP * (alphad * sigma_P2 * (alphad * sigmas - alphas * rho * sigmad) +
-                          sigma_Q2 * (-rho * sigmad + sigmas)) +
-                sigma_P_sigma_Q * (-2 * alphad * sigmas + rho * sigmad * (alphad + alphas))) *
-               (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
-                rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
-           sigma_Q2 * (rho * sigmad - sigmas) * (h_Pr * rho1_QP * z_PQr - 1)) /
-          (2 * delta2 * sigma_P2 * sigma_Q2 * sigmas);
-
-      partial_rho[r] = sigmad * sigmas *
-                       (-alphad * alphas * sigma_P2 * (h_Qr * rho1_QP * z_QPr - 1) +
-                        rho1_QP *
-                            (rho_QP * (alphad * alphas * sigma_P2 + sigma_Q2) -
-                             sigma_P_sigma_Q * (alphad + alphas)) *
-                            (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
-                             rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
-                        sigma_Q2 * (h_Pr * rho1_QP * z_PQr - 1)) /
-                       (delta2 * sigma_P2 * sigma_Q2);
-    });
+          partial_rho[r] = sigmad * sigmas *
+                           (-alphad * alphas * sigma_P2 * (h_Qr * rho1_QP * z_QPr - 1) +
+                            rho1_QP *
+                                (rho_QP * (alphad * alphas * sigma_P2 + sigma_Q2) -
+                                 sigma_P_sigma_Q * (alphad + alphas)) *
+                                (h_Pr * h_Qr * rho1_QP * (rho1_QP2 + rho2_QP2) -
+                                 rho1_QP2 * rho2_QP * (h_P2r + h_Q2r) + rho2_QP) -
+                            sigma_Q2 * (h_Pr * rho1_QP * z_PQr - 1)) /
+                           (delta2 * sigma_P2 * sigma_Q2);
+        });
 
     // Floating point addition is not commutative. For deterministic output the summation has to
     // be performed in a prespecified order.
@@ -460,65 +459,38 @@ public:
   }
 };
 
-void test_df(const gsl_vector *x, double step, void *params);
-
 double my_f(const gsl_vector *v, void *params) {
-  // printf("my_f: ");
-  // for (size_t i = 0; i < v->size; i++)
-  //   printf("%10.5f ", v->data[i]);
-  // printf("\n");
-
   gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
   obj->system_equilibrium_model_set_parameters(v);
-  // printf("llh = %f\n", -obj->sum_llh);
 
   return -obj->sum_llh;
 }
 
-/* The gradient of f, df = (df/dx, df/dy). */
 void my_df(const gsl_vector *v, void *params, gsl_vector *df) {
-  // printf("my_df: ");
-  // for (size_t i = 0; i < v->size; i++)
-  //   printf("%10.5f ", v->data[i]);
-  // printf("\n");
-
   gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
   obj->system_equilibrium_model_set_parameters(v);
   obj->calculate_gradient(df);
 }
 
-/* Compute both f and df together. */
 void my_fdf(const gsl_vector *v, void *params, double *f, gsl_vector *df) {
-  // printf("my_fdf: ");
-  // for (size_t i = 0; i < v->size; i++)
-  //   printf("%10.5f ", v->data[i]);
-  // printf("\n");
-
   gsl_equilibrium_model_impl *obj = static_cast<gsl_equilibrium_model_impl *>(params);
   obj->system_equilibrium_model_set_parameters(v);
 
   *f = -obj->sum_llh;
   obj->calculate_gradient(df);
-  // printf("llh = %g\n", *f);
 }
 
-void test_df(const gsl_vector *x, double step, void *params) {
+std::vector<double> test_df(const gsl_vector *x, double step, void *params) {
   double fx;
   gsl_vector *dfx = gsl_vector_alloc(x->size);
   my_fdf(x, params, &fx, dfx);
-  printf("fx.0 = %g\n", fx);
-  my_fdf(x, params, &fx, dfx);
-  printf("fx.1 = %g\n", fx);
-  fx = my_f(x, params);
-  printf("fx.2 = %g\n", fx);
-  fx = my_f(x, params);
-  printf("fx.3 = %g\n", fx);
 
   double g = 0;
   for (size_t j = 0; j < x->size; ++j) {
     g += gsl_vector_get(dfx, j) * step;
   }
 
+  std::vector<double> qs(x->size);
   gsl_vector *y = gsl_vector_alloc(x->size);
   for (int i = 0; i < 40; ++i) {
     double s = std::pow(10.0, 20.0 - i);
@@ -526,12 +498,13 @@ void test_df(const gsl_vector *x, double step, void *params) {
       gsl_vector_set(y, j, gsl_vector_get(x, j) + step * s);
     }
     double fy = my_f(y, params);
-    double q = (fy - fx) / g / s;
-    printf("i = %d, fx = %g, fy = %g, g = %g, s = %g, q = %g\n", i, fx, fy, g, s, q);
+    qs.push_back((fy - fx) / g / s);
   }
+
+  return qs;
 }
 
-Rcpp::List minimize(gsl_equilibrium_model_impl *objective, Rcpp::NumericVector &start, double step,
+Rcpp::List minimize(gsl_equilibrium_model_impl *model, Rcpp::NumericVector &start, double step,
                     double objective_tolerance, double gradient_tolerance) {
   size_t iter = 0;
   int status;
@@ -546,9 +519,8 @@ Rcpp::List minimize(gsl_equilibrium_model_impl *objective, Rcpp::NumericVector &
   my_func.f = my_f;
   my_func.df = my_df;
   my_func.fdf = my_fdf;
-  my_func.params = objective;
+  my_func.params = model;
 
-  /* Starting point, x = (5,7) */
   x = gsl_vector_alloc(start.length());
   for (R_xlen_t i = 0; i < start.length(); ++i) {
     gsl_vector_set(x, i, start[i]);
@@ -557,45 +529,30 @@ Rcpp::List minimize(gsl_equilibrium_model_impl *objective, Rcpp::NumericVector &
   T = gsl_multimin_fdfminimizer_vector_bfgs2;
   s = gsl_multimin_fdfminimizer_alloc(T, start.length());
 
-  // printf("step: %f", step);
   gsl_multimin_fdfminimizer_set(s, &my_func, x, step, objective_tolerance);
-
-  // gsl_vector *xx = gsl_vector_alloc(x->size);
 
   do {
     iter++;
     status = gsl_multimin_fdfminimizer_iterate(s);
-    // gsl_vector_memcpy(xx, x);
-    // test_df(xx, 1e-4, my_func.params);
 
     if (status) {
-      // printf("status %d: %s\n", status, gsl_strerror(status));
-      // printf("objective = %f\n", s->f);
       break;
     }
 
     status = gsl_multimin_test_gradient(s->gradient, gradient_tolerance);
-    // printf("gradient: ");
-    // for (size_t i = 0; i < s->gradient->size; i++)
-    //   printf("%10.5f ", s->gradient->data[i]);
-    // printf("\n");
-
-    // if (status == GSL_SUCCESS)
-    //   printf("Minimum found at:\n");
-
-    // printf("%5zu ", iter);
-    // for (size_t i = 0; i < s->x->size; i++)
-    //   printf("%10.5f ", s->x->data[i]);
-    // printf("%10.5f\n", s->f);
-
   } while (status == GSL_CONTINUE && iter < 1e+5);
 
   Rcpp::NumericVector optimizer(s->x->size);
-  std::copy(std::execution::seq, s->x->data, s->x->data + s->x->size, optimizer.begin());
   Rcpp::NumericVector gradient(s->gradient->size);
-  std::copy(std::execution::seq, s->gradient->data, s->gradient->data + s->gradient->size,
-            gradient.begin());
   double log_likelihood = s->f;
+  std::for_each(
+#if _DISEQ_HAS_EXECUTION_POLICIES_
+      std::execution::par_unseq,
+#endif
+      model->col_indices.begin(), model->col_indices.end(), [&](size_t c) {
+        optimizer[c] = s->x->data[c];
+        gradient[c] = s->gradient->data[c];
+      });
 
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x);
@@ -610,12 +567,5 @@ Rcpp::List minimize(gsl_equilibrium_model_impl *objective, Rcpp::NumericVector &
 RCPP_MODULE(diseq_module) {
   Rcpp::class_<gsl_equilibrium_model_impl>("gsl_equilibrium_model_impl")
       .constructor<Rcpp::S4>()
-      .method("minimize", &minimize)
-      .field("partial_alpha_d", &gsl_equilibrium_model_impl::partial_alpha_d)
-      .field("partial_beta_d", &gsl_equilibrium_model_impl::partial_beta_d)
-      .field("partial_alpha_s", &gsl_equilibrium_model_impl::partial_alpha_s)
-      .field("partial_beta_s", &gsl_equilibrium_model_impl::partial_beta_s)
-      .field("partial_var_d", &gsl_equilibrium_model_impl::partial_var_d)
-      .field("partial_var_s", &gsl_equilibrium_model_impl::partial_var_s)
-      .field("partial_rho", &gsl_equilibrium_model_impl::partial_rho);
+      .method("minimize", &minimize);
 }

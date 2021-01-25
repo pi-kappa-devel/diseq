@@ -22,23 +22,23 @@ setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 #' @slot model_type_string Model type string description.
 #' @slot system Model's system of equations.
 setClass(
-  "market_model",
-  representation(
-    ## Logging
-    logger = "model_logger",
+    "market_model",
+    representation(
+        ## Logging
+        logger = "model_logger",
 
-    ## Column fields
-    key_columns = "vector",
-    time_column = "characterOrNULL",
-    explanatory_columns = "vector",
-    data_columns = "vector",
-    columns = "vector",
+        ## Column fields
+        key_columns = "vector",
+        time_column = "characterOrNULL",
+        explanatory_columns = "vector",
+        data_columns = "vector",
+        columns = "vector",
 
-    ## Model data
-    model_tibble = "tbl_df",
-    model_type_string = "character",
-    system = "system_base"
-  )
+        ## Model data
+        model_tibble = "tbl_df",
+        model_type_string = "character",
+        system = "system_base"
+    )
 )
 
 #' @title Model initialization
@@ -97,138 +97,138 @@ setClass(
 NULL
 
 setMethod(
-  "initialize", "market_model",
-  function(
-           .Object,
-           model_type_string, verbose,
-           key_columns, time_column,
-           quantity_column, price_column,
-           demand_specification, supply_specification, price_specification,
-           use_correlated_shocks,
-           data,
-           system_initializer) {
+    "initialize", "market_model",
+    function(
+             .Object,
+             model_type_string, verbose,
+             key_columns, time_column,
+             quantity_column, price_column,
+             demand_specification, supply_specification, price_specification,
+             use_correlated_shocks,
+             data,
+             system_initializer) {
 
-    ## Model assignments
-    .Object@model_type_string <- model_type_string
-    .Object@logger <- new("model_logger", verbose)
-    .Object@system@correlated_shocks <- use_correlated_shocks
-    print_info(.Object@logger, "This is '", get_model_description(.Object), "' model")
+        ## Model assignments
+        .Object@model_type_string <- model_type_string
+        .Object@logger <- new("model_logger", verbose)
+        .Object@system@correlated_shocks <- use_correlated_shocks
+        print_info(.Object@logger, "This is '", get_model_description(.Object), "' model")
 
 
-    .Object@key_columns <- key_columns
-    .Object@time_column <- time_column
+        .Object@key_columns <- key_columns
+        .Object@time_column <- time_column
 
-    .Object@explanatory_columns <- unique(c(
-      all.vars(formula(paste0(quantity_column, " ~ ", demand_specification))),
-      all.vars(formula(paste0(quantity_column, " ~ ", supply_specification)))
-    ))
-    if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
-      .Object@explanatory_columns <- unique(c(
-        .Object@explanatory_columns,
-        all.vars(formula(paste0(price_column, " ~ ", price_specification)))
-      ))
-    }
-    .Object@data_columns <- unique(c(quantity_column, price_column, .Object@explanatory_columns))
-    .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
-
-    ## Data assignment
-    .Object@model_tibble <- data
-
-    ## Create model tibble
-    len <- nrow(.Object@model_tibble)
-    .Object@model_tibble <- .Object@model_tibble %>%
-      dplyr::select(!!!.Object@columns) %>%
-      na.omit()
-    drops <- len - nrow(.Object@model_tibble)
-    if (drops) {
-      print_warning(.Object@logger, "Dropping ", drops, " rows due to omitted values.")
-    }
-
-    .Object@model_tibble <- .Object@model_tibble %>%
-      dplyr::mutate_if(is.factor, function(x) {
-        initial_levels <- levels(x)
-        x <- factor(x)
-        remaining_levels <- levels(x)
-        removed_levels <- initial_levels[!(initial_levels %in% remaining_levels)]
-        if (length(removed_levels)) {
-          print_warning(
-            .Object@logger, "Removing unobserved '",
-            paste0(removed_levels, collapse = ", "), "' level(s)."
-          )
+        .Object@explanatory_columns <- unique(c(
+            all.vars(formula(paste0(quantity_column, " ~ ", demand_specification))),
+            all.vars(formula(paste0(quantity_column, " ~ ", supply_specification)))
+        ))
+        if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
+            .Object@explanatory_columns <- unique(c(
+                .Object@explanatory_columns,
+                all.vars(formula(paste0(price_column, " ~ ", price_specification)))
+            ))
         }
-        x
-      })
+        .Object@data_columns <- unique(c(quantity_column, price_column, .Object@explanatory_columns))
+        .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
 
-    ## Create primary key column
-    key_columns_syms <- rlang::syms(.Object@key_columns)
-    .Object@model_tibble <- .Object@model_tibble %>%
-      dplyr::mutate(pk = as.integer(paste0(!!!key_columns_syms)))
+        ## Data assignment
+        .Object@model_tibble <- data
 
-    ## Do we need to use lags?
-    if (.Object@model_type_string %in% c(
-      "Directional", "Deterministic Adjustment", "Stochastic Adjustment"
-    )) {
-      ## Generate lags
-      key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns != .Object@time_column])
-      price_sym <- rlang::sym(price_column)
-      time_sym <- rlang::sym(.Object@time_column)
-      lagged_price_column <- paste0("LAGGED_", price_column)
-      lagged_price_sym <- rlang::sym(lagged_price_column)
-
-      .Object@model_tibble <- .Object@model_tibble %>%
-        dplyr::group_by(!!!key_syms) %>%
-        dplyr::mutate(!!lagged_price_sym := dplyr::lag(!!price_sym, order_by = !!time_sym)) %>%
-        dplyr::ungroup()
-
-      drop_rows <- .Object@model_tibble %>%
-        dplyr::select(!!lagged_price_sym) %>%
-        is.na() %>%
-        c()
-      .Object@model_tibble <- .Object@model_tibble[!drop_rows, ]
-      print_info(
-        .Object@logger, "Dropping ",
-        sum(drop_rows), " rows by generating '", lagged_price_column, "'."
-      )
-
-      ## Do we need to use first differences?
-      if (.Object@model_type_string %in% c("Directional", "Deterministic Adjustment")) {
-        ## Generate first differences
-        diff_column <- paste0(price_column, "_DIFF")
-        diff_sym <- rlang::sym(diff_column)
+        ## Create model tibble
+        len <- nrow(.Object@model_tibble)
+        .Object@model_tibble <- .Object@model_tibble %>%
+            dplyr::select(!!!.Object@columns) %>%
+            na.omit()
+        drops <- len - nrow(.Object@model_tibble)
+        if (drops) {
+            print_warning(.Object@logger, "Dropping ", drops, " rows due to omitted values.")
+        }
 
         .Object@model_tibble <- .Object@model_tibble %>%
-          dplyr::group_by(!!!key_syms) %>%
-          dplyr::mutate(!!diff_sym := !!price_sym - !!lagged_price_sym) %>%
-          dplyr::ungroup()
-      }
-    }
+            dplyr::mutate_if(is.factor, function(x) {
+                initial_levels <- levels(x)
+                x <- factor(x)
+                remaining_levels <- levels(x)
+                removed_levels <- initial_levels[!(initial_levels %in% remaining_levels)]
+                if (length(removed_levels)) {
+                    print_warning(
+                        .Object@logger, "Removing unobserved '",
+                        paste0(removed_levels, collapse = ", "), "' level(s)."
+                    )
+                }
+                x
+            })
 
-    if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
-      .Object@system <- system_initializer(
-        quantity_column, price_column,
-        demand_specification, supply_specification, price_specification,
-        .Object@model_tibble, use_correlated_shocks
-      )
-    }
-    else {
-      .Object@system <- system_initializer(
-        quantity_column, price_column, demand_specification, supply_specification,
-        .Object@model_tibble, use_correlated_shocks
-      )
-    }
+        ## Create primary key column
+        key_columns_syms <- rlang::syms(.Object@key_columns)
+        .Object@model_tibble <- .Object@model_tibble %>%
+            dplyr::mutate(pk = as.integer(paste0(!!!key_columns_syms)))
 
-    print_verbose(.Object@logger, "Using columns ", paste0(.Object@columns, collapse = ", "), ".")
+        ## Do we need to use lags?
+        if (.Object@model_type_string %in% c(
+            "Directional", "Deterministic Adjustment", "Stochastic Adjustment"
+        )) {
+            ## Generate lags
+            key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns != .Object@time_column])
+            price_sym <- rlang::sym(price_column)
+            time_sym <- rlang::sym(.Object@time_column)
+            lagged_price_column <- paste0("LAGGED_", price_column)
+            lagged_price_sym <- rlang::sym(lagged_price_column)
 
-    .Object
-  }
+            .Object@model_tibble <- .Object@model_tibble %>%
+                dplyr::group_by(!!!key_syms) %>%
+                dplyr::mutate(!!lagged_price_sym := dplyr::lag(!!price_sym, order_by = !!time_sym)) %>%
+                dplyr::ungroup()
+
+            drop_rows <- .Object@model_tibble %>%
+                dplyr::select(!!lagged_price_sym) %>%
+                is.na() %>%
+                c()
+            .Object@model_tibble <- .Object@model_tibble[!drop_rows, ]
+            print_info(
+                .Object@logger, "Dropping ",
+                sum(drop_rows), " rows by generating '", lagged_price_column, "'."
+            )
+
+            ## Do we need to use first differences?
+            if (.Object@model_type_string %in% c("Directional", "Deterministic Adjustment")) {
+                ## Generate first differences
+                diff_column <- paste0(price_column, "_DIFF")
+                diff_sym <- rlang::sym(diff_column)
+
+                .Object@model_tibble <- .Object@model_tibble %>%
+                    dplyr::group_by(!!!key_syms) %>%
+                    dplyr::mutate(!!diff_sym := !!price_sym - !!lagged_price_sym) %>%
+                    dplyr::ungroup()
+            }
+        }
+
+        if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
+            .Object@system <- system_initializer(
+                quantity_column, price_column,
+                demand_specification, supply_specification, price_specification,
+                .Object@model_tibble, use_correlated_shocks
+            )
+        }
+        else {
+            .Object@system <- system_initializer(
+                quantity_column, price_column, demand_specification, supply_specification,
+                .Object@model_tibble, use_correlated_shocks
+            )
+        }
+
+        print_verbose(.Object@logger, "Using columns ", paste0(.Object@columns, collapse = ", "), ".")
+
+        .Object
+    }
 )
 
 #' Minus log-likelihood.
 #'
 #' Returns the opposite of the log-likelihood. The likelihood functions are based on
-#' \href{https://doi.org/10.2307/1914215}{Maddala and Nelson (1974)}. The likelihoods expressions
+#' Maddala and Nelson (1974) \doi{10.2307/1914215}. The likelihoods expressions
 #' that the function uses are derived in
-#' \href{https://dx.doi.org/10.2139/ssrn.3525622}{Karapanagiotis (2020)}. The function calculates
+#' Karapanagiotis (2020) \doi{10.2139/ssrn.3525622}. The function calculates
 #' the model's log likelihood by evaluating the log likelihood of each observation in the sample
 #' and summing the evaluation results.
 #' @param object A model object.
@@ -245,7 +245,7 @@ setGeneric("gradient", function(object, parameters) {
 })
 
 setGeneric("hessian", function(object, parameters) {
-  standardGeneric("hessian")
+    standardGeneric("hessian")
 })
 
 #' Model estimation.
@@ -261,7 +261,7 @@ setGeneric("hessian", function(object, parameters) {
 #' @param object A model object.
 #' @param ... Named parameter used in the model's estimation. These are passed further down
 #'   to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the parameters are passed
-#'   to \code{\link[systemfit]{systemfit}}, if the method is set to "2SLS", or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
+#'   to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
 #'   to \code{\link[bbmle]{mle2}}.
 #' @return The object that holds the estimation result.
 #' @rdname estimate
@@ -354,7 +354,7 @@ setMethod(
 #' Maximize the log-likelihood.
 #'
 #' Maximizes the log-likelihood using the
-#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{GSL} implementation of
+#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} implementation of
 #' the BFGS algorithm. This function is primarily intended for advanced usage. The
 #' \code{\link{estimate}} functionality is a fast, analysis-oriented alternative.
 #' @param object A model object.
@@ -368,23 +368,24 @@ setMethod(
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
-#'   "equilibrium_model", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
+#'     "equilibrium_model", 500, 3, # model type, observed entities, observed time points
+#'     -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'     0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
 #' )
 #'
 #' # initialize the model
 #' model <- new(
-#'   "equilibrium_model", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'     "equilibrium_model", # model type
+#'     c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'     "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'     simulated_data, # data
+#'     use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # maximize the model's log-likelihood
 #' mll <- maximize_log_likelihood(
-#'     model, start = NULL, step = 1e-5,
+#'     model,
+#'     start = NULL, step = 1e-5,
 #'     objective_tolerance = 1e-4, gradient_tolerance = 1e-3
 #' )
 #' }
@@ -541,45 +542,45 @@ setMethod(
 
 #' @rdname get_model_description
 setMethod("get_model_description", signature(object = "market_model"), function(object) {
-  paste0(
-    object@model_type_string, " with ",
-    ifelse(object@system@correlated_shocks, "correlated", "independent"), " shocks"
-  )
+    paste0(
+        object@model_type_string, " with ",
+        ifelse(object@system@correlated_shocks, "correlated", "independent"), " shocks"
+    )
 })
 
 #' @rdname get_number_of_observations
 setMethod("get_number_of_observations", signature(object = "market_model"), function(object) {
-  nrow(object@model_tibble)
+    nrow(object@model_tibble)
 })
 
 setMethod("get_descriptives", signature(object = "market_model"), function(object, variables = NULL) {
-  if (is.null(variables)) {
-    variables <- object@columns
-  }
-  variables <- variables[sapply(variables, function(c) !is.factor(object@model_tibble[, c]))]
-  tibble::as_tibble(apply(
-    object@model_tibble[, variables], 2,
-    function(x) {
-      c(
-        nobs = length(x), nmval = sum(is.na(x)),
-        min = min(x), max = max(x), range = max(x) - min(x),
-        sum = sum(x), median = median(x), mean = mean(x),
-        mean_se = sqrt(var(x) / length(x)),
-        mean_ce = qnorm(0.975) * sqrt(var(x) / length(x)),
-        var = var(x), sd = sd(x), coef_var = sd(x) / mean(x)
-      )
+    if (is.null(variables)) {
+        variables <- object@columns
     }
-  ), rownames = "col")
+    variables <- variables[sapply(variables, function(c) !is.factor(object@model_tibble[, c]))]
+    tibble::as_tibble(apply(
+        object@model_tibble[, variables], 2,
+        function(x) {
+            c(
+                nobs = length(x), nmval = sum(is.na(x)),
+                min = min(x), max = max(x), range = max(x) - min(x),
+                sum = sum(x), median = median(x), mean = mean(x),
+                mean_se = sqrt(var(x) / length(x)),
+                mean_ce = qnorm(0.975) * sqrt(var(x) / length(x)),
+                var = var(x), sd = sd(x), coef_var = sd(x) / mean(x)
+            )
+        }
+    ), rownames = "col")
 })
 
 #' @rdname get_demand_descriptives
 setMethod("get_demand_descriptives", signature(object = "market_model"), function(object) {
-  get_descriptives(object, object@system@demand@independent_variables)
+    get_descriptives(object, object@system@demand@independent_variables)
 })
 
 #' @rdname get_supply_descriptives
 setMethod("get_supply_descriptives", signature(object = "market_model"), function(object) {
-  get_descriptives(object, object@system@supply@independent_variables)
+    get_descriptives(object, object@system@supply@independent_variables)
 })
 
 setGeneric("calculate_initializing_values", function(object) {
@@ -718,8 +719,8 @@ setGeneric("get_aggregate_demand", function(object, parameters) {
 
 #' @rdname get_aggregate_demand
 setMethod("get_aggregate_demand", signature(object = "market_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  get_aggregate(object@system@demand)
+    object@system <- set_parameters(object@system, parameters)
+    get_aggregate(object@system@demand)
 })
 
 #' Demanded quantities.
@@ -760,11 +761,11 @@ setGeneric("get_demanded_quantities", function(object, parameters) {
 
 #' @rdname get_demanded_quantities
 setMethod(
-  "get_demanded_quantities", signature(object = "market_model"),
-  function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    get_quantities(object@system@demand)
-  }
+    "get_demanded_quantities", signature(object = "market_model"),
+    function(object, parameters) {
+        object@system <- set_parameters(object@system, parameters)
+        get_quantities(object@system@demand)
+    }
 )
 
 #' Supply aggregation.
@@ -805,8 +806,8 @@ setGeneric("get_aggregate_supply", function(object, parameters) {
 
 #' @rdname get_aggregate_supply
 setMethod("get_aggregate_supply", signature(object = "market_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  get_aggregate(object@system@supply)
+    object@system <- set_parameters(object@system, parameters)
+    get_aggregate(object@system@supply)
 })
 
 #' Supplied quantities.
@@ -847,9 +848,9 @@ setGeneric("get_supplied_quantities", function(object, parameters) {
 
 #' @rdname get_supplied_quantities
 setMethod(
-  "get_supplied_quantities", signature(object = "market_model"),
-  function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    get_quantities(object@system@supply)
-  }
+    "get_supplied_quantities", signature(object = "market_model"),
+    function(object, parameters) {
+        object@system <- set_parameters(object@system, parameters)
+        get_quantities(object@system@supply)
+    }
 )

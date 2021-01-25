@@ -28,10 +28,10 @@
 #' )
 #' @export
 setClass(
-  "diseq_basic",
-  contains = "disequilibrium_model",
-  representation(),
-  prototype()
+    "diseq_basic",
+    contains = "disequilibrium_model",
+    representation(),
+    prototype()
 )
 
 #' @describeIn initialize_market_model Basic disequilibrium model base constructor

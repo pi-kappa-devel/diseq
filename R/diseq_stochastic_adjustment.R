@@ -32,10 +32,10 @@
 #' )
 #' @export
 setClass(
-  "diseq_stochastic_adjustment",
-  contains = "disequilibrium_model",
-  representation(),
-  prototype()
+    "diseq_stochastic_adjustment",
+    contains = "disequilibrium_model",
+    representation(),
+    prototype()
 )
 
 #' @describeIn initialize_market_model Disequilibrium model with stochastic price
@@ -72,32 +72,32 @@ setMethod(
 )
 
 setMethod(
-  "calculate_initializing_values", signature(object = "diseq_stochastic_adjustment"),
-  function(object) {
-    start <- callNextMethod(object)
+    "calculate_initializing_values", signature(object = "diseq_stochastic_adjustment"),
+    function(object) {
+        start <- callNextMethod(object)
 
-    len <- length(start)
-    pos <- len - ifelse(object@system@correlated_shocks, 3, 2)
-    start <- c(
-      start[1:pos],
-      object@system@price_equation@linear_model$coefficients, start[(pos + 1):len]
-    )
+        len <- length(start)
+        pos <- len - ifelse(object@system@correlated_shocks, 3, 2)
+        start <- c(
+            start[1:pos],
+            object@system@price_equation@linear_model$coefficients, start[(pos + 1):len]
+        )
 
-    len <- length(start)
-    if (object@system@correlated_shocks) {
-      start <- c(start[1:(len - 1)], 1, start[len], 0, 0)
-      names(start)[len:length(start)] <- c(
-        get_prefixed_variance_variable(object@system@price_equation),
-        paste0(get_correlation_variable(object@system), c("_DS", "_DP", "_SP"))
-      )
+        len <- length(start)
+        if (object@system@correlated_shocks) {
+            start <- c(start[1:(len - 1)], 1, start[len], 0, 0)
+            names(start)[len:length(start)] <- c(
+                get_prefixed_variance_variable(object@system@price_equation),
+                paste0(get_correlation_variable(object@system), c("_DS", "_DP", "_SP"))
+            )
+        }
+        else {
+            start <- c(start, price_variance = 1)
+            names(start)[len + 1] <- get_prefixed_variance_variable(object@system@price_equation)
+        }
+
+        start
     }
-    else {
-      start <- c(start, price_variance = 1)
-      names(start)[len + 1] <- get_prefixed_variance_variable(object@system@price_equation)
-    }
-
-    start
-  }
 )
 
 #' @rdname minus_log_likelihood

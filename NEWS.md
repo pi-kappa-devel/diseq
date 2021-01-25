@@ -1,6 +1,18 @@
+# diseq 0.1.0.9003
+
+* Fixed `M1mac` issues. Adjusted README to API changes. Replaced `href` with `doi` whenever relevant. 
+
+# diseq 0.1.0.9002
+
+* Added macro checks for C++20 execution policies features in C++ sources. Removed calls to `std::ragnes::iota_view` and `std::reduce` to ensure C++11 compatibility.
+
+# diseq 0.1.0.9001
+
+* Adjusted vignettes to API changes. 
+
 # diseq 0.1.0.9000
 
-* Introduced the option maximizing the equilibrium model likelihood using GSL through Rcpp. Added linter and formatting configuration files for R anc C++ code. Cleaned C++ code. Reorganized R back-end classes.
+* Introduced the option maximizing the equilibrium model likelihood using `GSL` through `Rcpp`. Added linting and formatting configuration files for R and C++ code. Cleaned C++ code. Reorganized R back-end classes.
 
 # diseq 0.0.14.9004
 
@@ -45,11 +57,11 @@
 
 # diseq 0.0.12.9001
 
-* Added noLD in word exceptions list.
+* Added `noLD` in word exceptions list.
 
 # diseq 0.0.12
 
-* Fixed 'noLD' issues.
+* Fixed `noLD` issues.
 
 # diseq 0.0.11.9002
 

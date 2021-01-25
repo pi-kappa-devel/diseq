@@ -12,11 +12,13 @@
 \#*\#
 *~
 
-# Produced vignettes
+# Documentation files
 README*.html
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*.R
+doc*
+pkgdown
 
 # Development files
 Meta

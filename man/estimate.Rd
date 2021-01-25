@@ -24,7 +24,7 @@ estimate(object, ...)
 
 \item{...}{Named parameter used in the model's estimation. These are passed further down
 to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the parameters are passed
-to \code{\link[systemfit]{systemfit}}, if the method is set to "2SLS", or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
+to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
 to \code{\link[bbmle]{mle2}}.}
 
 \item{use_numerical_gradient}{If true, the gradient is calculated numerically. By default,
@@ -43,11 +43,12 @@ model. If the vector is supplied, the variance-covariance matrix is calculated b
 grouping the score matrix based on the passed variables.}
 
 \item{method}{A string specifying the estimation method. When the passed value is among
-"Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", and "Brent", the model is estimated using
+\code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
+and \code{Brent}, the model is estimated using
 full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality. When
-"2SLS" is supplied, the model is estimated using two-stage least squares based on
+\code{2SLS} is supplied, the model is estimated using two-stage least squares based on
 \code{\link[systemfit]{systemfit}}. In this case, the function returns a list containing
-the first and second stage estimates. The default value is "BFGS".}
+the first and second stage estimates. The default value is \code{BFGS}.}
 }
 \value{
 The object that holds the estimation result.

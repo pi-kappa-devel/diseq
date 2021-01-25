@@ -24,18 +24,18 @@ setOldClass(c("systemfit"))
 #' using the fitted prices instead of the observed.
 #' @examples
 #' simulated_data <- simulate_model_data(
-#'   "equilibrium_model", 500, 3, # model type, observed entities and time points
-#'   -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
+#'     "equilibrium_model", 500, 3, # model type, observed entities and time points
+#'     -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+#'     0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
 #' )
 #'
 #' # initialize the model
 #' model <- new(
-#'   "equilibrium_model", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'     "equilibrium_model", # model type
+#'     c("id", "date"), "Q", "P", # keys, quantity, and price variables
+#'     "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'     simulated_data, # data
+#'     use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #' @export
 setClass(
@@ -69,36 +69,36 @@ setMethod(
 
 #' @rdname minus_log_likelihood
 setMethod("minus_log_likelihood", signature(object = "equilibrium_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  -sum(object@system@llh)
+    object@system <- set_parameters(object@system, parameters)
+    -sum(object@system@llh)
 })
 
 
 setMethod("gradient", signature(object = "equilibrium_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
+    object@system <- set_parameters(object@system, parameters)
 
-  partial_alpha_d <- partial_alpha_d(object@system)
-  partial_beta_d <- partial_beta_d(object@system)
-  partial_alpha_s <- partial_alpha_s(object@system)
-  partial_beta_s <- partial_beta_s(object@system)
-  partial_var_d <- partial_var_d(object@system)
-  partial_var_s <- partial_var_s(object@system)
-  partial_rho <- partial_rho(object@system)
+    partial_alpha_d <- partial_alpha_d(object@system)
+    partial_beta_d <- partial_beta_d(object@system)
+    partial_alpha_s <- partial_alpha_s(object@system)
+    partial_beta_s <- partial_beta_s(object@system)
+    partial_var_d <- partial_var_d(object@system)
+    partial_var_s <- partial_var_s(object@system)
+    partial_rho <- partial_rho(object@system)
 
-  g <- rep(NA, length(get_likelihood_variables(object@system)))
-  names(g) <- get_likelihood_variables(object@system)
+    g <- rep(NA, length(get_likelihood_variables(object@system)))
+    names(g) <- get_likelihood_variables(object@system)
 
-  g[get_prefixed_price_variable(object@system@demand)] <- sum(partial_alpha_d)
-  g[get_prefixed_control_variables(object@system@demand)] <- colSums(partial_beta_d)
-  g[get_prefixed_price_variable(object@system@supply)] <- sum(partial_alpha_s)
-  g[get_prefixed_control_variables(object@system@supply)] <- colSums(partial_beta_s)
-  g[get_prefixed_variance_variable(object@system@demand)] <- sum(partial_var_d)
-  g[get_prefixed_variance_variable(object@system@supply)] <- sum(partial_var_s)
-  if (object@system@correlated_shocks) {
-    g[get_correlation_variable(object@system)] <- sum(partial_rho)
-  }
+    g[get_prefixed_price_variable(object@system@demand)] <- sum(partial_alpha_d)
+    g[get_prefixed_control_variables(object@system@demand)] <- colSums(partial_beta_d)
+    g[get_prefixed_price_variable(object@system@supply)] <- sum(partial_alpha_s)
+    g[get_prefixed_control_variables(object@system@supply)] <- colSums(partial_beta_s)
+    g[get_prefixed_variance_variable(object@system@demand)] <- sum(partial_var_d)
+    g[get_prefixed_variance_variable(object@system@supply)] <- sum(partial_var_s)
+    if (object@system@correlated_shocks) {
+        g[get_correlation_variable(object@system)] <- sum(partial_rho)
+    }
 
-  as.matrix(-g)
+    as.matrix(-g)
 })
 
 #' @rdname scores
@@ -121,11 +121,12 @@ setMethod("scores", signature(object = "equilibrium_model"), function(object, pa
 
 #' @describeIn estimate Equilibrium model estimation.
 #' @param method A string specifying the estimation method. When the passed value is among
-#' "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", and "Brent", the model is estimated using
+#' \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
+#' and \code{Brent}, the model is estimated using
 #' full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality. When
-#' "2SLS" is supplied, the model is estimated using two-stage least squares based on
+#' \code{2SLS} is supplied, the model is estimated using two-stage least squares based on
 #' \code{\link[systemfit]{systemfit}}. In this case, the function returns a list containing
-#' the first and second stage estimates. The default value is "BFGS".
+#' the first and second stage estimates. The default value is \code{BFGS}.
 setMethod(
     "estimate", signature(object = "equilibrium_model"),
     ## TODO: Change long variable name.
