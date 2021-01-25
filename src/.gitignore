@@ -1,6 +1,0 @@
-*.o
-*.so
-*.dll
-
-compile_commands.json
-.clangd/*

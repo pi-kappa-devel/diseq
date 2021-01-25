@@ -7,17 +7,25 @@
 # RStudio files
 .Rproj.user/
 
-# emacs generated files
+# Temporary files
+.clangd/*
 \#*\#
 *~
 
 # Produced vignettes
-vignettes/*.html
-vignettes/*.R
-vignettes/*.pdf
 README*.html
+vignettes/*.html
+vignettes/*.pdf
+vignettes/*.R
 
 # Development files
 Meta
 tests/testthat/*.rda
 tests/testthat/devel-environment
+
+# Compilation files
+src/compile_commands.json
+*.o
+*.so
+*.dll
+
