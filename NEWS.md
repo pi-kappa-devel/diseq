@@ -1,3 +1,7 @@
+# diseq 0.1.0.9000
+
+* Introduced the option maximizing the equilibrium model likelihood using GSL through Rcpp. Added linter and formatting configuration files for R anc C++ code. Cleaned C++ code. Reorganized R back-end classes.
+
 # diseq 0.0.14.9004
 
 * Improved README file style.
