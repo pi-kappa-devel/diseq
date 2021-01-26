@@ -11,15 +11,6 @@ Models For Markets in Equilibrium and Disequilibrium
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 <!-- badges: end -->
 
-<style>
-body { text-align:justify; width: 75%; margin: 20px auto 0px auto; }
-pre:not([class]) { background-color: inherit!important; color: inherit!important; }
-.system-and-figure { text-align:center; display:inline-block; width:100%; }
-.system-and-figure div { width:40%; float:left; margin:10% auto; }
-.system-and-figure img { float:left; margin:2% 0 2% 2%; max-width:55%; }
-p:first-of-type { margin-bottom: 30px; }
-</style>
-
 The *diseq* package provides tools to estimate and analyze an
 equilibrium and four disequilibrium models. The equilibrium model can be
 estimated with either two-stage least squares or with full information
@@ -48,15 +39,15 @@ supply side and vice versa. This model assumes that the market
 observations always represent equilibrium points in which the demanded
 and supplied quantities are equal.
 
-<div class="system-and-figure">
-
-<div>
-
-</div>
-
-<img src='man/figures/equilibrium.png'/>
-
-</div>
+\[
+\begin{equation}
+\begin{aligned}
+D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
+S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
+Q_{n t} &= D_{n t} = S_{n t}
+\end{aligned} \tag{EM} \label{equilibrium}
+\end{equation}
+\] <img src='man/figures/equilibrium.png'/>
 
 ## The basic disequilibrium model
 
@@ -70,15 +61,15 @@ observation belongs to the demand or the supply side since the
 estimation of the model will allocate the observations on the demand or
 supply side so that the likelihood is maximized.
 
-<div class="system-and-figure">
-
-<div>
-
-</div>
-
-<img src='man/figures/diseq_basic_model.png'/>
-
-</div>
+\[
+\begin{equation}
+\begin{aligned}
+D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
+S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
+Q_{n t} &= \min\{D_{n t},S_{n t}\}
+\end{aligned} \tag{BM} \label{basic}
+\end{equation}
+\] <img src='man/figures/diseq_basic_model.png'/>
 
 ## The directional disequilibrium model
 
@@ -94,15 +85,16 @@ estimations, it also, when inaccurate, intensifies misspecification
 problems. Therefore, the additional structure of the directional model
 does not guarantee better estimates in comparison with the basic model.
 
-<div class="system-and-figure">
-
-<div>
-
-</div>
-
-<img src='man/figures/diseq_directional_model.png'/>
-
-</div>
+\[
+\begin{equation}
+\begin{aligned}
+D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
+S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
+Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
+\Delta P_{n t} &\ge 0 \implies D_{n t} \ge S_{n t}
+\end{aligned} \tag{DM} \label{directional}
+\end{equation}
+\] <img src='man/figures/diseq_directional_model.png'/>
 
 ## A disequilibrium model with deterministic price dynamics
 
@@ -120,15 +112,16 @@ in alignment with standard economic reasoning. By letting \(\gamma\)
 approach zero, the equilibrium model can be obtained as a limiting case
 of this model.
 
-<div class="system-and-figure">
-
-<div>
-
-</div>
-
-<img src='man/figures/diseq_deterministic_adjustment_model.png'/>
-
-</div>
+\[
+\begin{equation}
+\begin{aligned}
+D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
+S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
+Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
+\Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right)
+\end{aligned} \tag{DA} \label{deterministic_adjustment}
+\end{equation}
+\] <img src='man/figures/diseq_deterministic_adjustment_model.png'/>
 
 ## A disequilibrium model with stochastic price dynamics
 
@@ -142,15 +135,16 @@ the highest degree of freedom, accompanied, however, by a significant
 increase in estimation complexity, which can hinder the stability of the
 procedure and the numerical accuracy of the outcomes.
 
-<div class="system-and-figure">
-
-<div>
-
-</div>
-
-<img src='man/figures/diseq_stochastic_adjustment_model.png'/>
-
-</div>
+\[
+\begin{equation}
+\begin{aligned}
+D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
+S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
+Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
+\Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right) +  X_{p, n t}'\beta_{p} + u_{p, n t}
+\end{aligned} \tag{SA} \label{stochastic_adjustment}
+\end{equation}
+\] <img src='man/figures/diseq_stochastic_adjustment_model.png'/>
 
 # Installation
 
@@ -296,8 +290,9 @@ bbmle::summary(est)
     ## D_X1 = 1.44062383641357, D_X2 = 4.46769000498207, S_P = 2.19994905762293, 
     ## S_CONST = 10.2218850028638, S_Xs1 = 0.59622703822817, S_X1 = 1.43857649730766, 
     ## S_X2 = 4.46672975897316, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
-    ## ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
-    ##     gr = function(...) gradient(object, ...)))
+    ## ), method = "BFGS", minuslogl = function (...) 
+    ## minus_log_likelihood(object, ...), gr = function (...) 
+    ## gradient(object, ...)))
     ## 
     ## Coefficients:
     ##              Estimate Std. Error  z value  Pr(z)    
@@ -343,11 +338,7 @@ disequilibrium models are
 The package organizes these classes in a simple object oriented
 hierarchy.
 
-<div style="width:100%;text-align:center">
-
-<img src='man/figures/design.png' align="center" />
-
-</div>
+<img src='man/figures/design.png' width="100%" align="center" />
 
 Concerning post estimation analysis, the package offers functionality to
 calculate

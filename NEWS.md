@@ -1,3 +1,7 @@
+# diseq 0.1.1
+
+* Prepared CRAN submission. Small adjustments to README style. Updated CRAN comments.
+
 # diseq 0.1.0.9004
 
 * Adjusted file names so that they are consistent with the  API changes.

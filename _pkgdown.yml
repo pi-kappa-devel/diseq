@@ -1,0 +1,11 @@
+run_dont_run: TRUE
+url: https://diseq.pikappa.eu
+authors:
+  Pantelis Karapanagiotis:
+    href: http://pikappa.eu
+development:
+  mode: auto
+template:
+  params:
+    bootswatch: united
+    highlight: breezedark

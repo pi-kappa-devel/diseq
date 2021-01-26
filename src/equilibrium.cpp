@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 
+#include "gsl/gsl_errno.h"
 #include "gsl/gsl_multimin.h"
 #include "gsl/gsl_vector.h"
 

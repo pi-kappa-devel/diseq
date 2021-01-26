@@ -18,7 +18,8 @@ vignettes/*.html
 vignettes/*.pdf
 vignettes/*.R
 doc*
-pkgdown
+pkgdown/*
+!pkgdown/extra.css
 
 # Development files
 Meta
@@ -31,3 +32,4 @@ src/compile_commands.json
 *.so
 *.dll
 
+docs

@@ -15,4 +15,4 @@
 ^docs?$
 ^.git$
 ^pkgdown$
-^doc$
+^_pkgdown\.yml$

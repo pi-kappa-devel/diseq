@@ -1,0 +1,22 @@
+* Make documentation
+
+#begin_src R
+rmarkdown::render('README.Rmd', output_format = 'md_document')
+pkgdown::build_site(lazy = TRUE)
+rmarkdown::render('README.Rmd', output_format = 'github_document')
+devtools::document()
+devtools::spell_check()
+#end_src
+
+* Remote package checks
+
+#begin_src R
+devtools::check_win_oldrelease()
+devtools::check_win_devel()
+devtools::check_win_release()
+devtools::check_rhub(env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
+devtools::check_rhub(
+  platforms = c('macos-highsierra-release-cran', 'debian-gcc-devel-nold'), 
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always')
+)
+#end_src
