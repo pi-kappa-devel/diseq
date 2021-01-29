@@ -1,7 +1,7 @@
 Package: diseq
-Title: Estimation Methods for Markets in Disequilibrium
-Version: 0.1.1
-Date: 2021-01-26
+Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
+Version: 0.1.2
+Date: 2021-01-29
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
@@ -35,9 +35,7 @@ Imports:
     systemfit (>= 1.1),
     tibble (>= 1.4.2),
     tidyr (>= 1.0.2),
-    Rcpp,
-    RcppGSL,
-    RcppParallel
+    Rcpp
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -79,4 +77,4 @@ Collate:
 LinkingTo: 
     Rcpp
 SystemRequirements:
-    C++20
+    C++11

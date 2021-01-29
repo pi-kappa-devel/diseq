@@ -16,3 +16,8 @@
 ^.git$
 ^pkgdown$
 ^_pkgdown\.yml$
+^src/Makevars$
+^autom4te.cache$
+^config.log$
+^config.status$
+^aclocal.m4$

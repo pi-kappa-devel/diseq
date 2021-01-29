@@ -4,13 +4,7 @@
 #include "gsl/gsl_multimin.h"
 #include "gsl/gsl_vector.h"
 
-#if __cplusplus > 201703L && !defined(__MINGW32__)
-#define _DISEQ_HAS_EXECUTION_POLICIES_ 1
-#else
-#define _DISEQ_HAS_EXECUTION_POLICIES_ 0
-#endif
-
-#if _DISEQ_HAS_EXECUTION_POLICIES_
+#ifdef _DISEQ_HAS_EXECUTION_POLICIES_
 #include <execution>
 #endif
 #include <numeric>
@@ -313,7 +307,7 @@ public:
     rho2_QP2 = std::pow(rho2_QP, 2);
 
     std::for_each(
-#if _DISEQ_HAS_EXECUTION_POLICIES_
+#ifdef _DISEQ_HAS_EXECUTION_POLICIES_
         std::execution::par_unseq,
 #endif
         row_indices.begin(), row_indices.end(), [&](size_t r) {
@@ -344,12 +338,12 @@ public:
 
     // Floating point addition is not commutative. For deterministic output the summation has to
     // be performed in a prespecified order.
-  sum_llh = std::accumulate(llh.begin(), llh.end(), 0.0);
+    sum_llh = std::accumulate(llh.begin(), llh.end(), 0.0);
   }
 
   void calculate_gradient(gsl_vector *df) {
     std::for_each(
-#if _DISEQ_HAS_EXECUTION_POLICIES_
+#ifdef _DISEQ_HAS_EXECUTION_POLICIES_
         std::execution::par_unseq,
 #endif
         row_indices.begin(), row_indices.end(), [&](size_t r) {
@@ -481,7 +475,7 @@ void my_fdf(const gsl_vector *v, void *params, double *f, gsl_vector *df) {
   obj->calculate_gradient(df);
 }
 
-std::vector<double> test_df(const gsl_vector *x, double step, void *params) {
+std::vector<double> secant_gradient_ratios(const gsl_vector *x, double step, void *params) {
   double fx;
   gsl_vector *dfx = gsl_vector_alloc(x->size);
   my_fdf(x, params, &fx, dfx);
@@ -547,7 +541,7 @@ Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double
   Rcpp::NumericVector gradient(s->gradient->size);
   double log_likelihood = s->f;
   std::for_each(
-#if _DISEQ_HAS_EXECUTION_POLICIES_
+#ifdef _DISEQ_HAS_EXECUTION_POLICIES_
       std::execution::par_unseq,
 #endif
       model->col_indices.begin(), model->col_indices.end(), [&](size_t c) {

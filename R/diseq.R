@@ -59,6 +59,4 @@ NULL
 NULL
 
 #' @importFrom Rcpp loadModule
-#' @importFrom RcppGSL LdFlags
-#' @importFrom RcppParallel RcppParallelLibs
 Rcpp::loadModule("diseq_module", TRUE)

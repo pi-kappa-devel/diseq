@@ -18,6 +18,7 @@ vignettes/*.html
 vignettes/*.pdf
 vignettes/*.R
 doc*
+docs
 pkgdown/*
 !pkgdown/extra.css
 
@@ -32,4 +33,10 @@ src/compile_commands.json
 *.so
 *.dll
 
-docs
+# Autoconf files
+configure
+src/Makevars
+autom4te.cache
+config.log
+config.status
+aclocal.m4

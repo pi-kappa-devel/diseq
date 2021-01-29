@@ -80,6 +80,11 @@ test_aggregation <- function(aggregation, mdl, params) {
 }
 
 
+test_shortages <- function(shortages, mdl, params) {
+    testthat::expect(!any(is.na(shortages(mdl, params))), sprintf("Failed to calculate shortages"))
+}
+
+
 test_scores <- function(mdl, params) {
     scores <- scores(mdl, params)
     n <- diseq::get_number_of_observations(mdl)

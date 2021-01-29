@@ -1,22 +1,55 @@
-* Make documentation
+* Before releasing
+** Make documentation
 
-#begin_src R
+#+begin_src R :dir .. :results output :async
 rmarkdown::render('README.Rmd', output_format = 'md_document')
 pkgdown::build_site(lazy = TRUE)
 rmarkdown::render('README.Rmd', output_format = 'github_document')
 devtools::document()
 devtools::spell_check()
-#end_src
+devtools::check_man()
+devtools::release_checks()
+#+end_src
 
-* Remote package checks
+** Remote package checks
 
-#begin_src R
+*** Windows platforms
+#+begin_src R :eval no
 devtools::check_win_oldrelease()
 devtools::check_win_devel()
 devtools::check_win_release()
+#+end_src
+
+*** Preconfigured devtools platforms
+#+begin_src R :dir .. :results output :async
 devtools::check_rhub(env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
+#+end_src
+
+*** Platforms using clang
+#+begin_src R :dir .. :async
 devtools::check_rhub(
-  platforms = c('macos-highsierra-release-cran', 'debian-gcc-devel-nold'), 
+  platforms = c('debian-clang-devel', 'fedora-clang-devel'), 
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
+#+end_src
+
+*** Solaris platforms
+#+begin_src R :dir .. :async
+devtools::check_rhub(
+  platforms = c('solaris-x86-patched', 'solaris-x86-patched-ods'), 
   env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always')
 )
-#end_src
+#+end_src
+
+*** Mac platforms
+#+begin_src R :dir .. :async
+devtools::check_rhub(
+  platforms = c('macos-highsierra-release', 'macos-highsierra-release-cran'), 
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always')
+)
+#+end_src
+
+*** Platforms without long double
+#+begin_src R :dir .. :async
+devtools::check_rhub(platforms = c('debian-gcc-devel-nold'))
+#+end_src
+

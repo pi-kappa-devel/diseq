@@ -1,3 +1,11 @@
+# diseq 0.1.2
+
+* Added `autotools` configuration script for cross-platform compilation. Removed dependence on `C++20`. The sources are now `C++11` compliant and only use `C++17` and `libtbb` if it is available on the target machine. Patch for `clang` compilation failure: reverting to sequential execution when compiling with clang and `libc++`. 
+
+# diseq 0.1.1.9001
+
+* Restructured and added unit tests to increase test coverage. 
+
 # diseq 0.1.1
 
 * Prepared CRAN submission. Small adjustments to README style. Updated CRAN comments.
