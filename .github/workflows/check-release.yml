@@ -22,8 +22,8 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-latest, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-latest, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -56,16 +56,13 @@ jobs:
 
       - name: Install system dependencies
         run:  |
-         if [ "$RUNNER_OS" == "Linux" ]; then
+         if [ "$RUNNER_OS" == "Windows" ]; then
+           Rscript.exe -e 'install.packages("RcppGSL", type = "binary")'
+         else
            while read -r cmd
            do
              eval sudo $cmd
-           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "latest"))')
-         elif [ "$RUNNER_OS" == "Windows" ]; then
-              Rscript.exe -e 'install.packages("RcppGSL", type = "binary")'
-         else
-              echo "$RUNNER_OS not supported"
-              exit 1
+           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
          fi
         shell: bash
 
