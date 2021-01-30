@@ -62,7 +62,7 @@ jobs:
              eval sudo $cmd
            done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "latest"))')
          elif [ "$RUNNER_OS" == "Windows" ]; then
-              Rscript.exe -e 'install.packages("RcppGSL", type = "binary")"
+              Rscript.exe -e 'install.packages("RcppGSL", type = "binary")'
          else
               echo "$RUNNER_OS not supported"
               exit 1
