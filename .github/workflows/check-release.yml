@@ -58,7 +58,7 @@ jobs:
         run:  |
          if [ "$RUNNER_OS" == "Windows" ]; then
            Rscript.exe -e 'install.packages("RcppGSL", type = "binary")'
-         else
+         elif [ "$RUNNER_OS" == "Linux" ]; then
            while read -r cmd
            do
              eval sudo $cmd
