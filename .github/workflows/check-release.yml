@@ -57,7 +57,7 @@ jobs:
       - name: Install system dependencies
         run:  |
          if [ "$RUNNER_OS" == "Windows" ]; then
-           Rscript.exe -e 'install.packages("RcppGSL")'
+           Rscript.exe -e 'install.packages(\"RcppGSL\")'
          elif [ "$RUNNER_OS" == "Linux" ]; then
            while read -r cmd
            do
