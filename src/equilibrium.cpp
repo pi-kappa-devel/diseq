@@ -1,15 +1,19 @@
 #include <Rcpp.h>
 
+#ifdef _DISEQ_HAS_GSL_
 #include "gsl/gsl_errno.h"
 #include "gsl/gsl_multimin.h"
 #include "gsl/gsl_vector.h"
+#endif /* _DISEQ_HAS_GSL_ */
 
 #ifdef _DISEQ_HAS_EXECUTION_POLICIES_
 #include <execution>
-#endif
+#endif /* _DISEQ_HAS_EXECUTION_POLICIES_ */
 #include <numeric>
 
+#ifdef _DISEQ_HAS_GSL_
 static gsl_error_handler_t *defaul_gsl_error_handler = gsl_set_error_handler_off();
+#endif /* _DISEQ_HAS_GSL_ */
 
 class equilibrium_model {
 public:
@@ -35,12 +39,12 @@ public:
   size_t independent_variable_size;
   size_t gradient_size;
 
-  gsl_vector *alphad_betad;
-  gsl_vector *alphas_betas;
+  std::vector<double> alphad_betad;
+  std::vector<double> alphas_betas;
   double alphad;
   double alphas;
-  gsl_vector *betad;
-  gsl_vector *betas;
+  std::vector<double> betad;
+  std::vector<double> betas;
   double delta;
   double sigmad;
   double sigmas;
@@ -113,8 +117,8 @@ public:
     demand_independent_variables_size = demand_independent_variables.length();
     supply_independent_variables_size = supply_independent_variables.length();
 
-    alphad_betad = gsl_vector_alloc(demand_independent_variables_size);
-    alphas_betas = gsl_vector_alloc(supply_independent_variables_size);
+    alphad_betad.assign(demand_independent_variables_size, 0.0);
+    alphas_betas.assign(supply_independent_variables_size, 0.0);
 
     Rcpp::Function get_prefixed_price_variable = diseq["get_prefixed_price_variable"];
     demand_price_variable =
@@ -132,8 +136,8 @@ public:
     demand_control_variables_size = demand_control_variables.length();
     supply_control_variables_size = supply_control_variables.length();
 
-    betad = gsl_vector_alloc(demand_control_variables_size);
-    betas = gsl_vector_alloc(supply_control_variables_size);
+    betad.assign(demand_control_variables_size, 0.0);
+    betas.assign(supply_control_variables_size, 0.0);
 
     Rcpp::Function get_prefixed_variance_variable = diseq["get_prefixed_variance_variable"];
     demand_variance_variable =
@@ -209,63 +213,52 @@ public:
     std::iota(col_indices.begin(), col_indices.end(), 0);
   }
 
-  ~equilibrium_model() {
-    gsl_vector_free(alphad_betad);
-    gsl_vector_free(alphas_betas);
+  ~equilibrium_model() {}
 
-    gsl_vector_free(betad);
-    gsl_vector_free(betas);
-  }
-
-  void system_base_set_parameters(const gsl_vector *v) {
+  void system_base_set_parameters(const double *v) {
     size_t offsetd = 0;
     size_t offsets = demand_independent_variables_size;
-    gsl_vector view_vector;
 
-    view_vector = gsl_vector_const_subvector(v, offsetd, demand_independent_variables_size).vector;
-    gsl_vector_memcpy(alphad_betad, &view_vector);
-    view_vector = gsl_vector_const_subvector(v, offsets, supply_independent_variables_size).vector;
-    gsl_vector_memcpy(alphas_betas, &view_vector);
+    alphad_betad.assign(v, v + demand_independent_variables_size);
+    alphas_betas.assign(v + offsets, v + offsets + supply_independent_variables_size);
 
     if (demand_price_variable_size) {
-      alphad = gsl_vector_get(v, offsetd);
+      alphad = v[offsetd];
       ++offsetd;
     } else {
-      alphad = GSL_NAN;
+      alphad = NAN;
     }
     if (supply_price_variable_size) {
-      alphas = gsl_vector_get(v, offsets);
+      alphas = v[offsets];
       ++offsets;
     } else {
-      alphas = GSL_NAN;
+      alphas = NAN;
     }
     delta = alphas - alphad;
 
-    view_vector = gsl_vector_const_subvector(v, offsetd, demand_control_variables_size).vector;
-    gsl_vector_memcpy(betad, &view_vector);
-    view_vector = gsl_vector_const_subvector(v, offsets, supply_control_variables_size).vector;
-    gsl_vector_memcpy(betas, &view_vector);
+    betad.assign(v + offsetd, v + offsetd + demand_control_variables_size);
+    betas.assign(v + offsets, v + offsets + supply_control_variables_size);
 
     offsets += supply_control_variables_size;
     offsetd = offsets++;
 
-    double vard = gsl_vector_get(v, offsetd);
+    double vard = v[offsetd];
     if (vard < 0) {
-      sigmad = GSL_NAN;
+      sigmad = NAN;
     } else {
       sigmad = std::sqrt(vard);
     }
-    double vars = gsl_vector_get(v, offsets++);
+    double vars = v[offsets++];
     if (vars < 0) {
-      sigmas = GSL_NAN;
+      sigmas = NAN;
     } else {
       sigmas = std::sqrt(vars);
     }
 
     if (has_correlated_shocks) {
-      rho = gsl_vector_get(v, offsets);
+      rho = v[offsets];
       if (rho > 1) {
-        rho2 = rho1 = rho = GSL_NAN;
+        rho2 = rho1 = rho = NAN;
       } else {
         rho1 = 1 / std::sqrt(1 - std::pow(rho, 2));
         rho2 = rho * rho1;
@@ -273,7 +266,7 @@ public:
     }
   }
 
-  void system_equilibrium_model_set_parameters(const gsl_vector *v) {
+  void system_equilibrium_model_set_parameters(const double *v) {
     system_base_set_parameters(v);
 
     rho_sigmad_sigmas = rho * sigmad * sigmas;
@@ -309,15 +302,15 @@ public:
     std::for_each(
 #ifdef _DISEQ_HAS_EXECUTION_POLICIES_
         std::execution::par_unseq,
-#endif
+#endif /* _DISEQ_HAS_EXECUTION_POLICIES_ */
         row_indices.begin(), row_indices.end(), [&](size_t r) {
           Xdbetad[r] = 0;
           for (size_t c = 0; c < Xd[r].size(); ++c) {
-            Xdbetad[r] += Xd[r][c] * gsl_vector_get(betad, c);
+            Xdbetad[r] += Xd[r][c] * betad[c];
           }
           Xsbetas[r] = 0;
           for (size_t c = 0; c < Xs[r].size(); ++c) {
-            Xsbetas[r] += Xs[r][c] * gsl_vector_get(betas, c);
+            Xsbetas[r] += Xs[r][c] * betas[c];
           }
           mu_P[r] = (Xdbetad[r] - Xsbetas[r]) / delta;
           mu_Q[r] = (Xdbetad[r] * alphas - Xsbetas[r] * alphad) / (-alphad + alphas);
@@ -341,11 +334,11 @@ public:
     sum_llh = std::accumulate(llh.begin(), llh.end(), 0.0);
   }
 
-  void calculate_gradient(gsl_vector *df) {
+  void calculate_gradient(double *df) {
     std::for_each(
 #ifdef _DISEQ_HAS_EXECUTION_POLICIES_
         std::execution::par_unseq,
-#endif
+#endif /* _DISEQ_HAS_EXECUTION_POLICIES_ */
         row_indices.begin(), row_indices.end(), [&](size_t r) {
           double Xdbetadr = Xdbetad[r];
           double Xsbetasr = Xsbetas[r];
@@ -437,42 +430,43 @@ public:
 
     // Floating point addition is not commutative. For deterministic output the summation has to
     // be performed in a prespecified order.
-    std::memset(df->data, 0, sizeof(df->data[0]) * df->size);
+    std::memset(df, 0, sizeof(df[0]) * gradient_size);
     for (size_t r = 0; r < partial_alpha_d.size(); ++r) {
-      df->data[0] -= partial_alpha_d[r];
+      df[0] -= partial_alpha_d[r];
       for (size_t c = 0; c < demand_control_variables_size; ++c) {
-        df->data[c + 1] -= partial_beta_d[c][r];
+        df[c + 1] -= partial_beta_d[c][r];
       }
-      df->data[demand_independent_variables_size] -= partial_alpha_s[r];
+      df[demand_independent_variables_size] -= partial_alpha_s[r];
       for (size_t c = 0; c < supply_control_variables_size; ++c) {
-        df->data[c + demand_independent_variables_size + 1] -= partial_beta_s[c][r];
+        df[c + demand_independent_variables_size + 1] -= partial_beta_s[c][r];
       }
-      df->data[independent_variable_size] -= partial_var_d[r];
-      df->data[independent_variable_size + 1] -= partial_var_s[r];
-      df->data[independent_variable_size + 2] -= partial_rho[r];
+      df[independent_variable_size] -= partial_var_d[r];
+      df[independent_variable_size + 1] -= partial_var_s[r];
+      df[independent_variable_size + 2] -= partial_rho[r];
     }
   }
 };
 
+#ifdef _DISEQ_HAS_GSL_
 double my_f(const gsl_vector *v, void *params) {
   equilibrium_model *obj = static_cast<equilibrium_model *>(params);
-  obj->system_equilibrium_model_set_parameters(v);
+  obj->system_equilibrium_model_set_parameters(v->data);
 
   return -obj->sum_llh;
 }
 
 void my_df(const gsl_vector *v, void *params, gsl_vector *df) {
   equilibrium_model *obj = static_cast<equilibrium_model *>(params);
-  obj->system_equilibrium_model_set_parameters(v);
-  obj->calculate_gradient(df);
+  obj->system_equilibrium_model_set_parameters(v->data);
+  obj->calculate_gradient(df->data);
 }
 
 void my_fdf(const gsl_vector *v, void *params, double *f, gsl_vector *df) {
   equilibrium_model *obj = static_cast<equilibrium_model *>(params);
-  obj->system_equilibrium_model_set_parameters(v);
+  obj->system_equilibrium_model_set_parameters(v->data);
 
   *f = -obj->sum_llh;
-  obj->calculate_gradient(df);
+  obj->calculate_gradient(df->data);
 }
 
 std::vector<double> secant_gradient_ratios(const gsl_vector *x, double step, void *params) {
@@ -498,12 +492,17 @@ std::vector<double> secant_gradient_ratios(const gsl_vector *x, double step, voi
 
   return qs;
 }
+#endif /* _DISEQ_HAS_GSL_ */
 
 Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double step,
                     double objective_tolerance, double gradient_tolerance) {
   size_t iter = 0;
-  int status;
+  int status = -1;
+  Rcpp::NumericVector optimizer(model->gradient_size);
+  Rcpp::NumericVector gradient(model->gradient_size);
+  double log_likelihood = NAN;
 
+#ifdef _DISEQ_HAS_GSL_
   const gsl_multimin_fdfminimizer_type *T;
   gsl_multimin_fdfminimizer *s;
 
@@ -537,13 +536,10 @@ Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double
     status = gsl_multimin_test_gradient(s->gradient, gradient_tolerance);
   } while (status == GSL_CONTINUE && iter < 1e+5);
 
-  Rcpp::NumericVector optimizer(s->x->size);
-  Rcpp::NumericVector gradient(s->gradient->size);
-  double log_likelihood = s->f;
   std::for_each(
 #ifdef _DISEQ_HAS_EXECUTION_POLICIES_
       std::execution::par_unseq,
-#endif
+#endif /* _DISEQ_HAS_EXECUTION_POLICIES_ */
       model->col_indices.begin(), model->col_indices.end(), [&](size_t c) {
         optimizer[c] = s->x->data[c];
         gradient[c] = s->gradient->data[c];
@@ -551,6 +547,7 @@ Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double
 
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x);
+#endif /* _DISEQ_HAS_GSL_ */
 
   return Rcpp::List::create(
       Rcpp::_["step"] = step, Rcpp::_["objective_tolerance"] = objective_tolerance,

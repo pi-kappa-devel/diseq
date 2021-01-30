@@ -1,6 +1,13 @@
+# diseq 0.1.2.9001
+
+* Patched `M1mac` additional issues: Added compilation flag for availability of `GSL`. The native code can be compiled also in systems without `GSL`, albeit offering an empty shell functionality for the moment.
+* Documented changes in `maximize_log_likelihood` function.
+
 # diseq 0.1.2
 
-* Added `autotools` configuration script for cross-platform compilation. Removed dependence on `C++20`. The sources are now `C++11` compliant and only use `C++17` and `libtbb` if it is available on the target machine. Patch for `clang` compilation failure: reverting to sequential execution when compiling with clang and `libc++`. 
+* Added `autotools` configuration script for cross-platform compilation. 
+* Removed dependence on `C++20`. The sources are now `C++11` compliant and only use `C++17` and `libtbb` if it is available on the target machine. 
+* Patch for `clang` compilation failure: reverting to sequential execution when compiling with clang and `libc++`. 
 
 # diseq 0.1.1.9001
 
@@ -16,11 +23,13 @@
 
 # diseq 0.1.0.9003
 
-* Fixed `M1mac` issues. Adjusted README to API changes. Replaced `href` with `doi` whenever relevant. 
+* Fixed `M1mac` issues. Adjusted README to API changes. 
+* Replaced `href` with `doi` whenever relevant. 
 
 # diseq 0.1.0.9002
 
-* Added macro checks for C++20 execution policies features in C++ sources. Removed calls to `std::ragnes::iota_view` and `std::reduce` to ensure C++11 compatibility.
+* Added macro checks for C++20 execution policies features in C++ sources. 
+* Removed calls to `std::ragnes::iota_view` and `std::reduce` to ensure C++11 compatibility.
 
 # diseq 0.1.0.9001
 
@@ -28,7 +37,9 @@
 
 # diseq 0.1.0.9000
 
-* Introduced the option maximizing the equilibrium model likelihood using `GSL` through `Rcpp`. Added linting and formatting configuration files for R and C++ code. Cleaned C++ code. Reorganized R back-end classes.
+* Introduced the option maximizing the equilibrium model likelihood using `GSL` through `Rcpp`. 
+* Added linting and formatting configuration files for R and C++ code. Cleaned C++ code. 
+* Reorganized R back-end classes.
 
 # diseq 0.0.14.9004
 
@@ -85,7 +96,8 @@
 
 # diseq 0.0.11.9001
 
-* Enabled BFGS-based estimation with numerical gradient. Added CRAN installation instructions in README.
+* Enabled BFGS-based estimation with numerical gradient. 
+* Added CRAN installation instructions in README.
 
 # diseq 0.0.11.9000
 
@@ -93,7 +105,9 @@
 
 # diseq 0.0.11
 
-* Removed "get_correlation_variable" from exported functions. Improved the documentation of "minus_log_likelihood". Reintroduced references in description.
+* Removed `get_correlation_variable` from exported functions. 
+* Improved the documentation of `minus_log_likelihood`. 
+* Reintroduced references in description.
 
 # diseq 0.0.10
 
@@ -113,11 +127,13 @@
 
 # diseq 0.0.7.9001
 
-* Quoted all package names in DESCRIPTION. To reduce build time: 1. Removed direction model estimation from equilibrium assessment vignette, 2. Decreased estimation accuracy of basic usage vignette to six digits.
+* Quoted all package names in DESCRIPTION. 
+* To reduce build time: 1. Removed direction model estimation from equilibrium assessment vignette, 2. Decreased estimation accuracy of basic usage vignette to six digits.
 
 # diseq 0.0.7
 
-* Fixed order of arguments in web-link of estimation documentation. Improved simulation documentation.
+* Fixed order of arguments in web-link of estimation documentation. 
+* Improved simulation documentation.
 
 # diseq 0.0.6
 

@@ -1,4 +1,4 @@
-AC_INIT([diseq],[0.1.2])
+AC_INIT([diseq],[0.1.2.9001])
 
 # Find the compiler and compiler flags used by R.
 : ${R_HOME=`R RHOME`}
@@ -11,6 +11,12 @@ CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 AC_LANG(C++)
 AC_PROG_CPP
+
+AC_CHECK_LIB([m],[cos])
+AC_CHECK_LIB([gslcblas],[cblas_dgemm])
+AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
+AS_IF([test "X$ac_cv_lib_gsl_gsl_blas_dgemm" = "Xyes"],
+      [PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_GSL_"])
 
 AC_CHECK_HEADERS(execution)
 AS_IF([test "X$ac_cv_header_execution" = "Xyes"], [
@@ -28,12 +34,9 @@ AS_IF([test "X$ac_cv_header_execution" = "Xyes"], [
      PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_EXECUTION_POLICIES_ -std=c++17"
      PKG_LIBS="$PKG_LIBS -ltbb"],
     [AC_MSG_RESULT([no])])
-  CPPFLAGS="$OLDCPPFLAGS"
-  LIBS="$OLDLIBS"
+  CPPFLAGS="$OLD_CPPFLAGS"
+  LIBS="$OLD_LIBS"
 ])
-AC_CHECK_LIB([m],[cos])
-AC_CHECK_LIB([gslcblas],[cblas_dgemm])
-AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
 
 # Write the flags into the src/Makevars file.
 AC_SUBST([PKG_CPPFLAGS], ["${PKG_CPPFLAGS}"])

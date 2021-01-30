@@ -3,7 +3,7 @@
 
 #+begin_src R :dir .. :results output :async
 rmarkdown::render('README.Rmd', output_format = 'md_document')
-pkgdown::build_site(lazy = TRUE)
+pkgdown::build_site()
 rmarkdown::render('README.Rmd', output_format = 'github_document')
 devtools::document()
 devtools::spell_check()
