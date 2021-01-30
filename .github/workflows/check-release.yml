@@ -3,11 +3,9 @@
 on:
   push:
     branches:
-      - main
       - master
   pull_request:
     branches:
-      - main
       - master
 
 name: R-CMD-check
@@ -24,8 +22,8 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-latest, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-latest, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -57,12 +55,19 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install system dependencies
-        if: runner.os == 'Linux'
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+        run:  |
+         if [ "$RUNNER_OS" == "Linux" ]; then
+           while read -r cmd
+           do
+             eval sudo $cmd
+           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "latest"))')
+         elif [ "$RUNNER_OS" == "Windows" ]; then
+              Rscript.exe -e 'install.packages("RcppGSL", type = "binary")"
+         else
+              echo "$RUNNER_OS not supported"
+              exit 1
+         fi
+        shell: bash
 
       - name: Install dependencies
         run: |
