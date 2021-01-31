@@ -1,4 +1,4 @@
-AC_INIT([diseq],[0.1.2.9001])
+AC_INIT([diseq],[0.1.3])
 
 # Find the compiler and compiler flags used by R.
 : ${R_HOME=`R RHOME`}
@@ -12,35 +12,44 @@ CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
 AC_LANG(C++)
 AC_PROG_CPP
 
-AC_CHECK_LIB([m],[cos])
-AC_CHECK_LIB([gslcblas],[cblas_dgemm])
-AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
-AS_IF([test "X$ac_cv_lib_gsl_gsl_blas_dgemm" = "Xyes"],
-      [PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_GSL_"])
+GSL_LIBS=`gsl-config --libs`
+AS_IF([test "X$GSL_LIBS" != "X"], [
+  CPPFLAGS="$CPPFLAGS `gsl-config --cflags`"
+  LIBS="$LIBS `gsl-config --libs`"
+  AC_MSG_CHECKING([whether libgsl is available])
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[#include "gsl/gsl_multimin.h"]],
+		     [[gsl_vector v;]])],
+    [AC_MSG_RESULT([yes])
+     PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_GSL_ `gsl-config --cflags`"
+     PKG_LIBS="$PKG_LIBS `gsl-config --libs`"],
+    [AC_MSG_RESULT([no])])
+])
 
 AC_CHECK_HEADERS(execution)
 AS_IF([test "X$ac_cv_header_execution" = "Xyes"], [
   AC_MSG_CHECKING([whether the libtbb is available])
-  OLD_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="-std=c++17"
-  OLD_LIBS="$LIBS"
-  LIBS="$LIBS -ltbb"
+  CPPFLAGS="$CPPFLAGS -std=c++17"
   AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([[#include<algorithm>
-                       #include<execution> ]],
-    [[int v[2] = {1, 1};
-      std::for_each(std::execution::par_unseq, v, v + 2, [](int &n){ n++; });]])],
+    [AC_LANG_PROGRAM([[#include<execution>]],
+    [[const auto& ex = std::execution::par_unseq;]])],
     [AC_MSG_RESULT([yes])
-     PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_EXECUTION_POLICIES_ -std=c++17"
-     PKG_LIBS="$PKG_LIBS -ltbb"],
-    [AC_MSG_RESULT([no])])
-  CPPFLAGS="$OLD_CPPFLAGS"
-  LIBS="$OLD_LIBS"
+     PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_EXECUTION_POLICIES_  -std=c++17"
+     PKG_LIBS="$PKG_LIBS `pkg-config tbb --libs`"],
+    [LIBS="$LIBS -ltbb"
+     AC_LINK_IFELSE(
+     [AC_LANG_PROGRAM([[#include<execution>]],
+     [[const auto& ex = std::execution::par_unseq;]])],
+     [AC_MSG_RESULT([yes])
+      PKG_CPPFLAGS="$PKG_CPPFLAGS -D_DISEQ_HAS_EXECUTION_POLICIES_  -std=c++17"
+      PKG_LIBS="$PKG_LIBS -ltbb"],
+     [AC_MSG_RESULT([no])])
+    ])
 ])
 
 # Write the flags into the src/Makevars file.
 AC_SUBST([PKG_CPPFLAGS], ["${PKG_CPPFLAGS}"])
-AC_SUBST([PKG_LIBS], ["${LIBS} ${PKG_LIBS}"])
+AC_SUBST([PKG_LIBS], ["${PKG_LIBS}"])
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
 
@@ -48,7 +57,7 @@ echo "
   --------------------------------------------------
   Configuration for ${PACKAGE_NAME} ${PACKAGE_VERSION}
 
-    cppflags: ${CPPFLAGS} ${PKG_CPPFLAGS}
+    cppflags: ${PKG_CPPFLAGS}
     libs:     ${PKG_LIBS}
 
   --------------------------------------------------

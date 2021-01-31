@@ -1,3 +1,9 @@
+
+* Compile reconfigured native sources
+#+begin_src shell :dir .. :results output 
+rm configure && autoreconf && Rscript -e "devtools::clean_dll(); devtools::document()"
+#+end_src
+
 * Before releasing
 ** Make documentation
 
@@ -36,20 +42,19 @@ devtools::check_rhub(
 #+begin_src R :dir .. :async
 devtools::check_rhub(
   platforms = c('solaris-x86-patched', 'solaris-x86-patched-ods'), 
-  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always')
-)
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
 #+end_src
 
 *** Mac platforms
 #+begin_src R :dir .. :async
 devtools::check_rhub(
   platforms = c('macos-highsierra-release', 'macos-highsierra-release-cran'), 
-  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always')
-)
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
 #+end_src
 
 *** Platforms without long double
 #+begin_src R :dir .. :async
 devtools::check_rhub(platforms = c('debian-gcc-devel-nold'))
 #+end_src
+
 

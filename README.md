@@ -290,8 +290,9 @@ bbmle::summary(est)
     ## D_X1 = 1.44062383641357, D_X2 = 4.46769000498207, S_P = 2.19994905762293, 
     ## S_CONST = 10.2218850028638, S_Xs1 = 0.59622703822817, S_X1 = 1.43857649730766, 
     ## S_X2 = 4.46672975897316, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
-    ## ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
-    ##     gr = function(...) gradient(object, ...)))
+    ## ), method = "BFGS", minuslogl = function (...) 
+    ## minus_log_likelihood(object, ...), gr = function (...) 
+    ## gradient(object, ...)))
     ## 
     ## Coefficients:
     ##              Estimate Std. Error  z value  Pr(z)    
