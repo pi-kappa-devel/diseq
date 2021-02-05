@@ -251,3 +251,5 @@ Feel free to join, share, contribute, distribute.
 # License
 
 The code is distributed under the MIT License. 
+
+# References

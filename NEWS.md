@@ -1,3 +1,7 @@
+# diseq 0.1.3.9002
+
+* Included a reference section title in the README file.
+
 # diseq 0.1.3.9001
 
 * Added documentation URL in DESCRIPTION.
