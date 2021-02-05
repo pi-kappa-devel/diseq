@@ -1,3 +1,8 @@
+# diseq 0.1.3.9001
+
+* Added documentation URL in DESCRIPTION.
+* Added bibliography in the README file.
+
 # diseq 0.1.3
 
 * Patched `M1mac` additional issues: Added compilation flag for availability of `GSL`. The native code can be compiled also in systems without `GSL`, albeit offering an empty shell functionality for the moment.

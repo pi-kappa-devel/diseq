@@ -1,7 +1,7 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.1.3
-Date: 2021-01-31
+Version: 0.1.3.9001
+Date: 2021-02-05
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
@@ -17,11 +17,12 @@ Description: Provides estimation methods for markets in equilibrium and
     <doi:10.2307/1914215>. They are implemented using the analytic derivative
     expressions calculated in Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>.
     The equilibrium estimation constitutes a special case of
-    a system of simultaneous equations. The disequilibrium models, instead, replace
-    the market clearing condition with a short side rule and
+    a system of linear, simultaneous equations. The disequilibrium models,
+    instead, replace
+    the market clearing condition with a non-linear short side rule and
     allow for different specifications of price dynamics. 
 Language: en-US
-URL: https://github.com/pi-kappa-devel/diseq/
+URL: https://github.com/pi-kappa-devel/diseq/, https://diseq.pikappa.eu/
 BugReports: https://github.com/pi-kappa-devel/diseq/issues
 Depends:
     R (>= 3.5.0)
