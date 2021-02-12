@@ -13,16 +13,6 @@ on:
 name: R-CMD-check
 
 jobs:
-  windows-setup-gsl:
-    runs-on: windows-latest
-    steps:
-      - run: choco install gsl
-    
-  mac-setup-gsl:
-    runs-on: macos-latest
-    steps:
-      - run: brew install gsl 
-
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
@@ -66,14 +56,24 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install system dependencies
+      - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
           while read -r cmd
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-          
+
+      - name: Install Windows system dependencies
+        if: runner.os == 'Windows'
+        run: |
+          choco install gsl
+
+      - name: Install MacOs system dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install gsl
+
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
