@@ -1,3 +1,8 @@
+# diseq 0.1.3.9003
+
+* Removed `compile_commands.json` from source control.
+* Modified the simulation parameters of the market clearing assessment vignette.
+
 # diseq 0.1.3.9002
 
 * Included a reference section title in the README file.

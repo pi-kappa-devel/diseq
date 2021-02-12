@@ -28,24 +28,24 @@ library(magrittr)
 Prepare the data. Here, we simply simulate data using a data generating process for a market in equilibrium.
 
 ```{r setup.data}
-nobs <- 5000
+nobs <- 1000
 tobs <- 5
 
-alpha_d <- -1.9
-beta_d0 <- 4.9
+alpha_d <- -3.9
+beta_d0 <- 18.9
 beta_d <- c(2.1, -0.7)
 eta_d <- c(3.5, 6.25)
 
 alpha_s <- 2.8
-beta_s0 <- 1.2
-beta_s <- c(0.65)
+beta_s0 <- 3.2
+beta_s <- c(2.65)
 eta_s <- c(1.15, 4.2)
 
-sigma_d <- 1
-sigma_s <- 1
-rho_ds <- 0.5
+sigma_d <- 0.8
+sigma_s <- 1.1
+rho_ds <- 0.0
 
-seed <- 443
+seed <- 42
 
 eq_data <- simulate_model_data(
   "equilibrium_model", nobs, tobs,
