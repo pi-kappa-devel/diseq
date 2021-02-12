@@ -67,7 +67,7 @@ jobs:
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
-          choco install gsl
+          choco install gnuwin
 
       - name: Install MacOs system dependencies
         if: runner.os == 'macOS'
