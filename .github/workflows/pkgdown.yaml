@@ -8,7 +8,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: macOS-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -32,10 +32,13 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install MacOs system dependencies
-        if: runner.os == 'macOS'
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
         run: |
-          brew install gsl
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
           
       - name: Install dependencies
         run: |
@@ -48,6 +51,13 @@ jobs:
 
       - name: Deploy package
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
           Rscript -e 'rmarkdown::render("README.Rmd", output_format = "md_document"); pkgdown::build_site()'
+          
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: ${{ secrets.ftp_server }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          local-dir: docs/
+          server-dir: ${{ secrets.ftp_server_dir }}
