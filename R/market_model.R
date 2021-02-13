@@ -37,6 +37,7 @@ setClass(
         ## Model data
         model_tibble = "tbl_df",
         model_type_string = "character",
+        market_type_string = "character",
         system = "system_base"
     )
 )
@@ -222,6 +223,43 @@ setMethod(
         .Object
     }
 )
+
+#' Print short model description.
+#'
+#' Sends basic information about the model to standard output.
+#' @param object A model object.
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
+#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
+#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
+#'   1.2, 3.1, c(0.8) # price equation
+#' )
+#' 
+#' # initialize the model
+#' model <- new(
+#'   "diseq_stochastic_adjustment", # model type
+#'   c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   "Xp1", # price dynamics specification
+#'   simulated_data, # data
+#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#'
+#' # print the model
+#' show(model)
+#' }
+#' @export
+setMethod("show", signature(object = "market_model"), function(object) {
+    cat(sprintf(
+        "\n%s Model for Markets in %s\n",
+        object@model_type_string, object@market_type_string
+    ))
+    show(object@system)
+    cat(sprintf("  %-16s: %s\n", "Shocks",
+                ifelse(object@system@correlated_shocks, "Correlated", "Independent")))
+})
 
 #' Minus log-likelihood.
 #'

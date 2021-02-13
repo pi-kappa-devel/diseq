@@ -1,3 +1,7 @@
+# diseq 0.1.3.9004
+
+* Added `show` method for the front-end model classes.
+
 # diseq 0.1.3.9003
 
 * Removed `compile_commands.json` from source control.

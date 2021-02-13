@@ -117,6 +117,11 @@ setMethod(
   }
 )
 
+setMethod("show", signature(object = "system_stochastic_adjustment"), function(object) {
+    callNextMethod(object)
+    show(object@price_equation)
+})
+
 setMethod(
   "get_likelihood_variables", signature(object = "system_stochastic_adjustment"),
   function(object) {

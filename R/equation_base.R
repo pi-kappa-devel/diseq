@@ -104,6 +104,10 @@ setMethod(
   }
 )
 
+setMethod("show", signature(object = "equation_base"), function(object) {
+    cat(sprintf("  %-16s: %s\n", object@name, deparse(object@formula)))
+})
+
 #' Constant coefficient variable name.
 #'
 #' The constant coefficient name is constructed by concatenating the equation prefix

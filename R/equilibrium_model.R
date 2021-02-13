@@ -58,16 +58,20 @@ setMethod(
             data,
             function(...) new("system_fiml", ...)
         )
+        .Object@market_type_string <- "Equilibrium"
 
         .Object
     }
 )
 
 #' @rdname minus_log_likelihood
-setMethod("minus_log_likelihood", signature(object = "equilibrium_model"), function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    -sum(object@system@llh)
-})
+setMethod(
+    "minus_log_likelihood", signature(object = "equilibrium_model"),
+    function(object, parameters) {
+        object@system <- set_parameters(object@system, parameters)
+        -sum(object@system@llh)
+    }
+)
 
 
 setMethod("gradient", signature(object = "equilibrium_model"), function(object, parameters) {

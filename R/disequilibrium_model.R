@@ -29,6 +29,9 @@ setMethod(
             data,
             system_initializer
         )
+        .Object@market_type_string <- "Disequilibrium"
+
+        .Object
     }
 )
 

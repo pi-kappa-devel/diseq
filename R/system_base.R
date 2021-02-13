@@ -58,6 +58,11 @@ setMethod(
   }
 )
 
+setMethod("show", signature(object = "system_base"), function(object) {
+    show(object@demand)
+    show(object@supply)
+})
+
 setGeneric("get_lagged_price_variable", function(object) {
   standardGeneric("get_lagged_price_variable")
 })
