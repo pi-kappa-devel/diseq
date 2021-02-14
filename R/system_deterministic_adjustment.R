@@ -54,6 +54,7 @@ setMethod(
     )
     .Object@lagged_price_vector <- as.matrix(data[, get_lagged_price_variable(.Object)])
 
+    .Object@sample_separation <- TRUE
     .Object
   }
 )

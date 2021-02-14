@@ -105,7 +105,7 @@ setMethod(
 )
 
 setMethod("show", signature(object = "equation_base"), function(object) {
-    cat(sprintf("  %-16s: %s\n", object@name, deparse(object@formula)))
+    cat(sprintf("  %-18s: %s\n", object@name, deparse(object@formula)))
 })
 
 #' Constant coefficient variable name.

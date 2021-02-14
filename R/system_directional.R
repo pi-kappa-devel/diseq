@@ -26,6 +26,8 @@ setMethod(
       .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
       demand_initializer, supply_initializer
     )
+    .Object@sample_separation <- TRUE
+    .Object
   }
 )
 

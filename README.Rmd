@@ -216,7 +216,7 @@ In total, there are four disequilibrium models, which are all estimated using fu
 
 The package organizes these classes in a simple object oriented hierarchy. 
 
-<img src='man/figures/design.png' width="100%" align="center" />
+<img src='man/figures/design.png' align="center" />
 
 Concerning post estimation analysis, the package offers functionality to calculate
 
@@ -240,11 +240,11 @@ The package is planned to be expanded in the following ways:
 * Firstly, it is planned for the package to become more inclusive by adding additional market models. 
 * Secondly, the main implementation is currently written directly in _R_ and is single-threaded using only one processor for the estimations of the models. For the numerically intensive likelihood optimizations that the package employs, this results to extended execution times when the models are estimated using large datasets. Alternative likelihood optimizations are gradually implemented in _C++_ using a concurrent design. The equilibrium implementation is already implemented. It is planned for future versions to provide _C++_ implementations also for the remaining models. 
 * Thirdly, it is planned to include single-command functionality for the market-clearing tests [@karapanagiotis2020invisible; @hwang1980; @quandt1978tests].
-* Fourthly, it is planned to include additional estimation methods [@zilinskas2006; @quandt1978estimating]
+* Fourthly, it is planned to include additional estimation methods [@zilinskas2006; @quandt1978estimating].
 
 # Contributors
 
-Pantelis Karapanagiotis 
+[Pantelis Karapanagiotis](www.pikappa.eu)
 
 Feel free to join, share, contribute, distribute.
 

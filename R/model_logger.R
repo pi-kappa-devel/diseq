@@ -12,7 +12,8 @@
 setClass(
   "model_logger",
   representation(
-    verbosity = "numeric"
+    verbosity = "numeric",
+    attribute_print_mask = "character"
   ),
   prototype(
     verbosity = 0

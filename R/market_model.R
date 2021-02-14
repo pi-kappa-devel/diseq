@@ -231,25 +231,26 @@ setMethod(
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
-#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
-#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
-#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
-#'   1.2, 3.1, c(0.8) # price equation
+#'     "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
+#'     -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
+#'     0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
+#'     1.2, 3.1, c(0.8) # price equation
 #' )
-#' 
+#'
 #' # initialize the model
 #' model <- new(
-#'   "diseq_stochastic_adjustment", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   "Xp1", # price dynamics specification
-#'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'     "diseq_stochastic_adjustment", # model type
+#'     c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
+#'     "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'     "Xp1", # price dynamics specification
+#'     simulated_data, # data
+#'     use_correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # print the model
 #' show(model)
 #' }
+#' @rdname show
 #' @export
 setMethod("show", signature(object = "market_model"), function(object) {
     cat(sprintf(
@@ -257,8 +258,54 @@ setMethod("show", signature(object = "market_model"), function(object) {
         object@model_type_string, object@market_type_string
     ))
     show(object@system)
-    cat(sprintf("  %-16s: %s\n", "Shocks",
-                ifelse(object@system@correlated_shocks, "Correlated", "Independent")))
+    cat(sprintf(
+        "  %-18s: %s\n", "Shocks",
+        ifelse(object@system@correlated_shocks, "Correlated", "Independent")
+    ))
+})
+
+#' Summarizes the  model.
+#'
+#' Prints basic information about the passed model object. In addition to the outpur of
+#' the `show` method, \code{summary} prints
+#' - the number of observations,
+#' - the number of observations in each equation for models with sample separation, and
+#' - the number of (various categories of) variables.
+#' @param object A model object.
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'     "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
+#'     -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
+#'     0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
+#'     1.2, 3.1, c(0.8) # price equation
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'     "diseq_stochastic_adjustment", # model type
+#'     c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
+#'     "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'     "Xp1", # price dynamics specification
+#'     simulated_data, # data
+#'     use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#'
+#' # print the model
+#' summary(model)
+#' }
+#' @rdname summary
+#' @export
+setMethod("summary", signature(object = "market_model"), function(object) {
+    show(object)
+    cat(sprintf("  %-18s: %d\n", "Nobs", nrow(object@model_tibble)))
+    summary(object@system)
+    cat(sprintf("  %-18s: %s\n", "Key Var(s)",
+                paste0(object@key_columns, collapse = ", ")))
+    if (!is.null(object@time_column)) {
+      cat(sprintf("  %-18s: %s\n", "Time Var",
+                  paste0(object@time_column, collapse = ", ")))
+    }
 })
 
 #' Minus log-likelihood.
@@ -298,9 +345,11 @@ setGeneric("hessian", function(object, parameters) {
 #' \code{\link[systemfit]{systemfit}}.
 #' @param object A model object.
 #' @param ... Named parameter used in the model's estimation. These are passed further down
-#'   to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the parameters are passed
-#'   to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
-#'   to \code{\link[bbmle]{mle2}}.
+#'   to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
+#' parameters are passed
+#'   to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to
+#' \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters
+#' are passed to \code{\link[bbmle]{mle2}}.
 #' @return The object that holds the estimation result.
 #' @rdname estimate
 #' @examples
