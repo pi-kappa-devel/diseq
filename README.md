@@ -152,7 +152,7 @@ Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \end{equation}
 \] <img src='man/figures/diseq_stochastic_adjustment_model.png'/>
 
-# Installation
+# Installation and Documentation
 
 The released version of
 [*diseq*](https://CRAN.R-project.org/package=diseq) can be installed
@@ -172,7 +172,9 @@ To see it type the command
 vignette('basic_usage')
 ```
 
-You can find the documentation of the package by typing
+The documentation can be found online
+[here](https://www.diseq.pikappa.eu). You can also access it in `R` by
+typing
 
 ``` r
 ?? diseq
@@ -363,7 +365,7 @@ The package is planned to be expanded in the following ways:
 
 # Contributors
 
-[Pantelis Karapanagiotis](www.pikappa.eu)
+[Pantelis Karapanagiotis](https://www.pikappa.eu)
 
 Feel free to join, share, contribute, distribute.
 
