@@ -60,12 +60,16 @@ setMethod(
     }
 )
 
-setMethod("show", signature(object = "system_base"), function(object) {
-    show(object@demand)
-    show(object@supply)
+setMethod("show_implementation", signature(object = "system_base"), function(object) {
+    show_implementation(object@demand)
+    show_implementation(object@supply)
 })
 
-setMethod("summary", signature(object = "system_base"), function(object) {
+setGeneric("summary_implementation", function(object) {
+  standardGeneric("summary_implementation")
+})
+
+setMethod("summary_implementation", signature(object = "system_base"), function(object) {
     sample_separation_output <- ""
     if (object@sample_separation) {
         sample_separation_output <- sprintf(
@@ -78,8 +82,6 @@ setMethod("summary", signature(object = "system_base"), function(object) {
         sample_separation_output <- "Not Separated"
     }
     cat(sprintf("  %-18s: %s\n", "Sample Separation", sample_separation_output))
-    summary(object@demand)
-    summary(object@supply)
     cat(sprintf("  %-18s: %s\n", "Quantity Var", object@quantity_variable))
     cat(sprintf("  %-18s: %s\n", "Price Var", object@price_variable))
 })

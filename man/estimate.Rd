@@ -23,9 +23,11 @@ estimate(object, ...)
 \item{object}{A model object.}
 
 \item{...}{Named parameter used in the model's estimation. These are passed further down
-to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the parameters are passed
-to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters are passed
-to \code{\link[bbmle]{mle2}}.}
+  to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
+parameters are passed
+  to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to
+\code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters
+are passed to \code{\link[bbmle]{mle2}}.}
 
 \item{use_numerical_gradient}{If true, the gradient is calculated numerically. By default,
 all the models are estimated using the analytic expressions of their likelihoods'

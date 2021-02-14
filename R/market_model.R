@@ -257,7 +257,7 @@ setMethod("show", signature(object = "market_model"), function(object) {
         "\n%s Model for Markets in %s\n",
         object@model_type_string, object@market_type_string
     ))
-    show(object@system)
+    show_implementation(object@system)
     cat(sprintf(
         "  %-18s: %s\n", "Shocks",
         ifelse(object@system@correlated_shocks, "Correlated", "Independent")
@@ -266,8 +266,8 @@ setMethod("show", signature(object = "market_model"), function(object) {
 
 #' Summarizes the  model.
 #'
-#' Prints basic information about the passed model object. In addition to the outpur of
-#' the `show` method, \code{summary} prints
+#' Prints basic information about the passed model object. In addition to the output of
+#' the \code\link{{show}} method, \code{summary} prints
 #' - the number of observations,
 #' - the number of observations in each equation for models with sample separation, and
 #' - the number of (various categories of) variables.
@@ -299,7 +299,7 @@ setMethod("show", signature(object = "market_model"), function(object) {
 setMethod("summary", signature(object = "market_model"), function(object) {
     show(object)
     cat(sprintf("  %-18s: %d\n", "Nobs", nrow(object@model_tibble)))
-    summary(object@system)
+    summary_implementation(object@system)
     cat(sprintf("  %-18s: %s\n", "Key Var(s)",
                 paste0(object@key_columns, collapse = ", ")))
     if (!is.null(object@time_column)) {

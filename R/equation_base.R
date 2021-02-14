@@ -104,7 +104,11 @@ setMethod(
   }
 )
 
-setMethod("show", signature(object = "equation_base"), function(object) {
+setGeneric("show_implementation", function(object) {
+  standardGeneric("show_implementation")
+})
+
+setMethod("show_implementation", signature(object = "equation_base"), function(object) {
     cat(sprintf("  %-18s: %s\n", object@name, deparse(object@formula)))
 })
 

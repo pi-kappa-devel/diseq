@@ -2,5 +2,5 @@ body { text-align:justify; width: 75%; margin: 20px auto 0px auto; }
 p:first-of-type { margin-bottom: 40px; }
 pre:not([class]) { background-color: inherit!important; color: inherit!important; }
 .math.display { width:40%; float:left; margin:10% auto; }
-span + br + img { float:left; margin:2% 0 3% 3%; max-width:54%; }
+span + br + img { margin:2% 0 3% 3%; max-width:54%; }
 img { max-width: 100%; }

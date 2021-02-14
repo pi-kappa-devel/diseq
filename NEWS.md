@@ -1,6 +1,7 @@
 # diseq 0.1.3.9005
 
 * Added `summary` method for the front-end model classes.
+* Documentation improvements.
 
 # diseq 0.1.3.9004
 
