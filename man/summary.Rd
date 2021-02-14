@@ -11,10 +11,10 @@
 }
 \description{
 Prints basic information about the passed model object. In addition to the output of
-the \code\link{{show}} method, \code{summary} prints
+the \code{\link{show}} method, \code{summary} prints
 - the number of observations,
 - the number of observations in each equation for models with sample separation, and
-- the number of (various categories of) variables.
+- various categories of variables.
 }
 \examples{
 \donttest{

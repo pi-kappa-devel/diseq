@@ -3,6 +3,7 @@
 * Added `summary` method for the front-end model classes.
 * Documentation improvements.
 * Added online documentation link in `README.Rmd`
+* Corrected link in the documentation of the summary method.
 
 # diseq 0.1.3.9004
 

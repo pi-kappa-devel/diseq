@@ -8,6 +8,7 @@ rm configure && autoreconf && Rscript -e "devtools::clean_dll(); devtools::docum
 ** Make documentation
 
 #+begin_src R :dir .. :results output :async
+devtools::document()
 rmarkdown::render('README.Rmd', output_format = 'md_document')
 pkgdown::build_site()
 rmarkdown::render('README.Rmd', output_format = 'github_document')
