@@ -42,7 +42,8 @@ the BFGS algorithm. This function is primarily intended for advanced usage. The
 \code{\link{estimate}} functionality is a fast, analysis-oriented alternative. If
 the \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
 available, the function returns a trivial result list with status set equal to -1. If the
-\href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17 execution policies}
+\href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17
+execution policies}
 are available, the implementation of the optimization is parallelized.
 }
 \examples{

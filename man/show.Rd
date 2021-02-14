@@ -2,7 +2,7 @@
 % Please edit documentation in R/market_model.R
 \name{show,market_model-method}
 \alias{show,market_model-method}
-\title{Print short model description.}
+\title{Prints a short description of the model.}
 \usage{
 \S4method{show}{market_model}(object)
 }

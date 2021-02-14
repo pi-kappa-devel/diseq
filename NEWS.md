@@ -1,3 +1,8 @@
+# diseq 0.1.3.9006
+
+* Added `plot` method for the equilibrium and basic disequilibrium model classes.
+* Patched model initialization to avoid mutate warnings.
+
 # diseq 0.1.3.9005
 
 * Added `summary` method for the front-end model classes.

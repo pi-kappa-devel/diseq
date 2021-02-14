@@ -2,7 +2,7 @@
 % Please edit documentation in R/market_model.R
 \name{summary,market_model-method}
 \alias{summary,market_model-method}
-\title{Summarizes the  model.}
+\title{Summarizes the model.}
 \usage{
 \S4method{summary}{market_model}(object)
 }

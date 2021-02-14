@@ -145,8 +145,8 @@ setMethod(
             print_warning(.Object@logger, "Dropping ", drops, " rows due to omitted values.")
         }
 
-        .Object@model_tibble <- .Object@model_tibble %>%
-            dplyr::mutate_if(is.factor, function(x) {
+        remove_unused_levels <- function(x) {
+            if (is.factor(x)) {
                 initial_levels <- levels(x)
                 x <- factor(x)
                 remaining_levels <- levels(x)
@@ -157,8 +157,11 @@ setMethod(
                         paste0(removed_levels, collapse = ", "), "' level(s)."
                     )
                 }
-                x
-            })
+            }
+            x
+        }
+        .Object@model_tibble <- tibble::as_tibble(sapply(.Object@model_tibble,
+                                                         remove_unused_levels))
 
         ## Create primary key column
         key_columns_syms <- rlang::syms(.Object@key_columns)
@@ -178,7 +181,9 @@ setMethod(
 
             .Object@model_tibble <- .Object@model_tibble %>%
                 dplyr::group_by(!!!key_syms) %>%
-                dplyr::mutate(!!lagged_price_sym := dplyr::lag(!!price_sym, order_by = !!time_sym)) %>%
+                dplyr::mutate(
+                    !!lagged_price_sym := dplyr::lag(!!price_sym, order_by = !!time_sym)
+                ) %>%
                 dplyr::ungroup()
 
             drop_rows <- .Object@model_tibble %>%
@@ -224,7 +229,7 @@ setMethod(
     }
 )
 
-#' Print short model description.
+#' Prints a short description of the model.
 #'
 #' Sends basic information about the model to standard output.
 #' @param object A model object.
@@ -264,7 +269,7 @@ setMethod("show", signature(object = "market_model"), function(object) {
     ))
 })
 
-#' Summarizes the  model.
+#' Summarizes the model.
 #'
 #' Prints basic information about the passed model object. In addition to the output of
 #' the \code{\link{show}} method, \code{summary} prints
@@ -300,12 +305,50 @@ setMethod("summary", signature(object = "market_model"), function(object) {
     show(object)
     cat(sprintf("  %-18s: %d\n", "Nobs", nrow(object@model_tibble)))
     summary_implementation(object@system)
-    cat(sprintf("  %-18s: %s\n", "Key Var(s)",
-                paste0(object@key_columns, collapse = ", ")))
+    cat(sprintf(
+        "  %-18s: %s\n", "Key Var(s)",
+        paste0(object@key_columns, collapse = ", ")
+    ))
     if (!is.null(object@time_column)) {
-      cat(sprintf("  %-18s: %s\n", "Time Var",
-                  paste0(object@time_column, collapse = ", ")))
+        cat(sprintf(
+            "  %-18s: %s\n", "Time Var",
+            paste0(object@time_column, collapse = ", ")
+        ))
     }
+})
+
+setGeneric("plot_implementation", function(object) {
+    standardGeneric("plot_implementation")
+})
+
+#' Plots the model.
+#'
+#' Displays a graphical illustration of the passed model object.
+#' @param x A model object.
+#' @examples
+#' \donttest{
+#' simulated_data <- simulate_model_data(
+#'     "diseq_basic", 500, 3, # model type, observed entities, observed time points
+#'     -0.9, 8.9, c(0.03, -0.02), c(-0.03, -0.01), # demand coefficients
+#'     0.9, 4.2, c(0.03), c(0.05, 0.02), # supply coefficients
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'     "diseq_basic", # model type
+#'     c("id", "date"), "Q", "P", # keys, time, quantity, and price variables
+#'     "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'     simulated_data, # data
+#'     use_correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#'
+#' # print the model
+#' plot(model)
+#' }
+#' @rdname plot
+#' @export
+setMethod("plot", signature(x = "market_model"), function(x) {
+    plot_implementation(x)
 })
 
 #' Minus log-likelihood.
@@ -446,7 +489,8 @@ setMethod(
 #' \code{\link{estimate}} functionality is a fast, analysis-oriented alternative. If
 #' the \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
 #' available, the function returns a trivial result list with status set equal to -1. If the
-#' \href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17 execution policies}
+#' \href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17
+#' execution policies}
 #' are available, the implementation of the optimization is parallelized.
 #' @param object A model object.
 #' @param start Initializing vector.
@@ -644,25 +688,29 @@ setMethod("get_number_of_observations", signature(object = "market_model"), func
     nrow(object@model_tibble)
 })
 
-setMethod("get_descriptives", signature(object = "market_model"), function(object, variables = NULL) {
-    if (is.null(variables)) {
-        variables <- object@columns
-    }
-    variables <- variables[sapply(variables, function(c) !is.factor(object@model_tibble[, c]))]
-    tibble::as_tibble(apply(
-        object@model_tibble[, variables], 2,
-        function(x) {
-            c(
-                nobs = length(x), nmval = sum(is.na(x)),
-                min = min(x), max = max(x), range = max(x) - min(x),
-                sum = sum(x), median = median(x), mean = mean(x),
-                mean_se = sqrt(var(x) / length(x)),
-                mean_ce = qnorm(0.975) * sqrt(var(x) / length(x)),
-                var = var(x), sd = sd(x), coef_var = sd(x) / mean(x)
-            )
+setMethod(
+    "get_descriptives", signature(object = "market_model"),
+    function(object, variables = NULL) {
+        if (is.null(variables)) {
+            variables <- object@columns
         }
-    ), rownames = "col")
-})
+        variables <- variables[sapply(variables, function(c) !is.factor(object@model_tibble[, c]))]
+
+        tibble::as_tibble(apply(
+            object@model_tibble[, variables], 2,
+            function(x) {
+                c(
+                    nobs = length(x), nmval = sum(is.na(x)),
+                    min = min(x), max = max(x), range = max(x) - min(x),
+                    sum = sum(x), median = median(x), mean = mean(x),
+                    mean_se = sqrt(var(x) / length(x)),
+                    mean_ce = qnorm(0.975) * sqrt(var(x) / length(x)),
+                    var = var(x), sd = sd(x), coef_var = sd(x) / mean(x)
+                )
+            }
+        ), rownames = "col")
+    }
+)
 
 #' @rdname get_demand_descriptives
 setMethod("get_demand_descriptives", signature(object = "market_model"), function(object) {
