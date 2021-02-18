@@ -1,3 +1,8 @@
+# diseq 0.1.3.9009
+
+* Updated `README.md`.
+* Enclosed the plot example with `dontrun` instead of `donttest`.
+
 # diseq 0.1.3.9008
 
 * Added `png` and `grid` to dependencies.

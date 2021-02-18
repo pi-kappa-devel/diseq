@@ -73,7 +73,7 @@ S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
 Q_{n t} &= \min\{D_{n t},S_{n t}\}
 \end{aligned} \tag{BM} \label{basic}
 \end{equation}
-\] <img src='man/figures/diseq_basic_model.png'/>
+\] <img src='man/figures/diseq_basic.png'/>
 
 ## The directional disequilibrium model
 
@@ -99,7 +99,7 @@ Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &\ge 0 \implies D_{n t} \ge S_{n t}
 \end{aligned} \tag{DM} \label{directional}
 \end{equation}
-\] <img src='man/figures/diseq_directional_model.png'/>
+\] <img src='man/figures/diseq_directional.png'/>
 
 ## A disequilibrium model with deterministic price dynamics
 
@@ -126,7 +126,7 @@ Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right)
 \end{aligned} \tag{DA} \label{deterministic_adjustment}
 \end{equation}
-\] <img src='man/figures/diseq_deterministic_adjustment_model.png'/>
+\] <img src='man/figures/diseq_deterministic_adjustment.png'/>
 
 ## A disequilibrium model with stochastic price dynamics
 
@@ -150,7 +150,7 @@ Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right) +  X_{p, n t}'\beta_{p} + u_{p, n t}
 \end{aligned} \tag{SA} \label{stochastic_adjustment}
 \end{equation}
-\] <img src='man/figures/diseq_stochastic_adjustment_model.png'/>
+\] <img src='man/figures/diseq_stochastic_adjustment.png'/>
 
 # Installation and documentation
 
