@@ -319,10 +319,6 @@ setMethod("summary", signature(object = "market_model"), function(object) {
     }
 })
 
-setGeneric("plot_implementation", function(object) {
-    standardGeneric("plot_implementation")
-})
-
 #' Plots the model.
 #'
 #' Displays a graphical illustration of the passed model object.
@@ -350,7 +346,12 @@ setGeneric("plot_implementation", function(object) {
 #' @rdname plot
 #' @export
 setMethod("plot", signature(x = "market_model"), function(x) {
-    plot_implementation(x)
+    filename <- paste0(class(x)[1], ".png")
+    path <- system.file("help", "figures", filename, package = "diseq")
+    if (path == "") {
+      path <- system.file("man", "figures", filename, package = "diseq")
+    }
+    grid::grid.raster(png::readPNG(path))
 })
 
 #' Minus log-likelihood.

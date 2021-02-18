@@ -72,16 +72,6 @@ setMethod(
 )
 
 setMethod(
-    "plot_implementation", signature(object = "diseq_stochastic_adjustment"),
-    function(object) {
-        grid::grid.raster(png::readPNG(system.file("man", "figures",
-            "diseq_stochastic_adjustment.png",
-            package = "diseq"
-        )))
-    }
-)
-
-setMethod(
     "calculate_initializing_values", signature(object = "diseq_stochastic_adjustment"),
     function(object) {
         start <- callNextMethod(object)

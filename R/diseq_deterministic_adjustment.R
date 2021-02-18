@@ -69,16 +69,6 @@ setMethod(
   }
 )
 
-setMethod(
-    "plot_implementation", signature(object = "diseq_deterministic_adjustment"),
-    function(object) {
-        grid::grid.raster(png::readPNG(system.file("man", "figures",
-            "diseq_deterministic_adjustment.png",
-            package = "diseq"
-        )))
-    }
-)
-
 #' @rdname minus_log_likelihood
 setMethod(
   "minus_log_likelihood", signature(object = "diseq_deterministic_adjustment"),

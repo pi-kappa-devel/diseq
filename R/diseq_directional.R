@@ -83,12 +83,6 @@ setMethod(
     }
 )
 
-setMethod("plot_implementation", signature(object = "diseq_directional"), function(object) {
-    grid::grid.raster(png::readPNG(system.file("man", "figures", "diseq_directional.png",
-        package = "diseq"
-    )))
-})
-
 #' @rdname minus_log_likelihood
 setMethod(
   "minus_log_likelihood", signature(object = "diseq_directional"),
