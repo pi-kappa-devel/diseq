@@ -58,15 +58,9 @@ setMethod(
 )
 
 setMethod("plot_implementation", signature(object = "diseq_basic"), function(object) {
-<<<<<<< HEAD
     filename <- system.file("man", "figures", "diseq_basic.png", package = "diseq")
     print(filename)
     grid::grid.raster(png::readPNG(filename))
-=======
-    grid::grid.raster(png::readPNG(system.file("man", "figures", "diseq_basic.png",
-        package = "diseq"
-    )))
->>>>>>> c7a52f2dab6588db78aa0f0d4eb915eb015eca83
 })
 
 #' @rdname minus_log_likelihood
