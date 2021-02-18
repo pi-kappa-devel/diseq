@@ -1,3 +1,7 @@
+# diseq 0.1.3.9011
+
+* Added python script for creating the `README` figures.
+
 # diseq 0.1.3.9010
 
 * Corrected calls to `system.file`.
