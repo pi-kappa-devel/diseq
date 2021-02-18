@@ -67,31 +67,9 @@ setMethod(
 setMethod(
     "plot_implementation", signature(object = "equilibrium_model"),
     function(object) {
-        par(bg = "transparent")
-
-        domain <- seq(0, 1, 0.1)
-        demand <- function(p) 5 - .5 * p
-        supply <- function(p) 4.6 + .3 * p
-
-        plot(domain, demand(domain),
-            main = "Equilibrium Model",
-            ylab = "Price", xlab = "Quantity", yaxt = "n", xaxt = "n",
-            type = "l",
-            col = "red"
-        )
-        lines(domain, supply(domain), col = "red")
-
-        points(0.5, y = demand(0.5), type = "p", col = c("blue"))
-        arrows(
-            x0 = 0.5, y0 = demand(0.5) + 0.15, x1 = 0.5, y1 = demand(0.5) + 0.01,
-            col = c("blue"), lwd = 1, xpd = TRUE
-        )
-        text(
-            x = c(0.5, 0.85, 0.85),
-            y = c(demand(0.5) + 0.17, demand(0.85) + 0.05, supply(0.84) - .05),
-            labels = c("Only equilibrium points\nare observed", "Demand", "Supply"),
-            adj = c(0.5, 0.5), col = c("blue", "red", "red")
-        )
+    grid::grid.raster(png::readPNG(system.file("man/figures/equilibrium.png",
+        package = "diseq"
+    )))
     }
 )
 

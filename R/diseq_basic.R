@@ -58,56 +58,9 @@ setMethod(
 )
 
 setMethod("plot_implementation", signature(object = "diseq_basic"), function(object) {
-    par(bg = "transparent")
-
-    domain <- seq(-0.08, 1.0, 0.1)
-    half_domain <- seq(min(domain), 0.5, 0.01)
-    demand <- function(p) 5 - .5 * p
-    supply <- function(p) 4.6 + .3 * p
-
-    plot(domain, demand(domain),
-        main = "Basic Disequilibrium Model",
-        ylab = "Price", xlab = "Quantity", yaxt = "n", xaxt = "n",
-        type = "l", col = "red"
-    )
-    lines(domain, supply(domain), col = "red")
-    lines(half_domain, demand(half_domain), col = "blue", lty = 4)
-    lines(half_domain, supply(half_domain), col = "blue", lty = 4)
-    points(c(0.25, 0.65),
-        y = c(supply(0.25), demand(0.65)), type = "p",
-        col = c("orange")
-    )
-    lines(c(0.25, 0.65), c(supply(0.25), demand(0.65)), col = "orange", lty = 3)
-
-    arrows(
-        x0 = 0.25, y0 = demand(0.25) - 0.1, x1 = 0.35, y1 = demand(0.35) - 0.01,
-        col = c("blue"), lwd = 1, xpd = TRUE
-    )
-    arrows(
-        x0 = 0.25, y0 = supply(0.25) + 0.1, x1 = 0.35, y1 = supply(0.35) + 0.01,
-        col = c("blue"), lwd = 1, xpd = TRUE
-    )
-    text(
-        x = c(0.1, 0.85, 0.85),
-        y = c(demand(0.1) - 0.17, demand(0.85) + 0.05, supply(0.84) - .05),
-        labels = c(
-            "We observe points here,\nbut we do not know\nthe market side",
-            "Demand", "Supply"
-        ),
-        adj = c(0.5, 0.5), col = c("blue", "red", "red")
-    )
-
-    arrows(
-        x0 = 0.5, y0 = demand(0.5) - 0.135,
-        x1 = 0.5, y1 = (supply(0.25) + demand(0.65)) / 2.0 - 0.01,
-        col = c("orange"), lwd = 1, xpd = TRUE
-    )
-    text(
-        x = c(0.5),
-        y = c(demand(0.5) - 0.18),
-        labels = c("There exist\nshortages and surpluses"),
-        adj = c(0.5, 0.5), col = c("orange")
-    )
+    grid::grid.raster(png::readPNG(system.file("man/figures/diseq_basic.png",
+        package = "diseq"
+    )))
 })
 
 #' @rdname minus_log_likelihood

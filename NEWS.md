@@ -1,3 +1,7 @@
+# diseq 0.1.3.9007
+
+* Added `plot` method for the all model classes.
+
 # diseq 0.1.3.9006
 
 * Added `plot` method for the equilibrium and basic disequilibrium model classes.
