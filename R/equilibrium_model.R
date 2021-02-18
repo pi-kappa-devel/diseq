@@ -67,7 +67,7 @@ setMethod(
 setMethod(
     "plot_implementation", signature(object = "equilibrium_model"),
     function(object) {
-    grid::grid.raster(png::readPNG(system.file("man/figures/equilibrium.png",
+    grid::grid.raster(png::readPNG(system.file("man", "figures", "equilibrium.png",
         package = "diseq"
     )))
     }
