@@ -328,7 +328,7 @@ setGeneric("plot_implementation", function(object) {
 #' Displays a graphical illustration of the passed model object.
 #' @param x A model object.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' simulated_data <- simulate_model_data(
 #'     "diseq_basic", 500, 3, # model type, observed entities, observed time points
 #'     -0.9, 8.9, c(0.03, -0.02), c(-0.03, -0.01), # demand coefficients

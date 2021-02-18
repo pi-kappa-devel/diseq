@@ -84,7 +84,7 @@ setMethod(
 )
 
 setMethod("plot_implementation", signature(object = "diseq_directional"), function(object) {
-    grid::grid.raster(png::readPNG(system.file("man/figures/diseq_directional.png",
+    grid::grid.raster(png::readPNG(system.file("man", "figures", "diseq_directional.png",
         package = "diseq"
     )))
 })

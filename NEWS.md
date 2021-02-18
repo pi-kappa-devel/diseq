@@ -1,3 +1,7 @@
+# diseq 0.1.3.9010
+
+* Corrected calls to `system.file`.
+
 # diseq 0.1.3.9009
 
 * Updated `README.md`.
