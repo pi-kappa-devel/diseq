@@ -1,3 +1,8 @@
+# diseq 0.1.3.9012
+
+* Updated the description entry of the `DESCRIPTION` file.
+* Shortened `use_heteroscedasticity_consistent_errors` variable of `estimate` method to `use_heteroscedastic_errors`.
+
 # diseq 0.1.3.9011
 
 * Added python script for creating the `README` figures.

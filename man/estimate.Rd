@@ -12,7 +12,7 @@ estimate(object, ...)
   object,
   use_numerical_gradient = FALSE,
   use_numerical_hessian = TRUE,
-  use_heteroscedasticity_consistent_errors = FALSE,
+  use_heteroscedastic_errors = FALSE,
   cluster_errors_by = NA,
   ...
 )
@@ -37,7 +37,7 @@ gradients.}
 the numerically approximated Hessian. Calculated Hessians are only available for the basic
 and directional models.}
 
-\item{use_heteroscedasticity_consistent_errors}{If true, the variance-covariance matrix is
+\item{use_heteroscedastic_errors}{If true, the variance-covariance matrix is
 calculated using heteroscedasticity adjusted (Huber-White) standard errors.}
 
 \item{cluster_errors_by}{A vector with names of variables belonging in the data of the

@@ -5,10 +5,10 @@ Models For Markets in Equilibrium and Disequilibrium
 
 <!-- badges: start -->
 
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![](https://cranlogs.r-pkg.org/badges/grand-total/diseq)
 ![](https://www.r-pkg.org/badges/version/diseq)
-![](https://www.r-pkg.org/badges/last-release/diseq) ![License:
-MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![](https://www.r-pkg.org/badges/last-release/diseq)
 <!-- badges: end -->
 
 The *diseq* package provides tools to estimate and analyze an

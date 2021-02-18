@@ -417,7 +417,7 @@ def create_figure(model_name):
     filename = "{}/{}.png".format(output_dir, model_name)
     eval("{}_figure()".format(model_name))
     plt.savefig(filename, transparent=True)
-    invert_image_in_place(filename)
+
 
 model_names = ["equilibrium", "diseq_basic", "diseq_directional",
                "diseq_deterministic_adjustment", "diseq_stochastic_adjustment"]
