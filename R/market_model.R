@@ -1,8 +1,10 @@
 #' @include model_logger.R
 #' @include system_base.R
 #' @importFrom bbmle parnames mle2
-#' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
+#' @importFrom grid grid.raster
+#' @importFrom png readPNG
 #' @importFrom rlang :=
+#' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
 #' @import dplyr magrittr tibble
 
 setClassUnion("characterOrNULL", c("character", "NULL"))

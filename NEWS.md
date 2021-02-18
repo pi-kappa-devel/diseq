@@ -1,3 +1,7 @@
+# diseq 0.1.3.9008
+
+* Added `png` and `grid` to dependencies.
+
 # diseq 0.1.3.9007
 
 * Added `plot` method for the all model classes.
