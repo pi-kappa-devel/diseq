@@ -58,7 +58,7 @@ setMethod(
 )
 
 setMethod("plot_implementation", signature(object = "diseq_basic"), function(object) {
-    filename <- system.file("man", "figures", "diseq_basic.png", package = "diseq")
+    filename <- system.file("help", "figures", "diseq_basic.png", package = "diseq")
     print(filename)
     grid::grid.raster(png::readPNG(filename))
 })
