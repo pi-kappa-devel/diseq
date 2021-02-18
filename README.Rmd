@@ -18,10 +18,10 @@ bibliography: bibliography.bib
 <img src='man/figures/logo.png' align="right" height="48"/>
 
 <!-- badges: start -->
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![](https://cranlogs.r-pkg.org/badges/grand-total/diseq)
 ![](https://www.r-pkg.org/badges/version/diseq)
 ![](https://www.r-pkg.org/badges/last-release/diseq)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 <!-- badges: end -->
 
 The *diseq* package provides tools to estimate and analyze an equilibrium and four disequilibrium models. The equilibrium model can be estimated with either two-stage least squares or with full information maximum likelihood. The methods are asymptotically equivalent. The disequilibrium models are estimated using full information maximum likelihood. The likelihoods can be estimated both with independent and correlated demand and supply shocks and the optimization of the likelihoods can be performed either using analytic expressions or numerical approximations of their gradients.

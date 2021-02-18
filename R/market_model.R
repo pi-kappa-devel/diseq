@@ -433,7 +433,7 @@ setGeneric("estimate", function(object, ...) {
 #' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
 #' the numerically approximated Hessian. Calculated Hessians are only available for the basic
 #' and directional models.
-#' @param use_heteroscedasticity_consistent_errors If true, the variance-covariance matrix is
+#' @param use_heteroscedastic_errors If true, the variance-covariance matrix is
 #' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
 #' @param cluster_errors_by A vector with names of variables belonging in the data of the
 #' model. If the vector is supplied, the variance-covariance matrix is calculated by
@@ -441,7 +441,7 @@ setGeneric("estimate", function(object, ...) {
 setMethod(
     "estimate", signature(object = "market_model"),
     function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE,
-             use_heteroscedasticity_consistent_errors = FALSE, cluster_errors_by = NA, ...) {
+             use_heteroscedastic_errors = FALSE, cluster_errors_by = NA, ...) {
         va_args <- list(...)
 
         va_args$skip.hessian <- !use_numerical_hessian
@@ -471,7 +471,7 @@ setMethod(
             )
         }
 
-        if (use_heteroscedasticity_consistent_errors) {
+        if (use_heteroscedastic_errors) {
             est <- set_heteroscedasticity_consistent_errors(object, est)
         }
 
