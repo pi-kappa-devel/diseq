@@ -1,70 +1,69 @@
-# Changes in version 0.1.3
-* Patched the `M1mac` additional issues and `macos` compilation errors that the last update revealed.
-* Added a compilation flag for availability of `GSL`. The native code can be compiled also in systems without `GSL`, albeit offering an empty shell functionality for the moment.
-* The safest approach that I have found to link with `GSL` and `tbb` is including `RcppGSL` and `RcppParallel` as dependencies, despite that none of their functionality is directly used. This is not needed anymore to build the package due to the new `_DISEQ_HAS_GSL_` flag, but it enables testing the behavior of the package when linked with the shared libraries in more target platforms of `rhub`. 
+# Changes in version 0.1.4
+
+* Cumulative patch of CRAN version.
+* Provided standard methods for market model classes (`show`, `summary`, and `plot`).
+* Various improvements in `README`, `DESCRIPTION`, and documentation.
 
 # Test environments 
 ## Windows
-1. (R-devel win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R Under development (unstable) (2021-01-29 r79900)
+1. (R-devel win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R Under development (unstable) (2021-02-27 r80043)
 2. (R-oldrelease win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R version 3.6.3 (2020-02-29)
-3. (R-release win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R version 4.0.3 (2020-10-10)
+3. (R-release win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R version 4.0.4 (2021-02-15)
 4. (rhub windows-x86_64-devel) Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 
 ## Linux
 
 ### GCC
-5. (rhub x86_64-pc-linux-gnu) Ubuntu Linux 20.04.1 LTS, R-release, GCC, R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-6. (rhub fedora-gcc-devel) Fedora Linux, R-devel, GCC, R Under development (unstable) (2021-01-30 r79911) -- "Unsuffered Consequences"
-7. (rhub debian-gcc-devel-nold) Debian Linux, R-devel, GCC, no long double, R Under development (unstable) (2021-01-30 r79911)
-8. (rhub rocker-gcc-san) Debian Linux, R-devel, GCC ASAN/UBSAN, R Under development (unstable) (2020-07-31 r78945)
+5. (rhub x86_64-pc-linux-gnu) Ubuntu Linux 20.04.1 LTS, R-release, GCC, R version 4.0.4 (2021-02-15) -- "Lost Library Book"
+6. (rhub debian-gcc-devel) Debian Linux, R-devel, GCC, R Under development (unstable) (2021-02-27 r80043) -- "Unsuffered Consequences"
+7. (rhub debian-gcc-devel-nold) Debian Linux, R-devel, GCC, no long double, R Under development (unstable) (2021-02-27 r80043) -- "Unsuffered Consequences"
+8. (rhub rocker-gcc-san) Debian Linux, R-devel, GCC ASAN/UBSAN, R Under development (unstable) (2020-07-31 r78945) -- "Unsuffered Consequences"
 9. (local) Fedora 32, GCC, R version 4.0.3 (2020-10-10)
 
 ### LLVM
-10. (rhub debian-clang-devel) Debian Linux, R-devel, clang, ISO-8859-15 locale, R Under development (unstable) (2021-01-30 r79911) -- "Unsuffered Consequences"
-11. (rhub fedora-clang-devel) Fedora Linux, R-devel, clang, gfortran, R Under development (unstable) (2021-01-28 r79891) -- "Unsuffered Consequences"
+10. (rhub debian-clang-devel) Debian Linux, R-devel, clang, ISO-8859-15 locale, R Under development (unstable) (2021-02-27 r80043) -- "Unsuffered Consequences"
+11. (rhub fedora-clang-devel) Fedora Linux, R-devel, clang, gfortran, R Under development (unstable) (2021-02-27 r80043) -- "Unsuffered Consequences"
 
 ## Solaris
-12. (rhub solaris-x86-patched) Oracle Solaris 10, x86, 32 bit, R-release, R version 4.0.3 (2020-10-10)
+12. (rhub solaris-x86-patched) Oracle Solaris 10, x86, 32 bit, R-release, R version 4.0.4 (2021-02-15)
 
 ## Macos
-13. (rhub macos-highsierra-release-cran) macOS 10.13.6 High Sierra, R-release, CRAN's setup, R version 4.0.3 (2020-10-10)
-14. (rhub macos-highsierra-release) macOS 10.13.6 High Sierra, R-release, brew, R version 4.0.3 (2020-10-10)
+13. (rhub macos-highsierra-release-cran) macOS 10.13.6 High Sierra, R-release, CRAN's setup, R version 4.0.4 (2021-02-15)
+14. (rhub macos-highsierra-release) macOS 10.13.6 High Sierra, R-release, brew, R version 4.0.4 (2021-02-15)
 
 # Check results
 ## R CMD check results in (1) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Installation time in seconds: 172
-Check time in seconds: 403
+Installation time in seconds: 239
+Check time in seconds: 526
 Status: 1 NOTE
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
-Days since last update: 2
-
 Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.2307/1913181
+    From: README.md
+    Status: 403
+    Message: Forbidden
   URL: https://doi.org/10.2307/1914215
     From: man/diseq.Rd
           man/minus_log_likelihood.Rd
     Status: 403
     Message: Forbidden
-
-Found the following (possibly) invalid DOIs:
-  DOI: 10.2307/1914215
-    From: DESCRIPTION
-    Status: Forbidden
-    Message: 403
+  URL: https://doi.org/10.2307/2526311
+    From: README.md
+    Status: 403
+    Message: Forbidden
 	
-Log: https://win-builder.r-project.org/6n2vddlCUGM1/
+Log: https://win-builder.r-project.org/1c65N6NRNv7i
 
 ## R CMD check results in (2) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Installation time in seconds: 168
-Check time in seconds: 394
+Installation time in seconds: 223
+Check time in seconds: 480
 Status: 1 NOTE
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
-
-Days since last update: 2
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.2307/1914215
@@ -79,23 +78,28 @@ Found the following (possibly) invalid DOIs:
     Status: Forbidden
     Message: 403
 	
-Log: https://win-builder.r-project.org/a9a1sCz5qKyh/
+Log: https://win-builder.r-project.org/QYMX3sFna5Vv/
 
 ## R CMD check results in (3) -- std=gnu++11, with GSL, no execution header -- 1 Note
-The files will be removed after roughly 72 hours.
-Installation time in seconds: 174
-Check time in seconds: 412
+Installation time in seconds: 252
+Check time in seconds: 584
 Status: 1 NOTE
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
-Days since last update: 2
-
 Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.2307/1913181
+    From: README.md
+    Status: 403
+    Message: Forbidden
   URL: https://doi.org/10.2307/1914215
     From: man/diseq.Rd
           man/minus_log_likelihood.Rd
+    Status: 403
+    Message: Forbidden
+  URL: https://doi.org/10.2307/2526311
+    From: README.md
     Status: 403
     Message: Forbidden
 
@@ -105,65 +109,44 @@ Found the following (possibly) invalid DOIs:
     Status: Forbidden
     Message: 403
 	
-Log: https://win-builder.r-project.org/596JcrKNGD4E/
+Log: https://win-builder.r-project.org/BG0r7YgzaAXy/
 
-## R CMD check results in (4) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Build time:	11 minutes 57.8 seconds
+## R CMD check results in (4) -- std=gnu++11, with GSL, no execution header -- Ok
+Build time:	13 minutes 34.2 seconds
+Status: Ok
+
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-32c5a63c77a44a89975c2a3142e1572f
+## R CMD check results in (5) -- std=gnu++11, with GSL, no execution header -- 1 Note
+Build time:	1 hour 53 minutes 53.8 seconds
 Status: 1 NOTE
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
-
-Days since last update: 2
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-e22e7ad7fd99461f9bd58d1320fef7da
-## R CMD check results in (5) -- std=gnu++11, with GSL, no execution header -- 2 Notes
-Build time:	1 hour 24 minutes 28.1 seconds
-Status: 2 NOTEs
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
-
-Days since last update: 2
-
 * checking installed package size ... NOTE
   installed size is  5.6Mb
   sub-directories of 1Mb or more:
     libs   3.4Mb
-    R      1.5Mb
+    R      1.7Mb
 	
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-fe7994eb0f8e4c3fb82d55d5f921c567
-## R CMD check results in (6) -- std=c++17, with GSL, with execution header -- 2 Notes
-Build time: 36m 33.4s
-Status: 2 NOTEs
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-c0aee4ccc1a04764adc19b3f0540fca9
 
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
+## R CMD check results in (6) -- std=c++17, with GSL, with execution header -- Ok
+Build time:	1 hour 6 minutes 15.3 seconds
+Status: Ok
 
-Days since last update: 2
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-18d6570969f34661924b20478589a5e5
 
-* checking installed package size ... NOTE
-  installed size is  5.2Mb
-  sub-directories of 1Mb or more:
-    R      1.5Mb
-    libs   3.1Mb
-	
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-045798a27ef94b5e9bbecabfd922bb3e
+## R CMD check results in (7) -- std=c++17, with GSL, with execution header -- Ok
+Build time:	2 hours 7 minutes 58.7 seconds
+Status: Ok
 
-## R CMD check results in (7) -- std=c++17, with GSL, with execution header -- 1 Note
-Build time:	1 hour 28 minutes 47.5 seconds
-Status: 1 NOTE
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-2a0459fc1ab5412a8f7e0bb2cd0a9a7e
 
-Days since last update: 2
-
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-a92ad14daf9a472ba1ef5af79ffa4342
 ## R CMD check results in (8) -- std=c++17, with GSL, with execution header -- Ok
-Build time:	2 hours 9.4 seconds
+Build time:	3 hours 49 minutes 15.3 seconds
 
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-53c7f302c530409ea922344770ff33b4
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-fe931436de9a423882a55b05dc72ab84
 
-## R CMD check results in (9) -- std=c++17, no GSL, with execution header -- 1 Warning, 2 Notes
-── R CMD check results ──────────────────────────────────────── diseq 0.1.3 ────
-Duration: 6m 24.7s
+## R CMD check results in (9) -- std=c++17, with GSL, with execution header -- 1 Warning, 2 Notes
+── R CMD check results ──────────────────────────────────────── diseq 0.1.4 ────
+Duration: 7m 12.2s
 
 ❯ checking compiled code ... WARNING
   File ‘diseq/libs/diseq.so’:
@@ -179,10 +162,10 @@ Duration: 6m 24.7s
   See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
 
 ❯ checking installed package size ... NOTE
-    installed size is  5.2Mb
+    installed size is  5.8Mb
     sub-directories of 1Mb or more:
-      R      1.5Mb
-      libs   3.1Mb
+      R      1.6Mb
+      libs   3.6Mb
 
 ❯ checking compilation flags used ... NOTE
   Compilation used the following non-portable flag(s):
@@ -191,29 +174,22 @@ Duration: 6m 24.7s
 
 0 errors ✔ | 1 warning ✖ | 2 notes ✖
 
-## R CMD check results in (10) -- std=c++17, with GSL, with execution header -- 1 Note
-Build time:	1 hour 33 minutes 53.9 seconds
-Status: 1 NOTE
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
+## R CMD check results in (10) -- std=c++17, with GSL, with execution header -- Ok
+Build time:	2 hours 20 minutes 50.2 seconds
+Status: Ok
 
-Days since last update: 2
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-c2655587018c4b469203397f1930dba8
 
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-690ac90aeaa9474eb85940d1935c6377
+## R CMD check results in (11) -- std=c++17, with GSL, with execution header -- Ok
+1 hour 53 minutes 42.3 seconds
+Status: 1 Ok
 
-
-## R CMD check results in (11) -- std=c++17, with GSL, with execution header -- 1 Note
-Build time:	1 hour 23 minutes 48.2 seconds
-Status: 1 NOTE
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
-
-Days since last update: 2
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-45d41b35c1bd4c34878f52a04e9de49b
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-47ee1d3ddfd04ad6bd7f0af63bf8a486
 
 ## R CMD check results in (12) -- std=gnu++11, with GSL, no execution header -- 1 Warning, 2 Notes
-Build time:	38 minutes 19.8 seconds
+Build time:	37 minutes 51.2 seconds
 Status: 1 WARNING, 2 NOTEs
+
 WARNINGS:
 * checking top-level files ... WARNING
   Output from running autoreconf:
@@ -227,8 +203,6 @@ Files ‘README.md’ or ‘NEWS.md’ cannot be checked without ‘pandoc’ be
 NOTES:
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
-
-Days since last update: 2
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.2307/1914215
@@ -246,11 +220,12 @@ Found the following (possibly) invalid DOIs:
 Compilation used the following non-portable flag(s):
   ‘-march=pentiumpro’
 
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-ca008ec28f6e410f978a7133bd6ad47d
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-c726e9b54b3c493f9c7d0fc500d110f6
 
 ## R CMD check results in (13) -- std=gnu++11, with GSL, no execution header -- 1 Warning, 1 Note
-Build time:	36 minutes 59.9 seconds
+Build time:	35 minutes 8.1 seconds
 Status: 1 WARNING, 1 NOTE
+
 WARNINGS:
 * checking top-level files ... WARNING
 A complete check needs the 'checkbashisms' script.
@@ -259,8 +234,6 @@ manual.
 NOTES:
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
-
-Days since last update: 2
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.2307/1914215
@@ -274,9 +247,13 @@ Found the following (possibly) invalid DOIs:
     From: DESCRIPTION
     Status: Forbidden
     Message: 403
+
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-0333d2b05d8d4010a921edc3e68350c8
+
 ## R CMD check results in (14) -- std=gnu++11, with GSL, no execution header -- 1 Warning, 1 Note
-Build time:	14 minutes 20.1 seconds
+Build time:	13 minutes 31.7 seconds
 Status: 1 WARNING, 1 NOTE
+
 WARNINGS:
 * checking top-level files ... WARNING
 A complete check needs the 'checkbashisms' script.
@@ -285,8 +262,6 @@ manual.
 NOTES:
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: ‘Pantelis Karapanagiotis <pikappa.devel@gmail.com>’
-
-Days since last update: 2
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.2307/1914215
@@ -301,4 +276,4 @@ Found the following (possibly) invalid DOIs:
     Status: Forbidden
     Message: 403
 	
-Log: https://builder.r-hub.io/status/original/diseq_0.1.3.tar.gz-f04216f8cfdb4a4681f06422b372e6ee
+Log: https://builder.r-hub.io/status/original/diseq_0.1.4.tar.gz-8041f9aaaabb42b9a1f3feae97c82a28

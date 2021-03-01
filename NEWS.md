@@ -1,3 +1,7 @@
+# diseq 0.1.4
+
+* Cumulative patch of CRAN version.
+
 # diseq 0.1.3.9012
 
 * Updated the description entry of the `DESCRIPTION` file.
