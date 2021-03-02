@@ -4,7 +4,7 @@ authors:
   Pantelis Karapanagiotis:
     href: http://pikappa.eu
 development:
-  mode: devel
+  mode: auto
 template:
   params:
     bootswatch: united
