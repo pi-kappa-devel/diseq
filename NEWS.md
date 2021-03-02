@@ -1,3 +1,7 @@
+# diseq 0.1.5
+
+* Deployed development documentation website.
+
 # diseq 0.1.4
 
 * Cumulative patch of CRAN version.

@@ -1,3 +1,7 @@
+# Changes in version 0.1.5
+
+* Deployed development documentation website. For the actual changes in the package see the changes in version 0.1.4 that follow.
+
 # Changes in version 0.1.4
 
 * Cumulative patch of CRAN version.
