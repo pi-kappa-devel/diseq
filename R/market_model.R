@@ -9,6 +9,7 @@
 
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
+utils::globalVariables("where")
 
 #' @title Model base class
 #'
@@ -148,22 +149,23 @@ setMethod(
         }
 
         remove_unused_levels <- function(x) {
-            if (is.factor(x)) {
-                initial_levels <- levels(x)
-                x <- factor(x)
-                remaining_levels <- levels(x)
-                removed_levels <- initial_levels[!(initial_levels %in% remaining_levels)]
-                if (length(removed_levels)) {
-                    print_warning(
-                        .Object@logger, "Removing unobserved '",
-                        paste0(removed_levels, collapse = ", "), "' level(s)."
-                    )
-                }
+            initial_levels <- levels(x)
+            x <- factor(x)
+            remaining_levels <- levels(x)
+            removed_levels <- initial_levels[!(initial_levels %in% remaining_levels)]
+            if (length(removed_levels)) {
+                print_warning(
+                    .Object@logger, "Removing unobserved '",
+                    paste0(removed_levels, collapse = ", "), "' level(s)."
+                )
             }
             x
         }
-        .Object@model_tibble <- tibble::as_tibble(sapply(.Object@model_tibble,
-                                                         remove_unused_levels))
+        .Object@model_tibble <- .Object@model_tibble %>%
+            dplyr::mutate(dplyr::across(
+                where(is.factor),
+                remove_unused_levels
+            ))
 
         ## Create primary key column
         key_columns_syms <- rlang::syms(.Object@key_columns)
@@ -349,7 +351,7 @@ setMethod("plot", signature(x = "market_model"), function(x) {
     filename <- paste0(class(x)[1], ".png")
     path <- system.file("help", "figures", filename, package = "diseq")
     if (path == "") {
-      path <- system.file("man", "figures", filename, package = "diseq")
+        path <- system.file("man", "figures", filename, package = "diseq")
     }
     grid::grid.raster(png::readPNG(path))
 })

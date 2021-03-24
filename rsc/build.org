@@ -58,4 +58,3 @@ devtools::check_rhub(
 devtools::check_rhub(platforms = c('debian-gcc-devel-nold'))
 #+end_src
 
-
