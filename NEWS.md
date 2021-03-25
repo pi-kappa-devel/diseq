@@ -1,3 +1,11 @@
+# diseq 0.1.5.9002
+
+* Fixed option class concerning the calculation of the Hessian in estimation calls. Models can be now estimated by skipping the Hessian, calculating it based on the analytic expressions, or calculating it numerically.
+
+# diseq 0.1.5.9001
+
+* Corrected bug in initialization of indicator variables.
+
 # diseq 0.1.5
 
 * Deployed development documentation website.

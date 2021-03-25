@@ -446,7 +446,9 @@ setMethod(
              use_heteroscedastic_errors = FALSE, cluster_errors_by = NA, ...) {
         va_args <- list(...)
 
-        va_args$skip.hessian <- !use_numerical_hessian
+        if (is.null(va_args$skip.hessian)) {
+            va_args$skip.hessian <- !use_numerical_hessian
+        }
 
         va_args$start <- prepare_initializing_values(object, va_args$start)
 
@@ -464,7 +466,8 @@ setMethod(
         est <- do.call(bbmle::mle2, va_args)
         est@call.orig <- call("bbmle::mle2", va_args)
 
-        if ((object@model_type_string %in% c("Basic", "Directional")) && va_args$skip.hessian) {
+        if ((object@model_type_string %in% c("Basic", "Directional")) &&
+            !va_args$skip.hessian && use_numerical_hessian) {
             print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
             est@details$hessian <- hessian(object, est@coef)
             tryCatch(
