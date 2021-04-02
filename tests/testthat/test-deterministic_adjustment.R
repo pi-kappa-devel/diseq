@@ -26,8 +26,7 @@ est <- NULL
 test_that(paste0(get_model_description(mdl), " can be estimated"), {
     est <<- estimate(mdl,
         control = optimization_controls,
-        method = optimization_method, use_numerical_hessian = TRUE,
-        use_heteroscedastic_errors = TRUE
+        method = optimization_method, standard_errors = "heteroscedastic"
     )
     expect_is(est, "mle2")
 })

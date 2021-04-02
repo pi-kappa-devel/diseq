@@ -25,7 +25,7 @@ est <- NULL
 test_that(paste0(get_model_description(mdl), " can be estimated"), {
     est <<- estimate(mdl,
         control = optimization_controls, method = optimization_method,
-        cluster_errors_by = c("id")
+        standard_errors = c("id")
     )
     expect_is(est, "mle2")
 })

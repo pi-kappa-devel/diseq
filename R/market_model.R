@@ -432,22 +432,29 @@ setGeneric("estimate", function(object, ...) {
 #' @param use_numerical_gradient If true, the gradient is calculated numerically. By default,
 #' all the models are estimated using the analytic expressions of their likelihoods'
 #' gradients.
-#' @param use_numerical_hessian If true, the variance-covariance matrix is calculated using
-#' the numerically approximated Hessian. Calculated Hessians are only available for the basic
-#' and directional models.
-#' @param use_heteroscedastic_errors If true, the variance-covariance matrix is
-#' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
-#' @param cluster_errors_by A vector with names of variables belonging in the data of the
-#' model. If the vector is supplied, the variance-covariance matrix is calculated by
-#' grouping the score matrix based on the passed variables.
+#' @param hessian One of three potential options: `skip`, `numerical`, and `calculated`.
+#' The default is to use the `calculated` Hessian for the model that expressions are
+#' available and the `numerical` Hessian in other cases. Calculated Hessian expressions
+#' are available for the basic and directional models.
+#' @param standard_errors One of three potential options: `homoscedastic`,
+#' `heteroscedastic`, or a vector with variables names for which standard error
+#' clusters are to be created. The default value is `homoscedastic`. If the option
+#' `heteroscedastic` is passed, the variance-covariance matrix is calculated using
+#' heteroscedasticity adjusted (Huber-White) standard errors. If the vector is
+#' supplied, the variance-covariance matrix is calculated by grouping the score matrix
+#' based on the passed variables.
 setMethod(
     "estimate", signature(object = "market_model"),
-    function(object, use_numerical_gradient = FALSE, use_numerical_hessian = TRUE,
-             use_heteroscedastic_errors = FALSE, cluster_errors_by = NA, ...) {
+    function(object, use_numerical_gradient = FALSE, hessian = "calculated",
+             standard_errors = "homoscedastic", ...) {
         va_args <- list(...)
 
-        if (is.null(va_args$skip.hessian)) {
-            va_args$skip.hessian <- !use_numerical_hessian
+        if (hessian == "skip" ||
+            ((object@model_type_string %in% c("Basic", "Directional")) &&
+                hessian == "calculated")) {
+            va_args$skip.hessian <- TRUE
+        } else {
+            hessian <- "numerical"
         }
 
         va_args$start <- prepare_initializing_values(object, va_args$start)
@@ -466,8 +473,7 @@ setMethod(
         est <- do.call(bbmle::mle2, va_args)
         est@call.orig <- call("bbmle::mle2", va_args)
 
-        if ((object@model_type_string %in% c("Basic", "Directional")) &&
-            !va_args$skip.hessian && use_numerical_hessian) {
+        if (hessian == "calculated") {
             print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
             est@details$hessian <- hessian(object, est@coef)
             tryCatch(
@@ -476,12 +482,14 @@ setMethod(
             )
         }
 
-        if (use_heteroscedastic_errors) {
-            est <- set_heteroscedasticity_consistent_errors(object, est)
-        }
-
-        if (!is.na(cluster_errors_by)) {
-            est <- set_clustered_errors(object, est, cluster_errors_by)
+        if (length(standard_errors) == 1) {
+            if (standard_errors == "heteroscedastic") {
+                est <- set_heteroscedasticity_consistent_errors(object, est)
+            } else if (standard_errors != "homoscedastic") {
+                est <- set_clustered_errors(object, est, standard_errors)
+            }
+        } else {
+            est <- set_clustered_errors(object, est, standard_errors)
         }
 
         est

@@ -1,3 +1,12 @@
+# diseq 0.2.0.9001
+
+* Better options for hessian estimation: Consolidated all three potential options in `hessian` input variable of `estimate`.
+* Better options for adjusted standard errors: Consolidated all three potential options in `standard_errors` input variable of `estimate`.
+
+# diseq 0.1.5.9003
+
+* Added houses dataset
+
 # diseq 0.1.5.9002
 
 * Fixed option class concerning the calculation of the Hessian in estimation calls. Models can be now estimated by skipping the Hessian, calculating it based on the analytic expressions, or calculating it numerically.

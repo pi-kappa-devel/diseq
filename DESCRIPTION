@@ -1,7 +1,7 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.1.5.9002
-Date: 2021-03-24
+Version: 0.2.0.9001
+Date: 2021-04-01
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
@@ -19,8 +19,8 @@ Description: Provides estimation methods for markets in equilibrium and
     Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>. Standard
     errors can be estimated by adjusting for heteroscedasticity or clustering.
     The equilibrium estimation constitutes a case of a system of linear,
-    simultaneous equations. The disequilibrium models,
-    instead, replace the market-clearing condition with a non-linear,
+    simultaneous equations. Instead, the disequilibrium models replace the
+    market-clearing condition with a non-linear,
     short-side rule and allow for different specifications of price dynamics. 
 Language: en-US
 URL: https://github.com/pi-kappa-devel/diseq/, https://diseq.pikappa.eu/
@@ -54,6 +54,7 @@ Suggests:
     testthat (>= 2.0.0)
 VignetteBuilder: knitr
 Collate:
+    'data.R'
     'equation_base.R'
     'system_base.R'
     'equation_basic.R'

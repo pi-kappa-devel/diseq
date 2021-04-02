@@ -1,0 +1,53 @@
+#' Credit market data for US housing starts
+#'
+#' A dataset containing the monthly mortgage rates and other attributes of the US market
+#' for new, non-farm houses from July 1958 to December 1969. The variables are as follows:
+#'
+#' \itemize{
+#'   \item DATE The date of the record.
+#'   \item HS Private non-farm housing starts in thousands of units (Not seasonally
+#' adjusted).
+#'   \item RM FHA Mortgage Rate series on new homes in units of 100 (beginning-of-month
+#' Data).
+#'   \item DSLA Savings capital (deposits) of savings and loan associations in millions
+#' of Dollars.
+#'   \item DMSB Deposits of mutual savings banks in millions of dollars.
+#'   \item DHLB Advances of the federal home loan bank to savings and loan associations
+#' in million of dollars.
+#'   \item W Number of working days in month.
+#' }
+#'
+#' @references \itemize{
+#'   \item Fair, R. C. (1971). A short-run forecasting model of the United States
+#' economy. Heath Lexington Books.
+#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}
+#'   \item Fair, R. C., & Jaffee, D. M. (1972). Methods of Estimation for Markets in
+#' Disequilibrium. Econometrica, 40(3), 497.
+#' \href{https://doi.org/10.2307/1913181}{https://doi.org/10.2307/1913181}
+#'   \item Maddala, G. S., & Nelson, F. D. (1974). Maximum Likelihood Methods for
+#' Models of Markets in Disequilibrium. Econometrica, 42(6), 1013.
+#' \href{https://doi.org/10.2307/1914215}{https://doi.org/10.2307/1914215}
+#'   \item Hwang, H. (1980). A test of a disequilibrium model. Journal of Econometrics,
+#' 12(3), 319–333.
+#' \href{https://doi.org/10.1016/0304-4076(80)90059-7}{https://doi.org/10.1016/0304-4076(80)90059-7}
+#' }
+#'
+#' @source \itemize{
+#'   \item HS \href{https://fraser.stlouisfed.org/title/economic-report-president-45?browse=1940s}{Economic Reports of the President}
+#'   \item RM Fair, R. C. (1971).
+#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}
+#'   \item DSLA \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item DMSB \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item DHLB \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item W \href{https://www.timeanddate.com/date/workdays.html}{Manually calculated}
+#' }
+#'
+#' @examples
+#' data(houses)
+#'
+#' @docType data
+#' @keywords housing, datasets
+#' @name houses
+#' @usage data(houses)
+#' @format A data frame with 138 rows and 7 columns
+NULL
