@@ -4,23 +4,23 @@
 #' for new, non-farm houses from July 1958 to December 1969. The variables are as follows:
 #'
 #' \itemize{
-#'   \item DATE The date of the record.
-#'   \item HS Private non-farm housing starts in thousands of units (Not seasonally
+#'   \item \code{DATE} The date of the record.
+#'   \item \code{HS} Private non-farm housing starts in thousands of units (Not seasonally
 #' adjusted).
-#'   \item RM FHA Mortgage Rate series on new homes in units of 100 (beginning-of-month
+#'   \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (beginning-of-month
 #' Data).
-#'   \item DSLA Savings capital (deposits) of savings and loan associations in millions
+#'   \item \code{DSLA} Savings capital (deposits) of savings and loan associations in millions
 #' of Dollars.
-#'   \item DMSB Deposits of mutual savings banks in millions of dollars.
-#'   \item DHLB Advances of the federal home loan bank to savings and loan associations
+#'   \item \code{DMSB} Deposits of mutual savings banks in millions of dollars.
+#'   \item \code{DHLB} Advances of the federal home loan bank to savings and loan associations
 #' in million of dollars.
-#'   \item W Number of working days in month.
+#'   \item \code{W} Number of working days in month.
 #' }
 #'
 #' @references \itemize{
 #'   \item Fair, R. C. (1971). A short-run forecasting model of the United States
 #' economy. Heath Lexington Books.
-#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}
+#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{\code{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}}
 #'   \item Fair, R. C., & Jaffee, D. M. (1972). Methods of Estimation for Markets in
 #' Disequilibrium. Econometrica, 40(3), 497.
 #' \href{https://doi.org/10.2307/1913181}{https://doi.org/10.2307/1913181}
@@ -33,13 +33,13 @@
 #' }
 #'
 #' @source \itemize{
-#'   \item HS \href{https://fraser.stlouisfed.org/title/economic-report-president-45?browse=1940s}{Economic Reports of the President}
-#'   \item RM Fair, R. C. (1971).
-#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}
-#'   \item DSLA \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
-#'   \item DMSB \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
-#'   \item DHLB \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
-#'   \item W \href{https://www.timeanddate.com/date/workdays.html}{Manually calculated}
+#'   \item \code{HS} \href{https://fraser.stlouisfed.org/title/economic-report-president-45?browse=1940s}{Economic Reports of the President}
+#'   \item \code{RM} Fair, R. C. (1971).
+#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{\code{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}}
+#'   \item \code{DSLA} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item \code{DMSB} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item \code{DHLB} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
+#'   \item \code{W} \href{https://www.timeanddate.com/date/workdays.html}{Manually calculated}
 #' }
 #'
 #' @examples

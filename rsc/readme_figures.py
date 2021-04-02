@@ -127,7 +127,7 @@ def get_axes(fig):
     return ax
 
 
-def equilibrium_figure():
+def equilibrium_model_figure():
     fig_em = plt.figure()
     # with plt.xkcd():
     ax = get_axes(fig_em)
@@ -419,7 +419,7 @@ def create_figure(model_name):
     plt.savefig(filename, transparent=True)
 
 
-model_names = ["equilibrium", "diseq_basic", "diseq_directional",
+model_names = ["equilibrium_model", "diseq_basic", "diseq_directional",
                "diseq_deterministic_adjustment", "diseq_stochastic_adjustment"]
 for model_name in model_names:
     create_figure(model_name)

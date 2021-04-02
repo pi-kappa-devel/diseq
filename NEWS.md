@@ -1,3 +1,8 @@
+# diseq 0.2.0.9002
+
+* Fixed bug in `equilibrium_model` plot functionality.
+* Minor improvements in `houses` documentation.
+
 # diseq 0.2.0.9001
 
 * Better options for hessian estimation: Consolidated all three potential options in `hessian` input variable of `estimate`.

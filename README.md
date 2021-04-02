@@ -39,7 +39,7 @@ supply side and vice versa. This model assumes that the market
 observations always represent equilibrium points in which the demanded
 and supplied quantities are equal. The model can be estimated using
 two-stage least squares (Theil 1953) or full information maximum
-likelihood (Karapanagiotis 2020). Asymptotically, these methods are
+likelihood (Karapanagiotis, n.d.). Asymptotically, these methods are
 equivalent (Balestra and Varadharajan-Krishnakumar 1987).
 
 \[
@@ -50,7 +50,7 @@ S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
 Q_{n t} &= D_{n t} = S_{n t}
 \end{aligned} \tag{EM} \label{equilibrium}
 \end{equation}
-\] <img src='man/figures/equilibrium.png'/>
+\] <img src='man/figures/equilibrium_model.png'/>
 
 ## The basic disequilibrium model
 
@@ -359,7 +359,7 @@ The package is planned to be expanded in the following ways:
     already implemented. It is planned for future versions to provide
     *C++* implementations also for the remaining models.
   - Thirdly, it is planned to include single-command functionality for
-    the market-clearing tests (Karapanagiotis 2020; Hwang 1980; Quandt
+    the market-clearing tests (Karapanagiotis, n.d.; Hwang 1980; Quandt
     1978).
   - Fourthly, it is planned to include additional estimation methods
     (Zilinskas and Bogle 2006; Quandt and Ramsey 1978).
@@ -389,15 +389,15 @@ component structure.” *Econometric Theory* 3 (2): 223–46.
 
 <div id="ref-fair1972">
 
-Fair, Ray C, and Dwight M Jaffee. 1972. “Methods of Estimation for
-Markets in Disequilibrium.” *Econometrica* 40 (3): 497–514.
+Fair, Ray C., and Dwight M. Jaffee. 1972. “Methods of Estimation for
+Markets in Disequilibrium.” *Econometrica* 40 (3): 497.
 <https://doi.org/10.2307/1913181>.
 
 </div>
 
 <div id="ref-hwang1980">
 
-Hwang, Hae shin. 1980. “A test of a disequilibrium model.” *Journal of
+Hwang, Hae-shin. 1980. “A test of a disequilibrium model.” *Journal of
 Econometrics* 12 (3): 319–33.
 <https://doi.org/10.1016/0304-4076(80)90059-7>.
 
@@ -405,16 +405,17 @@ Econometrics* 12 (3): 319–33.
 
 <div id="ref-karapanagiotis2020invisible">
 
-Karapanagiotis, Pantelis. 2020. “Invisible Market Forces with Observable
-Effects.” <https://doi.org/10.2139/ssrn.3525622>.
+Karapanagiotis, Pantelis. n.d. “The Assessment of Market-Clearing as a
+Model Selection Problem.” Working Paper.
+<https://doi.org/10.2139/ssrn.3525622>.
 
 </div>
 
 <div id="ref-maddala1974">
 
 Maddala, G. S., and Forrest D. Nelson. 1974. “Maximum Likelihood Methods
-for Models of Markets in Disequilibrium.” *Econometrica* 42 (6):
-1013–30.
+for Models of Markets in Disequilibrium.” *Econometrica* 42 (6): 1013.
+<https://doi.org/10.2307/1914215>.
 
 </div>
 

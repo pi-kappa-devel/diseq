@@ -43,7 +43,7 @@ Q_{n t} &= D_{n t} = S_{n t}
 \end{aligned} \tag{EM} \label{equilibrium}
 \end{equation}
 $$
-<img src='man/figures/equilibrium.png'/>
+<img src='man/figures/equilibrium_model.png'/>
 
 ## The basic disequilibrium model
 
