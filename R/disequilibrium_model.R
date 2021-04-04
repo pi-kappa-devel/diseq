@@ -2,37 +2,37 @@
 
 #' @title Equilibrium model base class
 setClass(
-    "disequilibrium_model",
-    contains = "market_model",
-    representation(),
-    prototype()
+  "disequilibrium_model",
+  contains = "market_model",
+  representation(),
+  prototype()
 )
 
 setMethod(
-    "initialize", "disequilibrium_model",
-    function(
-             .Object,
-             model_type_string, verbose,
-             key_columns, time_column,
-             quantity_column, price_column,
-             demand_specification, supply_specification, price_specification,
-             use_correlated_shocks,
-             data,
-             system_initializer) {
-        .Object <- callNextMethod(
-            .Object,
-            model_type_string, verbose,
-            key_columns, time_column,
-            quantity_column, price_column,
-            demand_specification, supply_specification, price_specification,
-            use_correlated_shocks,
-            data,
-            system_initializer
-        )
-        .Object@market_type_string <- "Disequilibrium"
+  "initialize", "disequilibrium_model",
+  function(
+           .Object,
+           model_type_string, verbose,
+           key_columns, time_column,
+           quantity_column, price_column,
+           demand_specification, supply_specification, price_specification,
+           correlated_shocks,
+           data,
+           system_initializer) {
+    .Object <- callNextMethod(
+      .Object,
+      model_type_string, verbose,
+      key_columns, time_column,
+      quantity_column, price_column,
+      demand_specification, supply_specification, price_specification,
+      correlated_shocks,
+      data,
+      system_initializer
+    )
+    .Object@market_type_string <- "Disequilibrium"
 
-        .Object
-    }
+    .Object
+  }
 )
 
 setGeneric("calculate_h", function(object, equation) {
@@ -69,7 +69,7 @@ setGeneric("get_shortage_variance", function(object) {
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -104,7 +104,7 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -140,7 +140,7 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -180,7 +180,7 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -216,7 +216,7 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -253,7 +253,7 @@ setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable)
 #'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #'
 #' # estimate a model object
@@ -289,86 +289,89 @@ setMethod("get_shortage_variance", signature(object = "disequilibrium_model"), f
 
 #' @rdname get_normalized_shortages
 setMethod(
-    "get_normalized_shortages", signature(object = "disequilibrium_model"),
-    function(object, parameters) {
-        object@system <- set_parameters(object@system, parameters)
-        (
-            object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
-                object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
-        ) / get_shortage_variance(object)
-    }
+  "get_normalized_shortages", signature(object = "disequilibrium_model"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    (
+      object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
+        object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
+    ) / get_shortage_variance(object)
+  }
 )
 
 #' @rdname get_relative_shortages
-setMethod("get_relative_shortages", signature(object = "disequilibrium_model"), function(object, parameters) {
+setMethod(
+  "get_relative_shortages", signature(object = "disequilibrium_model"),
+  function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     (
-        object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
-            object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
+      object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
+        object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
     ) / object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
-})
+  }
+)
 
 #' @rdname get_shortage_probabilities
 setMethod(
-    "get_shortage_probabilities", signature(object = "disequilibrium_model"),
-    function(object, parameters) {
-        pnorm(get_normalized_shortages(object, parameters))
-    }
+  "get_shortage_probabilities", signature(object = "disequilibrium_model"),
+  function(object, parameters) {
+    pnorm(get_normalized_shortages(object, parameters))
+  }
 )
 
 setMethod(
-    "get_scaled_effect", signature(object = "disequilibrium_model"),
-    function(object, estimation, variable, scale_function) {
-        object@system <- set_parameters(object@system, estimation@coef)
-        dvar <- paste0(object@system@demand@variable_prefix, variable)
-        svar <- paste0(object@system@supply@variable_prefix, variable)
-        in_demand <- dvar %in% get_prefixed_independent_variables(object@system@demand)
-        in_supply <- svar %in% get_prefixed_independent_variables(object@system@supply)
-        scale <- scale_function(estimation@coef)
-        if (in_demand && in_supply) {
-            effect <- scale * (
-                estimation@coef[dvar] - estimation@coef[svar]
-            ) / get_shortage_variance(object)
-            names(effect) <- paste0("B_", variable)
-        }
-        else if (in_demand) {
-            effect <- scale * estimation@coef[dvar] / get_shortage_variance(object)
-            names(effect) <- dvar
-        }
-        else {
-            effect <- -scale * estimation@coef[svar] / get_shortage_variance(object)
-            names(effect) <- svar
-        }
-        effect
+  "get_scaled_effect", signature(object = "disequilibrium_model"),
+  function(object, estimation, variable, scale_function) {
+    object@system <- set_parameters(object@system, estimation@coef)
+    dvar <- paste0(object@system@demand@variable_prefix, variable)
+    svar <- paste0(object@system@supply@variable_prefix, variable)
+    in_demand <- dvar %in% get_prefixed_independent_variables(object@system@demand)
+    in_supply <- svar %in% get_prefixed_independent_variables(object@system@supply)
+    scale <- scale_function(estimation@coef)
+    if (in_demand && in_supply) {
+      effect <- scale * (
+        estimation@coef[dvar] - estimation@coef[svar]
+      ) / get_shortage_variance(object)
+      names(effect) <- paste0("B_", variable)
     }
+    else if (in_demand) {
+      effect <- scale * estimation@coef[dvar] / get_shortage_variance(object)
+      names(effect) <- dvar
+    }
+    else {
+      effect <- -scale * estimation@coef[svar] / get_shortage_variance(object)
+      names(effect) <- svar
+    }
+    effect
+  }
 )
 
 #' @rdname get_mean_marginal_effect
 setMethod(
-    "get_mean_marginal_effect", signature(object = "disequilibrium_model"),
-    function(object, estimation, variable) {
-        get_scaled_effect(
-            object, estimation, variable,
-            function(x) mean(dnorm(get_normalized_shortages(object, x)))
-        )
-    }
+  "get_mean_marginal_effect", signature(object = "disequilibrium_model"),
+  function(object, estimation, variable) {
+    get_scaled_effect(
+      object, estimation, variable,
+      function(x) mean(dnorm(get_normalized_shortages(object, x)))
+    )
+  }
 )
 
 #' @rdname get_marginal_effect_at_mean
 setMethod(
-    "get_marginal_effect_at_mean", signature(object = "disequilibrium_model"),
-    function(object, estimation, variable) {
-        get_scaled_effect(
-            object, estimation, variable,
-            function(x) dnorm(mean(get_normalized_shortages(object, x)))
-        )
-    }
+  "get_marginal_effect_at_mean", signature(object = "disequilibrium_model"),
+  function(object, estimation, variable) {
+    get_scaled_effect(
+      object, estimation, variable,
+      function(x) dnorm(mean(get_normalized_shortages(object, x)))
+    )
+  }
 )
 
 #' @rdname has_shortage
 setMethod(
-    "has_shortage", signature(object = "disequilibrium_model"),
-    function(object, parameters) {
-        get_normalized_shortages(object, parameters) >= 0
-    }
+  "has_shortage", signature(object = "disequilibrium_model"),
+  function(object, parameters) {
+    get_normalized_shortages(object, parameters) >= 0
+  }
 )

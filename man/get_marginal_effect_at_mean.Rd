@@ -36,7 +36,7 @@ model <- new(
   c("id", "date"), "Q", "P", # keys, quantity, and price variables
   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
   simulated_data, # data
-  use_correlated_shocks = TRUE # allow shocks to be correlated
+  correlated_shocks = TRUE # allow shocks to be correlated
 )
 
 # estimate a model object

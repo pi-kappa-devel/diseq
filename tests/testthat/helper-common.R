@@ -138,7 +138,7 @@ load_or_simulate_model <- function(model_string, parameters) {
             c("id", "date"),
             "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
             model_tibble,
-            use_correlated_shocks = TRUE, verbose = verbose
+            correlated_shocks = TRUE, verbose = verbose
         )
     }
     else if (model_string %in% c("diseq_directional")) {
@@ -147,7 +147,7 @@ load_or_simulate_model <- function(model_string, parameters) {
             c("id", "date"), "date",
             "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2",
             model_tibble,
-            use_correlated_shocks = TRUE, verbose = verbose
+            correlated_shocks = TRUE, verbose = verbose
         )
     }
     else if (model_string %in% c("diseq_deterministic_adjustment")) {
@@ -156,7 +156,7 @@ load_or_simulate_model <- function(model_string, parameters) {
             c("id", "date"), "date",
             "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
             model_tibble,
-            use_correlated_shocks = TRUE, verbose = verbose
+            correlated_shocks = TRUE, verbose = verbose
         )
     }
     else if (model_string %in% c("diseq_stochastic_adjustment")) {
@@ -165,7 +165,7 @@ load_or_simulate_model <- function(model_string, parameters) {
             c("id", "date"), "date",
             "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1",
             model_tibble,
-            use_correlated_shocks = TRUE, verbose = verbose
+            correlated_shocks = TRUE, verbose = verbose
         )
     }
     else {

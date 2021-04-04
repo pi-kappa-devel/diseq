@@ -30,57 +30,57 @@
 #'   c("id", "date"), "date", "Q", "P", # keys, time point, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #' }
 #' @export
 setClass(
-    "diseq_directional",
-    contains = "disequilibrium_model",
-    representation(),
-    prototype()
+  "diseq_directional",
+  contains = "disequilibrium_model",
+  representation(),
+  prototype()
 )
 
 #' @describeIn initialize_market_model Directional disequilibrium model base constructor
 setMethod(
-    "initialize", "diseq_directional",
-    function(
-             .Object,
-             key_columns, time_column, quantity_column, price_column,
-             demand_specification, supply_specification,
-             data,
-             use_correlated_shocks = TRUE, verbose = 0) {
-        .Object <- callNextMethod(
-            .Object,
-            "Directional", verbose,
-            key_columns, time_column,
-            quantity_column, price_column, demand_specification, supply_specification, NULL,
-            use_correlated_shocks,
-            data,
-            function(...) new("system_directional", ...)
-        )
+  "initialize", "diseq_directional",
+  function(
+           .Object,
+           key_columns, time_column, quantity_column, price_column,
+           demand_specification, supply_specification,
+           data,
+           correlated_shocks = TRUE, verbose = 0) {
+    .Object <- callNextMethod(
+      .Object,
+      "Directional", verbose,
+      key_columns, time_column,
+      quantity_column, price_column, demand_specification, supply_specification, NULL,
+      correlated_shocks,
+      data,
+      function(...) new("system_directional", ...)
+    )
 
-        # Check for misspecification
-        if (
-            price_column %in% .Object@system@demand@independent_variables &&
-                price_column %in% .Object@system@supply@independent_variables
-        ) {
-            print_error(
-                .Object@logger,
-                "Price cannot be part of both the demand and supply equations here ",
-                "(See Maddala, (1974) <https://doi.org/10.2307/1914215>, p1021)"
-            )
-        }
-
-        print_info(
-            .Object@logger,
-            "Sample separated with ", sum(.Object@system@demand@separation_subset),
-            " rows in excess supply and ",
-            sum(.Object@system@supply@separation_subset), " in excess demand regime."
-        )
-
-        .Object
+    # Check for mis-specification
+    if (
+      price_column %in% .Object@system@demand@independent_variables &&
+        price_column %in% .Object@system@supply@independent_variables
+    ) {
+      print_error(
+        .Object@logger,
+        "Price cannot be part of both the demand and supply equations here ",
+        "(See Maddala, (1974) <https://doi.org/10.2307/1914215>, p1021)"
+      )
     }
+
+    print_info(
+      .Object@logger,
+      "Sample separated with ", sum(.Object@system@demand@separation_subset),
+      " rows in excess supply and ",
+      sum(.Object@system@supply@separation_subset), " in excess demand regime."
+    )
+
+    .Object
+  }
 )
 
 #' @rdname minus_log_likelihood

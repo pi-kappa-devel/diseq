@@ -28,14 +28,14 @@
 #'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
 #'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
 #'   simulated_data, # data
-#'   use_correlated_shocks = TRUE # allow shocks to be correlated
+#'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
 #' @export
 setClass(
-    "diseq_deterministic_adjustment",
-    contains = "disequilibrium_model",
-    representation(),
-    prototype()
+  "diseq_deterministic_adjustment",
+  contains = "disequilibrium_model",
+  representation(),
+  prototype()
 )
 
 #' @describeIn initialize_market_model Disequilibrium model with deterministic price
@@ -47,13 +47,13 @@ setMethod(
            key_columns, time_column, quantity_column, price_column,
            demand_specification, supply_specification,
            data,
-           use_correlated_shocks = TRUE, verbose = 0) {
+           correlated_shocks = TRUE, verbose = 0) {
     .Object <- callNextMethod(
       .Object,
       "Deterministic Adjustment", verbose,
       key_columns, time_column,
       quantity_column, price_column, demand_specification, supply_specification, NULL,
-      use_correlated_shocks,
+      correlated_shocks,
       data,
       function(...) new("system_deterministic_adjustment", ...)
     )

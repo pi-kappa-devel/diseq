@@ -19,7 +19,7 @@
   demand_specification,
   supply_specification,
   data,
-  use_correlated_shocks = TRUE,
+  correlated_shocks = TRUE,
   verbose = 0
 )
 
@@ -32,7 +32,7 @@
   demand_specification,
   supply_specification,
   data,
-  use_correlated_shocks = TRUE,
+  correlated_shocks = TRUE,
   verbose = 0
 )
 
@@ -45,7 +45,7 @@
   demand_specification,
   supply_specification,
   data,
-  use_correlated_shocks = TRUE,
+  correlated_shocks = TRUE,
   verbose = 0
 )
 
@@ -59,7 +59,7 @@
   supply_specification,
   price_specification,
   data,
-  use_correlated_shocks = TRUE,
+  correlated_shocks = TRUE,
   verbose = 0
 )
 
@@ -71,7 +71,7 @@
   demand_specification,
   supply_specification,
   data,
-  use_correlated_shocks = TRUE,
+  correlated_shocks = TRUE,
   verbose = 0
 )
 }
@@ -92,7 +92,7 @@ supply equation.}
 
 \item{data}{The data set.}
 
-\item{use_correlated_shocks}{Should the model be estimated using correlated shocks?}
+\item{correlated_shocks}{Should the model be estimated using correlated shocks?}
 
 \item{verbose}{Verbosity level.}
 

@@ -1,4 +1,4 @@
-context("Equilibrium FIML Model's Tests\n")
+context("Equilibrium Model's Tests\n")
 
 # Estimation setup
 parameters <- list(
@@ -11,7 +11,7 @@ parameters <- list(
 # Optimization setup
 reltol <- 1e-8
 optimization_method <- "BFGS"
-optimization_controls <- list(REPORT = 10, maxit = 50000, reltol = reltol)
+optimization_control <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 
 # Tests
 mdl <- NULL
@@ -22,7 +22,7 @@ test_that(paste0("Model can be simulated"), {
 
 est <- NULL
 test_that(paste0(get_model_description(mdl), " can be estimated"), {
-    est <<- estimate(mdl, control = optimization_controls, method = optimization_method)
+    est <<- estimate(mdl, control = optimization_control, method = optimization_method)
     expect_is(est, "mle2")
 })
 

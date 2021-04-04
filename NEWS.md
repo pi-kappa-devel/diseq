@@ -1,3 +1,11 @@
+# diseq 0.2.0.9004
+
+* Added validation functions for estimation input variables `gradient`, `hessian`, and `standard_errors`. 
+
+# diseq 0.2.0.9003
+
+* The input variable `gradient` controls whether the gradient is calculated by analytic expression or is numerically approximated. Switched from Boolean input to passing sting options so that the user interface for choosing gradient and hessian options is consistent.
+
 # diseq 0.2.0.9002
 
 * Fixed bug in `equilibrium_model` plot functionality.
@@ -5,8 +13,8 @@
 
 # diseq 0.2.0.9001
 
-* Better options for hessian estimation: Consolidated all three potential options in `hessian` input variable of `estimate`.
-* Better options for adjusted standard errors: Consolidated all three potential options in `standard_errors` input variable of `estimate`.
+* Better options for hessian estimation: Consolidated all three potential options in the `hessian` input variable of `estimate`.
+* Better options for adjusted standard errors: Consolidated all three potential options in the `standard_errors` input variable of `estimate`.
 
 # diseq 0.1.5.9003
 

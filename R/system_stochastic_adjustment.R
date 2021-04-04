@@ -118,11 +118,11 @@ setMethod(
 )
 
 setMethod(
-    "show_implementation", signature(object = "system_stochastic_adjustment"),
-    function(object) {
-        callNextMethod(object)
-        show_implementation(object@price_equation)
-    }
+  "show_implementation", signature(object = "system_stochastic_adjustment"),
+  function(object) {
+    callNextMethod(object)
+    show_implementation(object@price_equation)
+  }
 )
 
 setMethod(

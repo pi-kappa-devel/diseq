@@ -11,7 +11,7 @@ parameters <- list(
 # Optimization setup
 reltol <- 1e-6
 optimization_method <- "BFGS"
-optimization_controls <- list(REPORT = 10, maxit = 50000, reltol = reltol)
+optimization_control <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 
 
 # Tests
@@ -24,7 +24,7 @@ test_that(paste0("Model can be simulated"), {
 est <- NULL
 test_that(paste0(get_model_description(mdl), " can be estimated"), {
     est <<- estimate(mdl,
-        control = optimization_controls, method = optimization_method,
+        control = optimization_control, method = optimization_method,
         standard_errors = c("id")
     )
     expect_is(est, "mle2")

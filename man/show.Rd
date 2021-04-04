@@ -15,20 +15,20 @@ Sends basic information about the model to standard output.
 \examples{
 \donttest{
 simulated_data <- simulate_model_data(
-    "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
-    -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
-    0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
-    1.2, 3.1, c(0.8) # price equation
+  "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
+  -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
+  0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
+  1.2, 3.1, c(0.8) # price equation
 )
 
 # initialize the model
 model <- new(
-    "diseq_stochastic_adjustment", # model type
-    c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
-    "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-    "Xp1", # price dynamics specification
-    simulated_data, # data
-    use_correlated_shocks = TRUE # allow shocks to be correlated
+  "diseq_stochastic_adjustment", # model type
+  c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+  "Xp1", # price dynamics specification
+  simulated_data, # data
+  correlated_shocks = TRUE # allow shocks to be correlated
 )
 
 # print the model

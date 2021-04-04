@@ -20,7 +20,6 @@
 #' @references \itemize{
 #'   \item Fair, R. C. (1971). A short-run forecasting model of the United States
 #' economy. Heath Lexington Books.
-#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{\code{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}}
 #'   \item Fair, R. C., & Jaffee, D. M. (1972). Methods of Estimation for Markets in
 #' Disequilibrium. Econometrica, 40(3), 497.
 #' \href{https://doi.org/10.2307/1913181}{https://doi.org/10.2307/1913181}
@@ -34,8 +33,7 @@
 #'
 #' @source \itemize{
 #'   \item \code{HS} \href{https://fraser.stlouisfed.org/title/economic-report-president-45?browse=1940s}{Economic Reports of the President}
-#'   \item \code{RM} Fair, R. C. (1971).
-#' \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{\code{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}}
+#'   \item \code{RM} \href{https://fairmodel.econ.yale.edu/RAYFAIR/pdf/1971EI.PDF}{Fair (1971)}
 #'   \item \code{DSLA} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
 #'   \item \code{DMSB} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}
 #'   \item \code{DHLB} \href{https://fraser.stlouisfed.org/title/federal-reserve-bulletin-62?browse=1910s}{Federal Reserve Bulletins}

@@ -114,19 +114,19 @@ verbose <- 2
  * Should the estimation allow for correlated demand and supply shocks?
 
 ```{r model.parameters.correlated_shocks}
-use_correlated_shocks <- TRUE
+correlated_shocks <- TRUE
 ```
 
 Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per entity. 
 
 ```{r model.constructor}
 eqmdl <- new(
-    "equilibrium_model",
-    key_columns,
-    quantity_column, price_column,
-    demand_specification, paste0(price_column, " + ", supply_specification),
-    stochastic_adjustment_data,
-    use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  "equilibrium_model",
+  key_columns,
+  quantity_column, price_column,
+  demand_specification, paste0(price_column, " + ", supply_specification),
+  stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
@@ -134,7 +134,7 @@ bsmdl <- new(
   quantity_column, price_column,
   demand_specification, paste0(price_column, " + ", supply_specification),
   stochastic_adjustment_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 drmdl <- new(
   "diseq_directional",
@@ -142,7 +142,7 @@ drmdl <- new(
   quantity_column, price_column,
   demand_specification, supply_specification,
   stochastic_adjustment_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
@@ -150,7 +150,7 @@ damdl <- new(
   quantity_column, price_column,
   demand_specification, paste0(price_column, " + ", supply_specification),
   stochastic_adjustment_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 samdl <- new(
   "diseq_stochastic_adjustment",
@@ -159,7 +159,7 @@ samdl <- new(
   demand_specification, paste0(price_column, " + ", supply_specification),
   price_specification,
   stochastic_adjustment_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
 
@@ -183,12 +183,12 @@ Then, estimate the models. See the documentation for more options.
 ```{r estimation.execution}
 eqmdl_reg <- estimate(eqmdl, method = "2SLS")
 eqmdl_est <- estimate(eqmdl,
-    control = optimization_controls, method = optimization_method,
-    standard_errors = c("id")
+  control = optimization_controls, method = optimization_method,
+  standard_errors = c("id")
 )
 bsmdl_est <- estimate(bsmdl,
-    control = optimization_controls, method = optimization_method,
-    standard_errors = "heteroscedastic"
+  control = optimization_controls, method = optimization_method,
+  standard_errors = "heteroscedastic"
 )
 drmdl_est <- estimate(drmdl,
   control = optimization_controls, method = optimization_method,

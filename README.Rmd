@@ -133,7 +133,7 @@ Online documentation is available for both the [released](https://www.diseq.pika
 This is a basic example that illustrates how a model of the package can be estimated. The package is loaded in the standard way.
 
 ```{r loading}
-library(diseq)
+require(diseq)
 ```
 
 The example uses simulated data. The *diseq* package offers a function to simulate data from data generating processes that correspond to the models that the package provides.
@@ -182,7 +182,7 @@ verbose <- 0
 
  * Should the model estimation allow for correlated demand and supply shocks?
 ```{r model.parameters.correlated_shocks}
-use_correlated_shocks <- TRUE
+correlated_shocks <- TRUE
 ```
 
 ```{r model.initialize}
@@ -191,7 +191,7 @@ mdl <- new(
   key_columns,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
   model_tbl,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
 

@@ -70,7 +70,7 @@ demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
 supply_specification <- "Xs1 + X1 + X2"
 price_specification <- "Xp1"
 verbose <- 2
-use_correlated_shocks <- TRUE
+correlated_shocks <- TRUE
 ```
 
 Using the above parameterization, construct the model objects. Here we construct two equilibrium models and four  disequilibrium models. All the models are constructed using the simulated data from a model of market in equilibrium.
@@ -82,7 +82,7 @@ eqmdl <- new(
   quantity_column, price_column,
   demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data[eq_data$date != 1, ],
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
@@ -90,7 +90,7 @@ bsmdl <- new(
   quantity_column, price_column,
   demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data[eq_data$date != 1, ],
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
@@ -98,7 +98,7 @@ damdl <- new(
   quantity_column, price_column,
   demand_specification, paste0(price_column, " + ", supply_specification),
   eq_data,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
 

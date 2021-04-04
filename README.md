@@ -187,7 +187,7 @@ This is a basic example that illustrates how a model of the package can
 be estimated. The package is loaded in the standard way.
 
 ``` r
-library(diseq)
+require(diseq)
 ```
 
 The example uses simulated data. The *diseq* package offers a function
@@ -270,7 +270,7 @@ verbose <- 0
 <!-- end list -->
 
 ``` r
-use_correlated_shocks <- TRUE
+correlated_shocks <- TRUE
 ```
 
 ``` r
@@ -279,7 +279,7 @@ mdl <- new(
   key_columns,
   quantity_column, price_column, demand_specification, paste0(price_column, " + ", supply_specification),
   model_tbl,
-  use_correlated_shocks = use_correlated_shocks, verbose = verbose
+  correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
 

@@ -1,68 +1,68 @@
 #' @include equation_base.R
 setClass(
-    "system_base",
-    representation(
-        demand = "equation_base",
-        supply = "equation_base",
-        correlated_shocks = "logical",
-        sample_separation = "logical",
+  "system_base",
+  representation(
+    demand = "equation_base",
+    supply = "equation_base",
+    correlated_shocks = "logical",
+    sample_separation = "logical",
 
-        quantity_variable = "character",
-        price_variable = "character",
+    quantity_variable = "character",
+    price_variable = "character",
 
-        quantity_vector = "matrix",
-        price_vector = "matrix",
+    quantity_vector = "matrix",
+    price_vector = "matrix",
 
-        rho = "numeric",
-        rho1 = "numeric",
-        rho2 = "numeric"
-    ),
-    prototype(
-        demand = NULL,
-        supply = NULL,
+    rho = "numeric",
+    rho1 = "numeric",
+    rho2 = "numeric"
+  ),
+  prototype(
+    demand = NULL,
+    supply = NULL,
 
-        quantity_variable = NULL,
-        price_variable = NULL,
+    quantity_variable = NULL,
+    price_variable = NULL,
 
-        quantity_vector = matrix(NA_real_),
-        price_vector = matrix(NA_real_),
+    quantity_vector = matrix(NA_real_),
+    price_vector = matrix(NA_real_),
 
-        rho = 0,
-        rho1 = 1,
-        rho2 = 0
-    )
+    rho = 0,
+    rho1 = 1,
+    rho2 = 0
+  )
 )
 
 setMethod(
-    "initialize", "system_base",
-    function(
-             .Object, quantity, price,
-             demand_specification, supply_specification, data, correlated_shocks,
-             demand_initializer, supply_initializer) {
-        .Object@demand <- demand_initializer(
-            quantity, price,
-            demand_specification, data, "Demand Equation", "D_"
-        )
-        .Object@supply <- supply_initializer(
-            quantity, price,
-            supply_specification, data, "Supply Equation", "S_"
-        )
-        .Object@correlated_shocks <- correlated_shocks
-        .Object@sample_separation <- FALSE
+  "initialize", "system_base",
+  function(
+           .Object, quantity, price,
+           demand_specification, supply_specification, data, correlated_shocks,
+           demand_initializer, supply_initializer) {
+    .Object@demand <- demand_initializer(
+      quantity, price,
+      demand_specification, data, "Demand Equation", "D_"
+    )
+    .Object@supply <- supply_initializer(
+      quantity, price,
+      supply_specification, data, "Supply Equation", "S_"
+    )
+    .Object@correlated_shocks <- correlated_shocks
+    .Object@sample_separation <- FALSE
 
-        .Object@quantity_variable <- quantity
-        .Object@price_variable <- price
+    .Object@quantity_variable <- quantity
+    .Object@price_variable <- price
 
-        .Object@quantity_vector <- as.matrix(data[, quantity])
-        .Object@price_vector <- as.matrix(data[, price])
+    .Object@quantity_vector <- as.matrix(data[, quantity])
+    .Object@price_vector <- as.matrix(data[, price])
 
-        .Object
-    }
+    .Object
+  }
 )
 
 setMethod("show_implementation", signature(object = "system_base"), function(object) {
-    show_implementation(object@demand)
-    show_implementation(object@supply)
+  show_implementation(object@demand)
+  show_implementation(object@supply)
 })
 
 setGeneric("summary_implementation", function(object) {
@@ -70,20 +70,20 @@ setGeneric("summary_implementation", function(object) {
 })
 
 setMethod("summary_implementation", signature(object = "system_base"), function(object) {
-    sample_separation_output <- ""
-    if (object@sample_separation) {
-        sample_separation_output <- sprintf(
-            "Demand Obs = %d, Supply Obs = %d",
-            sum(object@system@demand@separation_subset),
-            sum(object@system@supply@separation_subset)
-        )
-    }
-    else {
-        sample_separation_output <- "Not Separated"
-    }
-    cat(sprintf("  %-18s: %s\n", "Sample Separation", sample_separation_output))
-    cat(sprintf("  %-18s: %s\n", "Quantity Var", object@quantity_variable))
-    cat(sprintf("  %-18s: %s\n", "Price Var", object@price_variable))
+  sample_separation_output <- ""
+  if (object@sample_separation) {
+    sample_separation_output <- sprintf(
+      "Demand Obs = %d, Supply Obs = %d",
+      sum(object@system@demand@separation_subset),
+      sum(object@system@supply@separation_subset)
+    )
+  }
+  else {
+    sample_separation_output <- "Not Separated"
+  }
+  cat(sprintf("  %-18s: %s\n", "Sample Separation", sample_separation_output))
+  cat(sprintf("  %-18s: %s\n", "Quantity Var", object@quantity_variable))
+  cat(sprintf("  %-18s: %s\n", "Price Var", object@price_variable))
 })
 
 setGeneric("get_lagged_price_variable", function(object) {

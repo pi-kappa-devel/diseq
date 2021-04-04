@@ -22,17 +22,17 @@ using the fitted prices instead of the observed.
 }
 \examples{
 simulated_data <- simulate_model_data(
-    "equilibrium_model", 500, 3, # model type, observed entities and time points
-    -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-    0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
+  "equilibrium_model", 500, 3, # model type, observed entities and time points
+  -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
+  0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
 )
 
 # initialize the model
 model <- new(
-    "equilibrium_model", # model type
-    c("id", "date"), "Q", "P", # keys, quantity, and price variables
-    "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-    simulated_data, # data
-    use_correlated_shocks = TRUE # allow shocks to be correlated
+  "equilibrium_model", # model type
+  c("id", "date"), "Q", "P", # keys, quantity, and price variables
+  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+  simulated_data, # data
+  correlated_shocks = TRUE # allow shocks to be correlated
 )
 }

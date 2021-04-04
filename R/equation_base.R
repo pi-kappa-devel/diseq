@@ -109,7 +109,7 @@ setGeneric("show_implementation", function(object) {
 })
 
 setMethod("show_implementation", signature(object = "equation_base"), function(object) {
-    cat(sprintf("  %-18s: %s\n", object@name, deparse(object@formula)))
+  cat(sprintf("  %-18s: %s\n", object@name, deparse(object@formula)))
 })
 
 #' Constant coefficient variable name.

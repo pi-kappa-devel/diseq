@@ -10,7 +10,7 @@ estimate(object, ...)
 
 \S4method{estimate}{market_model}(
   object,
-  use_numerical_gradient = FALSE,
+  gradient = "calculated",
   hessian = "calculated",
   standard_errors = "homoscedastic",
   ...
@@ -28,9 +28,9 @@ parameters are passed
 \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters
 are passed to \code{\link[bbmle]{mle2}}.}
 
-\item{use_numerical_gradient}{If true, the gradient is calculated numerically. By default,
-all the models are estimated using the analytic expressions of their likelihoods'
-gradients.}
+\item{gradient}{One of two potential options: `numerical` and `calculated`. By
+default, all the models are estimated using the analytic expressions of their
+likelihoods' gradients.}
 
 \item{hessian}{One of three potential options: `skip`, `numerical`, and `calculated`.
 The default is to use the `calculated` Hessian for the model that expressions are
@@ -87,7 +87,7 @@ model <- new(
   c("id", "date"), "Q", "P", # keys, quantity, and price variables
   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
   simulated_data, # data
-  use_correlated_shocks = TRUE # allow shocks to be correlated
+  correlated_shocks = TRUE # allow shocks to be correlated
 )
 
 # estimate the model object (by default the maximum optimization is using BFGS)
