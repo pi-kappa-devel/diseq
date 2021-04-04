@@ -179,13 +179,13 @@ lm_coef <- c(
 eqmdl_coef <- append(
   eqmdl_est@coef, c(NA),
   after = which(names(eqmdl_est@coef) ==
-    get_prefixed_variance_variable(eqmdl@system@demand)) - 1
+    prefixed_variance_variable(eqmdl@system@demand)) - 1
 )
 
 bsmdl_coef <- append(
   bsmdl_est@coef, c(NA),
   after = which(names(bsmdl_est@coef) ==
-    get_prefixed_variance_variable(bsmdl@system@demand)) - 1
+    prefixed_variance_variable(bsmdl@system@demand)) - 1
 )
 
 damdl_coef <- damdl_est@coef
@@ -215,9 +215,9 @@ model_names <- c(
   bsmdl@model_type_string, damdl@model_type_string
 )
 model_obs <- c(
-  get_number_of_observations(eqmdl),
-  get_number_of_observations(bsmdl),
-  get_number_of_observations(damdl)
+  number_of_observations(eqmdl),
+  number_of_observations(bsmdl),
+  number_of_observations(damdl)
 )
 model_errors <- c(
   comp_means["fierr"],

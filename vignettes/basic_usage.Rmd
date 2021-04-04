@@ -213,35 +213,35 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c(price_column, "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) get_mean_marginal_effect(bsmdl, bsmdl_est, v),
+  function(v) mean_marginal_effect(bsmdl, bsmdl_est, v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) get_mean_marginal_effect(drmdl, drmdl_est, v),
+  function(v) mean_marginal_effect(drmdl, drmdl_est, v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) get_mean_marginal_effect(damdl, damdl_est, v),
+  function(v) mean_marginal_effect(damdl, damdl_est, v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) get_mean_marginal_effect(samdl, samdl_est, v),
+  function(v) mean_marginal_effect(samdl, samdl_est, v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
-  function(v) get_marginal_effect_at_mean(bsmdl, bsmdl_est, v),
+  function(v) marginal_effect_at_mean(bsmdl, bsmdl_est, v),
   USE.NAMES = FALSE
 )
 drmdl_mem <- sapply(variables,
-  function(v) get_marginal_effect_at_mean(drmdl, drmdl_est, v),
+  function(v) marginal_effect_at_mean(drmdl, drmdl_est, v),
   USE.NAMES = FALSE
 )
 damdl_mem <- sapply(variables,
-  function(v) get_marginal_effect_at_mean(damdl, damdl_est, v),
+  function(v) marginal_effect_at_mean(damdl, damdl_est, v),
   USE.NAMES = FALSE
 )
 samdl_mem <- sapply(variables,
-  function(v) get_marginal_effect_at_mean(samdl, samdl_est, v),
+  function(v) marginal_effect_at_mean(samdl, samdl_est, v),
   USE.NAMES = FALSE
 )
 
@@ -264,9 +264,9 @@ Copy the disequilibrium model `tibble` and augment it with post-estimation data.
 ```{r analysis.estimates}
 mdt <- tibble::add_column(
   bsmdl@model_tibble,
-  normalized_shortages = c(get_normalized_shortages(bsmdl, bsmdl_est@coef)),
-  shortage_probabilities = c(get_shortage_probabilities(bsmdl, bsmdl_est@coef)),
-  relative_shortages = c(get_relative_shortages(bsmdl, bsmdl_est@coef))
+  normalized_shortages = c(normalized_shortages(bsmdl, bsmdl_est@coef)),
+  shortage_probabilities = c(shortage_probabilities(bsmdl, bsmdl_est@coef)),
+  relative_shortages = c(relative_shortages(bsmdl, bsmdl_est@coef))
 )
 ```
 
@@ -289,7 +289,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
     ggplot2::geom_density() +
     ggplot2::ggtitle(paste0(
       "Normalized shortages density (",
-      get_model_description(bsmdl), ")"
+      model_description(bsmdl), ")"
     ))
 }
 ```
@@ -310,8 +310,8 @@ The estimated demanded and supplied quantities can be calculated per observation
 
 ```{r analysis.market_forces}
 market <- cbind(
-  demand = get_demanded_quantities(bsmdl, bsmdl_est@coef)[, 1],
-  supply = get_supplied_quantities(bsmdl, bsmdl_est@coef)[, 1]
+  demand = demanded_quantities(bsmdl, bsmdl_est@coef)[, 1],
+  supply = supplied_quantities(bsmdl, bsmdl_est@coef)[, 1]
 )
 summary(market)
 ```
@@ -320,8 +320,8 @@ The package offers also basic aggregation functionality.
 
 ```{r analysis.aggregation}
 aggregates <- c(
-  demand = get_aggregate_demand(bsmdl, bsmdl_est@coef),
-  supply = get_aggregate_supply(bsmdl, bsmdl_est@coef)
+  demand = aggregate_demand(bsmdl, bsmdl_est@coef),
+  supply = aggregate_supply(bsmdl, bsmdl_est@coef)
 )
 aggregates
 ```

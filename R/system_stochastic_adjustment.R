@@ -111,7 +111,7 @@ setMethod(
       "equation_stochastic_adjustment", quantity, price, price_specification, data,
       "Price Equation", "P_"
     )
-    .Object@lagged_price_vector <- as.matrix(data[, get_lagged_price_variable(.Object)])
+    .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
 
     .Object
   }
@@ -126,7 +126,7 @@ setMethod(
 )
 
 setMethod(
-  "get_likelihood_variables", signature(object = "system_stochastic_adjustment"),
+  "likelihood_variables", signature(object = "system_stochastic_adjustment"),
   function(object) {
     likelihood_variables <- callNextMethod(object)
 
@@ -134,7 +134,7 @@ setMethod(
     pos <- len - ifelse(object@correlated_shocks, 3, 2)
     likelihood_variables <- c(
       likelihood_variables[1:pos],
-      get_price_differences_variable(object), get_prefixed_control_variables(object@price_equation),
+      price_differences_variable(object), prefixed_control_variables(object@price_equation),
       likelihood_variables[(pos + 1):len]
     )
 
@@ -142,14 +142,14 @@ setMethod(
     if (object@correlated_shocks) {
       likelihood_variables <- c(
         likelihood_variables[1:(len - 1)],
-        get_prefixed_variance_variable(object@price_equation),
+        prefixed_variance_variable(object@price_equation),
         paste0(likelihood_variables[len], c("_DS", "_DP", "_SP"))
       )
     }
     else {
       likelihood_variables <- c(
         likelihood_variables,
-        get_prefixed_variance_variable(object@price_equation)
+        prefixed_variance_variable(object@price_equation)
       )
     }
 
@@ -164,11 +164,11 @@ setMethod(
     object@supply <- set_parameters(object@supply, parameters)
     object@price_equation <- set_parameters(object@price_equation, parameters)
     if (object@correlated_shocks) {
-      object@rho_ds <- parameters[paste0(get_correlation_variable(object), "_DS")]
-      object@rho_dp <- parameters[paste0(get_correlation_variable(object), "_DP")]
-      object@rho_sp <- parameters[paste0(get_correlation_variable(object), "_SP")]
+      object@rho_ds <- parameters[paste0(correlation_variable(object), "_DS")]
+      object@rho_dp <- parameters[paste0(correlation_variable(object), "_DP")]
+      object@rho_sp <- parameters[paste0(correlation_variable(object), "_SP")]
     }
-    object@gamma <- parameters[get_price_differences_variable(object)]
+    object@gamma <- parameters[price_differences_variable(object)]
     object@delta <- object@gamma + object@supply@alpha - object@demand@alpha
 
     object <- calculate_system_moments(object)
@@ -368,14 +368,14 @@ setMethod(
 
     denominator <- c(object@L_D + object@L_S)
 
-    if (!is.null(get_prefixed_price_variable(object@demand))) {
+    if (!is.null(prefixed_price_variable(object@demand))) {
       p_dprice <- sum(object@partial_own_price / denominator)
     }
     else {
       p_dprice <- NULL
     }
     p_dcontrols <- colSums(object@partial_own_controls / denominator)
-    if (!is.null(get_prefixed_price_variable(object@supply))) {
+    if (!is.null(prefixed_price_variable(object@supply))) {
       p_sprice <- sum(object@partial_other_price / denominator)
     }
     else {
@@ -400,7 +400,7 @@ setMethod(
     }
 
     object@gradient <- t(object@gradient)
-    rownames(object@gradient) <- get_likelihood_variables(object)
+    rownames(object@gradient) <- likelihood_variables(object)
 
     object
   }
@@ -424,14 +424,14 @@ setMethod(
 
     denominator <- c(object@L_D + object@L_S)
 
-    if (!is.null(get_prefixed_price_variable(object@demand))) {
+    if (!is.null(prefixed_price_variable(object@demand))) {
       p_dprice <- object@partial_own_price
     }
     else {
       p_dprice <- NULL
     }
     p_dcontrols <- object@partial_own_controls
-    if (!is.null(get_prefixed_price_variable(object@supply))) {
+    if (!is.null(prefixed_price_variable(object@supply))) {
       p_sprice <- object@partial_other_price
     }
     else {
@@ -456,7 +456,7 @@ setMethod(
     }
 
     scores <- scores / denominator
-    colnames(scores) <- get_likelihood_variables(object)
+    colnames(scores) <- likelihood_variables(object)
 
     scores
   }

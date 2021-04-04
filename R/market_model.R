@@ -113,7 +113,7 @@ setMethod(
     .Object@model_type_string <- model_type_string
     .Object@logger <- new("model_logger", verbose)
     .Object@system@correlated_shocks <- correlated_shocks
-    print_info(.Object@logger, "This is '", get_model_description(.Object), "' model")
+    print_info(.Object@logger, "This is '", model_description(.Object), "' model")
 
     .Object@key_columns <- key_columns
     .Object@time_column <- time_column
@@ -503,10 +503,10 @@ setMethod(
     }
 
     va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
-    bbmle::parnames(va_args$minuslogl) <- get_likelihood_variables(object@system)
+    bbmle::parnames(va_args$minuslogl) <- likelihood_variables(object@system)
     if (gradient == "calculated") {
       va_args$gr <- function(...) gradient(object, ...)
-      bbmle::parnames(va_args$gr) <- get_likelihood_variables(object@system)
+      bbmle::parnames(va_args$gr) <- likelihood_variables(object@system)
     }
 
     est <- do.call(bbmle::mle2, va_args)
@@ -637,10 +637,10 @@ setGeneric("set_clustered_errors", function(object, ...) {
 #' A unique identifying string for the model.
 #' @param object A model object.
 #' @return A string representation of the model.
-#' @rdname get_model_description
+#' @rdname model_description
 #' @export
-setGeneric("get_model_description", function(object) {
-  standardGeneric("get_model_description")
+setGeneric("model_description", function(object) {
+  standardGeneric("model_description")
 })
 
 #' Number of observations.
@@ -650,15 +650,15 @@ setGeneric("get_model_description", function(object) {
 #' from the numbers of observations of the data set that was passed to the model's initialization.
 #' @param object A model object.
 #' @return The number of used observations.
-#' @rdname get_number_of_observations
+#' @rdname number_of_observations
 #' @export
-setGeneric("get_number_of_observations", function(object) {
-  standardGeneric("get_number_of_observations")
+setGeneric("number_of_observations", function(object) {
+  standardGeneric("number_of_observations")
 })
 
 
-setGeneric("get_descriptives", function(object, variables) {
-  standardGeneric("get_descriptives")
+setGeneric("descriptives", function(object, variables) {
+  standardGeneric("descriptives")
 })
 
 #' Demand descriptive statistics
@@ -667,10 +667,10 @@ setGeneric("get_descriptives", function(object, variables) {
 #' variables are excluded from the calculations.
 #' @param object A model object.
 #' @return A data \code{tibble} containing descriptive statistics.
-#' @rdname get_demand_descriptives
+#' @rdname demand_descriptives
 #' @export
-setGeneric("get_demand_descriptives", function(object) {
-  standardGeneric("get_demand_descriptives")
+setGeneric("demand_descriptives", function(object) {
+  standardGeneric("demand_descriptives")
 })
 
 #' Supply descriptive statistics
@@ -679,10 +679,10 @@ setGeneric("get_demand_descriptives", function(object) {
 #' variables are excluded from  the calculations.
 #' @param object A model object.
 #' @return A data \code{tibble} containing descriptive statistics.
-#' @rdname get_supply_descriptives
+#' @rdname supply_descriptives
 #' @export
-setGeneric("get_supply_descriptives", function(object) {
-  standardGeneric("get_supply_descriptives")
+setGeneric("supply_descriptives", function(object) {
+  standardGeneric("supply_descriptives")
 })
 
 setMethod(
@@ -730,21 +730,21 @@ setMethod(
   }
 )
 
-#' @rdname get_model_description
-setMethod("get_model_description", signature(object = "market_model"), function(object) {
+#' @rdname model_description
+setMethod("model_description", signature(object = "market_model"), function(object) {
   paste0(
     object@model_type_string, " with ",
     ifelse(object@system@correlated_shocks, "correlated", "independent"), " shocks"
   )
 })
 
-#' @rdname get_number_of_observations
-setMethod("get_number_of_observations", signature(object = "market_model"), function(object) {
+#' @rdname number_of_observations
+setMethod("number_of_observations", signature(object = "market_model"), function(object) {
   nrow(object@model_tibble)
 })
 
 setMethod(
-  "get_descriptives", signature(object = "market_model"),
+  "descriptives", signature(object = "market_model"),
   function(object, variables = NULL) {
     if (is.null(variables)) {
       variables <- object@columns
@@ -767,14 +767,14 @@ setMethod(
   }
 )
 
-#' @rdname get_demand_descriptives
-setMethod("get_demand_descriptives", signature(object = "market_model"), function(object) {
-  get_descriptives(object, object@system@demand@independent_variables)
+#' @rdname demand_descriptives
+setMethod("demand_descriptives", signature(object = "market_model"), function(object) {
+  descriptives(object, object@system@demand@independent_variables)
 })
 
-#' @rdname get_supply_descriptives
-setMethod("get_supply_descriptives", signature(object = "market_model"), function(object) {
-  get_descriptives(object, object@system@supply@independent_variables)
+#' @rdname supply_descriptives
+setMethod("supply_descriptives", signature(object = "market_model"), function(object) {
+  descriptives(object, object@system@supply@independent_variables)
 })
 
 setGeneric("calculate_initializing_values", function(object) {
@@ -788,7 +788,7 @@ setMethod("calculate_initializing_values", signature(object = "market_model"), f
 
   ## Set demand initializing values
   varloc <-
-    !(get_prefixed_independent_variables(object@system@demand) %in% names(dlm$coefficients))
+    !(prefixed_independent_variables(object@system@demand) %in% names(dlm$coefficients))
   if (sum(varloc) > 0) {
     print_error(
       object@logger,
@@ -805,14 +805,14 @@ setMethod("calculate_initializing_values", signature(object = "market_model"), f
     dlm$coefficients[is.na(dlm$coefficients)] <- 0
   }
   start_names <- c(
-    get_prefixed_price_variable(object@system@demand),
-    get_prefixed_control_variables(object@system@demand)
+    prefixed_price_variable(object@system@demand),
+    prefixed_control_variables(object@system@demand)
   )
   start <- c(dlm$coefficients[start_names])
 
   ## Set supply initializing values
   varloc <-
-    !(get_prefixed_independent_variables(object@system@supply) %in% names(slm$coefficients))
+    !(prefixed_independent_variables(object@system@supply) %in% names(slm$coefficients))
   if (sum(varloc) > 0) {
     print_error(
       object@logger,
@@ -829,25 +829,25 @@ setMethod("calculate_initializing_values", signature(object = "market_model"), f
     slm$coefficients[is.na(slm$coefficients)] <- 0
   }
   start_names <- c(
-    get_prefixed_price_variable(object@system@supply),
-    get_prefixed_control_variables(object@system@supply)
+    prefixed_price_variable(object@system@supply),
+    prefixed_control_variables(object@system@supply)
   )
   start <- c(start, slm$coefficients[start_names])
 
   if (object@model_type_string %in% c("Deterministic Adjustment", "Stochastic Adjustment")) {
     start <- c(start, gamma = 1)
-    names(start)[length(start)] <- get_price_differences_variable(object@system)
+    names(start)[length(start)] <- price_differences_variable(object@system)
   }
 
   start <- c(start, 1, 1)
   names(start)[(length(start) - 1):length(start)] <- c(
-    get_prefixed_variance_variable(object@system@demand),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@supply)
   )
 
   if (object@system@correlated_shocks) {
     start <- c(start, rho = 0)
-    names(start)[length(start)] <- get_correlation_variable(object@system)
+    names(start)[length(start)] <- correlation_variable(object@system)
   }
 
   start
@@ -864,7 +864,7 @@ setMethod(
       print_verbose(object@logger, "Initializing using linear regression estimations.")
       initializing_vector <- calculate_initializing_values(object)
     }
-    names(initializing_vector) <- get_likelihood_variables(object@system)
+    names(initializing_vector) <- likelihood_variables(object@system)
     print_debug(
       object@logger, "Using starting values: ",
       paste(names(initializing_vector), initializing_vector, sep = " = ", collapse = ", ")
@@ -881,8 +881,8 @@ setMethod(
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
 #' @return The sum of the demanded quantities evaluated at the given parameters.
-#' @rdname get_aggregate_demand
-#' @seealso get_demanded_quantities
+#' @rdname aggregate_demand
+#' @seealso demanded_quantities
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -904,17 +904,17 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' get_aggregate_demand(model, est@coef)
+#' aggregate_demand(model, est@coef)
 #' }
 #' @export
-setGeneric("get_aggregate_demand", function(object, parameters) {
-  standardGeneric("get_aggregate_demand")
+setGeneric("aggregate_demand", function(object, parameters) {
+  standardGeneric("aggregate_demand")
 })
 
-#' @rdname get_aggregate_demand
-setMethod("get_aggregate_demand", signature(object = "market_model"), function(object, parameters) {
+#' @rdname aggregate_demand
+setMethod("aggregate_demand", signature(object = "market_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-  get_aggregate(object@system@demand)
+  aggregate(object@system@demand)
 })
 
 #' Demanded quantities.
@@ -923,8 +923,8 @@ setMethod("get_aggregate_demand", signature(object = "market_model"), function(o
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
 #' @return A vector with the demanded quantities evaluated at the given parameter vector.
-#' @rdname get_demanded_quantities
-#' @seealso get_aggregate_demand
+#' @rdname demanded_quantities
+#' @seealso aggregate_demand
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -946,19 +946,19 @@ setMethod("get_aggregate_demand", signature(object = "market_model"), function(o
 #' est <- estimate(model)
 #'
 #' # get estimated demanded quantities
-#' demq <- get_demanded_quantities(model, est@coef)
+#' demq <- demanded_quantities(model, est@coef)
 #' }
 #' @export
-setGeneric("get_demanded_quantities", function(object, parameters) {
-  standardGeneric("get_demanded_quantities")
+setGeneric("demanded_quantities", function(object, parameters) {
+  standardGeneric("demanded_quantities")
 })
 
-#' @rdname get_demanded_quantities
+#' @rdname demanded_quantities
 setMethod(
-  "get_demanded_quantities", signature(object = "market_model"),
+  "demanded_quantities", signature(object = "market_model"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
-    get_quantities(object@system@demand)
+    quantities(object@system@demand)
   }
 )
 
@@ -968,8 +968,8 @@ setMethod(
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
 #' @return The sum of the supplied quantities evaluated at the given parameters.
-#' @rdname get_aggregate_supply
-#' @seealso get_supplied_quantities
+#' @rdname aggregate_supply
+#' @seealso supplied_quantities
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -991,17 +991,17 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate supply
-#' get_aggregate_supply(model, est@coef)
+#' aggregate_supply(model, est@coef)
 #' }
 #' @export
-setGeneric("get_aggregate_supply", function(object, parameters) {
-  standardGeneric("get_aggregate_supply")
+setGeneric("aggregate_supply", function(object, parameters) {
+  standardGeneric("aggregate_supply")
 })
 
-#' @rdname get_aggregate_supply
-setMethod("get_aggregate_supply", signature(object = "market_model"), function(object, parameters) {
+#' @rdname aggregate_supply
+setMethod("aggregate_supply", signature(object = "market_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-  get_aggregate(object@system@supply)
+  aggregate(object@system@supply)
 })
 
 #' Supplied quantities.
@@ -1010,8 +1010,8 @@ setMethod("get_aggregate_supply", signature(object = "market_model"), function(o
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
 #' @return A vector with the supplied quantities evaluated at the given parameter vector.
-#' @rdname get_supplied_quantities
-#' @seealso get_aggregate_supply
+#' @rdname supplied_quantities
+#' @seealso aggregate_supply
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -1033,18 +1033,18 @@ setMethod("get_aggregate_supply", signature(object = "market_model"), function(o
 #' est <- estimate(model)
 #'
 #' # get estimated supplied quantities
-#' supq <- get_supplied_quantities(model, est@coef)
+#' supq <- supplied_quantities(model, est@coef)
 #' }
 #' @export
-setGeneric("get_supplied_quantities", function(object, parameters) {
-  standardGeneric("get_supplied_quantities")
+setGeneric("supplied_quantities", function(object, parameters) {
+  standardGeneric("supplied_quantities")
 })
 
-#' @rdname get_supplied_quantities
+#' @rdname supplied_quantities
 setMethod(
-  "get_supplied_quantities", signature(object = "market_model"),
+  "supplied_quantities", signature(object = "market_model"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
-    get_quantities(object@system@supply)
+    quantities(object@system@supply)
   }
 )

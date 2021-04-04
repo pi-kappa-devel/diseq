@@ -65,18 +65,18 @@ setMethod("minus_log_likelihood", signature(object = "diseq_basic"), function(ob
 setMethod("gradient", signature(object = "diseq_basic"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
 
-  g <- rep(NA, length(get_likelihood_variables(object@system)))
-  names(g) <- get_likelihood_variables(object@system)
+  g <- rep(NA, length(likelihood_variables(object@system)))
+  names(g) <- likelihood_variables(object@system)
   g[colnames(object@system@demand@independent_matrix)] <-
     colSums(partial_beta_d_of_loglh(object@system))
   g[colnames(object@system@supply@independent_matrix)] <-
     colSums(partial_beta_s_of_loglh(object@system))
-  g[get_prefixed_variance_variable(object@system@demand)] <-
+  g[prefixed_variance_variable(object@system@demand)] <-
     sum(partial_var_d_of_loglh(object@system))
-  g[get_prefixed_variance_variable(object@system@supply)] <-
+  g[prefixed_variance_variable(object@system@supply)] <-
     sum(partial_var_s_of_loglh(object@system))
   if (object@system@correlated_shocks) {
-    g[get_correlation_variable(object@system)] <- sum(partial_rho_of_loglh(object@system))
+    g[correlation_variable(object@system)] <- sum(partial_rho_of_loglh(object@system))
   }
 
   as.matrix(-g)
@@ -93,7 +93,7 @@ setMethod("scores", signature(object = "diseq_basic"), function(object, paramete
   if (object@system@correlated_shocks) {
     scores <- cbind(scores, partial_rho_of_loglh(object@system))
   }
-  colnames(scores) <- get_likelihood_variables(object@system)
+  colnames(scores) <- likelihood_variables(object@system)
 
   -scores
 })
@@ -120,8 +120,8 @@ setMethod("hessian", signature(object = "diseq_basic"), function(object, paramet
     prho_prho <- partial_rho_partial_rho_of_loglh(object@system)
   }
 
-  h <- rep(0.0, length(get_likelihood_variables(object@system)))
-  names(h) <- get_likelihood_variables(object@system)
+  h <- rep(0.0, length(likelihood_variables(object@system)))
+  names(h) <- likelihood_variables(object@system)
   h <- h %*% t(h)
   rownames(h) <- colnames(h)
 
@@ -130,85 +130,85 @@ setMethod("hessian", signature(object = "diseq_basic"), function(object, paramet
   h[rownames(pbeta_d_pbeta_s), colnames(pbeta_d_pbeta_s)] <- pbeta_d_pbeta_s
   h[colnames(pbeta_d_pbeta_s), rownames(pbeta_d_pbeta_s)] <- t(pbeta_d_pbeta_s)
 
-  h[get_prefixed_variance_variable(object@system@demand), colnames(pbeta_d_pvar_d)] <-
+  h[prefixed_variance_variable(object@system@demand), colnames(pbeta_d_pvar_d)] <-
     t(pbeta_d_pvar_d)
-  h[colnames(pbeta_d_pvar_d), get_prefixed_variance_variable(object@system@demand)] <-
+  h[colnames(pbeta_d_pvar_d), prefixed_variance_variable(object@system@demand)] <-
     pbeta_d_pvar_d
 
-  h[get_prefixed_variance_variable(object@system@supply), colnames(pbeta_d_pvar_s)] <-
+  h[prefixed_variance_variable(object@system@supply), colnames(pbeta_d_pvar_s)] <-
     t(pbeta_d_pvar_s)
-  h[colnames(pbeta_d_pvar_s), get_prefixed_variance_variable(object@system@supply)] <-
+  h[colnames(pbeta_d_pvar_s), prefixed_variance_variable(object@system@supply)] <-
     pbeta_d_pvar_s
 
   h[
-    get_prefixed_variance_variable(object@system@demand),
-    get_prefixed_variance_variable(object@system@demand)
+    prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@demand)
   ] <- pvar_d_pvar_d
 
   h[
-    get_prefixed_variance_variable(object@system@demand),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@supply)
   ] <- pvar_d_pvar_s
 
   h[
-    get_prefixed_variance_variable(object@system@supply),
-    get_prefixed_variance_variable(object@system@demand)
+    prefixed_variance_variable(object@system@supply),
+    prefixed_variance_variable(object@system@demand)
   ] <- pvar_d_pvar_s
 
   h[rownames(pbeta_s_pbeta_s), colnames(pbeta_s_pbeta_s)] <- pbeta_s_pbeta_s
 
   h[
-    get_prefixed_variance_variable(object@system@supply),
+    prefixed_variance_variable(object@system@supply),
     colnames(pbeta_s_pvar_s)
   ] <- t(pbeta_s_pvar_s)
   h[
     colnames(pbeta_s_pvar_s),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@supply)
   ] <- pbeta_s_pvar_s
 
   h[
-    get_prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@demand),
     colnames(pbeta_s_pvar_d)
   ] <- t(pbeta_s_pvar_d)
   h[
     colnames(pbeta_s_pvar_d),
-    get_prefixed_variance_variable(object@system@demand)
+    prefixed_variance_variable(object@system@demand)
   ] <- pbeta_s_pvar_d
 
   h[
-    get_prefixed_variance_variable(object@system@supply),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@supply),
+    prefixed_variance_variable(object@system@supply)
   ] <-
     pvar_s_pvar_s
 
   if (object@system@correlated_shocks) {
-    h[get_correlation_variable(object@system), colnames(pbeta_d_prho)] <- t(pbeta_d_prho)
-    h[colnames(pbeta_d_prho), get_correlation_variable(object@system)] <- pbeta_d_prho
+    h[correlation_variable(object@system), colnames(pbeta_d_prho)] <- t(pbeta_d_prho)
+    h[colnames(pbeta_d_prho), correlation_variable(object@system)] <- pbeta_d_prho
 
     h[
-      get_prefixed_variance_variable(object@system@demand),
-      get_correlation_variable(object@system)
+      prefixed_variance_variable(object@system@demand),
+      correlation_variable(object@system)
     ] <- pvar_d_prho
     h[
-      get_correlation_variable(object@system),
-      get_prefixed_variance_variable(object@system@demand)
+      correlation_variable(object@system),
+      prefixed_variance_variable(object@system@demand)
     ] <- pvar_d_prho
 
-    h[get_correlation_variable(object@system), colnames(pbeta_s_prho)] <- t(pbeta_s_prho)
-    h[colnames(pbeta_s_prho), get_correlation_variable(object@system)] <- pbeta_s_prho
+    h[correlation_variable(object@system), colnames(pbeta_s_prho)] <- t(pbeta_s_prho)
+    h[colnames(pbeta_s_prho), correlation_variable(object@system)] <- pbeta_s_prho
 
     h[
-      get_prefixed_variance_variable(object@system@supply),
-      get_correlation_variable(object@system)
+      prefixed_variance_variable(object@system@supply),
+      correlation_variable(object@system)
     ] <- pvar_s_prho
     h[
-      get_correlation_variable(object@system),
-      get_prefixed_variance_variable(object@system@supply)
+      correlation_variable(object@system),
+      prefixed_variance_variable(object@system@supply)
     ] <- pvar_s_prho
 
     h[
-      get_correlation_variable(object@system),
-      get_correlation_variable(object@system)
+      correlation_variable(object@system),
+      correlation_variable(object@system)
     ] <- prho_prho
   }
 

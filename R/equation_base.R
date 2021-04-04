@@ -118,10 +118,10 @@ setMethod("show_implementation", signature(object = "equation_base"), function(o
 #' with \code{CONST}.
 #' @param object An equation object.
 #' @return The constant coefficient name.
-#' @rdname get_prefixed_const_variable
+#' @rdname prefixed_const_variable
 #' @export
-setGeneric("get_prefixed_const_variable", function(object) {
-  standardGeneric("get_prefixed_const_variable")
+setGeneric("prefixed_const_variable", function(object) {
+  standardGeneric("prefixed_const_variable")
 })
 
 #' Independent variable names.
@@ -130,10 +130,10 @@ setGeneric("get_prefixed_const_variable", function(object) {
 #' with the column names of the data \code{tibble}.
 #' @param object An equation object.
 #' @return A vector with the independent variable names.
-#' @rdname get_prefixed_independent_variables
+#' @rdname prefixed_independent_variables
 #' @export
-setGeneric("get_prefixed_independent_variables", function(object) {
-  standardGeneric("get_prefixed_independent_variables")
+setGeneric("prefixed_independent_variables", function(object) {
+  standardGeneric("prefixed_independent_variables")
 })
 
 #' Price coefficient variable name.
@@ -142,10 +142,10 @@ setGeneric("get_prefixed_independent_variables", function(object) {
 #' with the name of the price column.
 #' @param object An equation object.
 #' @return The price coefficient variable name.
-#' @rdname get_prefixed_price_variable
+#' @rdname prefixed_price_variable
 #' @export
-setGeneric("get_prefixed_price_variable", function(object) {
-  standardGeneric("get_prefixed_price_variable")
+setGeneric("prefixed_price_variable", function(object) {
+  standardGeneric("prefixed_price_variable")
 })
 
 #' Control variable names.
@@ -155,10 +155,10 @@ setGeneric("get_prefixed_price_variable", function(object) {
 #' the price column.
 #' @param object An equation object.
 #' @return A vector with the control variable names.
-#' @rdname get_prefixed_control_variables
+#' @rdname prefixed_control_variables
 #' @export
-setGeneric("get_prefixed_control_variables", function(object) {
-  standardGeneric("get_prefixed_control_variables")
+setGeneric("prefixed_control_variables", function(object) {
+  standardGeneric("prefixed_control_variables")
 })
 
 #' Variance variable name.
@@ -167,10 +167,10 @@ setGeneric("get_prefixed_control_variables", function(object) {
 #' "VARIANCE".
 #' @param object An equation object.
 #' @return The variable name for the variance of the shock of the equation.
-#' @rdname get_prefixed_variance_variable
+#' @rdname prefixed_variance_variable
 #' @export
-setGeneric("get_prefixed_variance_variable", function(object) {
-  standardGeneric("get_prefixed_variance_variable")
+setGeneric("prefixed_variance_variable", function(object) {
+  standardGeneric("prefixed_variance_variable")
 })
 
 setGeneric("set_parameters", function(object, parameters) {
@@ -181,49 +181,45 @@ setGeneric("calculate_equation_loglikelihood", function(object) {
   standardGeneric("calculate_equation_loglikelihood")
 })
 
-setGeneric("get_quantities", function(object) {
-  standardGeneric("get_quantities")
+setGeneric("quantities", function(object) {
+  standardGeneric("quantities")
 })
 
-setGeneric("get_aggregate", function(object) {
-  standardGeneric("get_aggregate")
-})
-
-#' @rdname get_prefixed_const_variable
-setMethod("get_prefixed_const_variable", signature(object = "equation_base"), function(object) {
+#' @rdname prefixed_const_variable
+setMethod("prefixed_const_variable", signature(object = "equation_base"), function(object) {
   paste0(object@variable_prefix, "CONST")
 })
 
-#' @rdname get_prefixed_price_variable
+#' @rdname prefixed_price_variable
 setMethod(
-  "get_prefixed_independent_variables", signature(object = "equation_base"),
+  "prefixed_independent_variables", signature(object = "equation_base"),
   function(object) {
     colnames(object@independent_matrix)
   }
 )
 
-#' @rdname get_prefixed_price_variable
-setMethod("get_prefixed_price_variable", signature(object = "equation_base"), function(object) {
+#' @rdname prefixed_price_variable
+setMethod("prefixed_price_variable", signature(object = "equation_base"), function(object) {
   colnames(object@price_vector)
 })
 
-#' @rdname get_prefixed_price_variable
-setMethod("get_prefixed_control_variables", signature(object = "equation_base"), function(object) {
+#' @rdname prefixed_price_variable
+setMethod("prefixed_control_variables", signature(object = "equation_base"), function(object) {
   colnames(object@control_matrix)
 })
 
-#' @rdname get_prefixed_variance_variable
-setMethod("get_prefixed_variance_variable", signature(object = "equation_base"), function(object) {
+#' @rdname prefixed_variance_variable
+setMethod("prefixed_variance_variable", signature(object = "equation_base"), function(object) {
   paste0(object@variable_prefix, "VARIANCE")
 })
 
 setMethod("set_parameters", signature(object = "equation_base"), function(object, parameters) {
-  object@alpha_beta <- as.matrix(parameters[get_prefixed_independent_variables(object)])
-  if (!is.null(get_prefixed_price_variable(object))) {
-    object@alpha <- parameters[get_prefixed_price_variable(object)]
+  object@alpha_beta <- as.matrix(parameters[prefixed_independent_variables(object)])
+  if (!is.null(prefixed_price_variable(object))) {
+    object@alpha <- parameters[prefixed_price_variable(object)]
   }
-  object@beta <- as.matrix(parameters[get_prefixed_control_variables(object)])
-  object@var <- parameters[get_prefixed_variance_variable(object)]
+  object@beta <- as.matrix(parameters[prefixed_control_variables(object)])
+  object@var <- parameters[prefixed_variance_variable(object)]
   if (object@var < 0) {
     object@var <- NA_real_
   }
@@ -231,10 +227,11 @@ setMethod("set_parameters", signature(object = "equation_base"), function(object
   object
 })
 
-setMethod("get_quantities", signature(object = "equation_base"), function(object) {
+setMethod("quantities", signature(object = "equation_base"), function(object) {
   object@independent_matrix %*% object@alpha_beta
 })
 
-setMethod("get_aggregate", signature(object = "equation_base"), function(object) {
-  sum(get_quantities(object))
+# uses aggregate generic from stats
+setMethod("aggregate", signature(x = "equation_base"), function(x) {
+  sum(quantities(x))
 })

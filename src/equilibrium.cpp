@@ -110,9 +110,9 @@ public:
     Rcpp::S4 demand = system.slot("demand");
     Rcpp::S4 supply = system.slot("supply");
 
-    Rcpp::Function get_prefixed_independent_variables = diseq["get_prefixed_independent_variables"];
-    demand_independent_variables = get_prefixed_independent_variables(demand);
-    supply_independent_variables = get_prefixed_independent_variables(supply);
+    Rcpp::Function prefixed_independent_variables = diseq["prefixed_independent_variables"];
+    demand_independent_variables = prefixed_independent_variables(demand);
+    supply_independent_variables = prefixed_independent_variables(supply);
 
     demand_independent_variables_size = demand_independent_variables.length();
     supply_independent_variables_size = supply_independent_variables.length();
@@ -120,18 +120,18 @@ public:
     alphad_betad.assign(demand_independent_variables_size, 0.0);
     alphas_betas.assign(supply_independent_variables_size, 0.0);
 
-    Rcpp::Function get_prefixed_price_variable = diseq["get_prefixed_price_variable"];
+    Rcpp::Function prefixed_price_variable = diseq["prefixed_price_variable"];
     demand_price_variable =
-        Rcpp::as<Rcpp::String>(get_prefixed_price_variable(demand)).get_cstring();
+        Rcpp::as<Rcpp::String>(prefixed_price_variable(demand)).get_cstring();
     supply_price_variable =
-        Rcpp::as<Rcpp::String>(get_prefixed_price_variable(supply)).get_cstring();
+        Rcpp::as<Rcpp::String>(prefixed_price_variable(supply)).get_cstring();
 
     demand_price_variable_size = demand_price_variable.empty() ? 0 : 1;
     supply_price_variable_size = supply_price_variable.empty() ? 0 : 1;
 
-    Rcpp::Function get_prefixed_control_variables = diseq["get_prefixed_control_variables"];
-    demand_control_variables = get_prefixed_control_variables(demand);
-    supply_control_variables = get_prefixed_control_variables(supply);
+    Rcpp::Function prefixed_control_variables = diseq["prefixed_control_variables"];
+    demand_control_variables = prefixed_control_variables(demand);
+    supply_control_variables = prefixed_control_variables(supply);
 
     demand_control_variables_size = demand_control_variables.length();
     supply_control_variables_size = supply_control_variables.length();
@@ -139,17 +139,17 @@ public:
     betad.assign(demand_control_variables_size, 0.0);
     betas.assign(supply_control_variables_size, 0.0);
 
-    Rcpp::Function get_prefixed_variance_variable = diseq["get_prefixed_variance_variable"];
+    Rcpp::Function prefixed_variance_variable = diseq["prefixed_variance_variable"];
     demand_variance_variable =
-        Rcpp::as<Rcpp::String>(get_prefixed_variance_variable(demand)).get_cstring();
+        Rcpp::as<Rcpp::String>(prefixed_variance_variable(demand)).get_cstring();
     supply_variance_variable =
-        Rcpp::as<Rcpp::String>(get_prefixed_variance_variable(supply)).get_cstring();
+        Rcpp::as<Rcpp::String>(prefixed_variance_variable(supply)).get_cstring();
 
     demand_variance_variable_size = 1;
     supply_variance_variable_size = 1;
 
-    Rcpp::Function get_correlation_variable = diseq["get_correlation_variable"];
-    correlation_variable = Rcpp::as<Rcpp::String>(get_correlation_variable(system)).get_cstring();
+    Rcpp::Function correlation_variable = diseq["correlation_variable"];
+    this->correlation_variable = Rcpp::as<Rcpp::String>(correlation_variable(system)).get_cstring();
     has_correlated_shocks = Rcpp::as<bool>(system.slot("correlated_shocks"));
 
     correlation_variable_size = has_correlated_shocks ? 1 : 0;

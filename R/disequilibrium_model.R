@@ -43,8 +43,8 @@ setGeneric("calculate_z", function(object, equation_i, equation_j) {
   standardGeneric("calculate_z")
 })
 
-setGeneric("get_shortage_variance", function(object) {
-  standardGeneric("get_shortage_variance")
+setGeneric("shortage_variance", function(object) {
+  standardGeneric("shortage_variance")
 })
 
 #' Normalized shortages.
@@ -54,7 +54,7 @@ setGeneric("get_shortage_variance", function(object) {
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
 #' @return A vector with the estimated normalized shortages.
-#' @rdname get_normalized_shortages
+#' @rdname normalized_shortages
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -76,11 +76,11 @@ setGeneric("get_shortage_variance", function(object) {
 #' est <- estimate(model)
 #'
 #' # get estimated normalized shortages
-#' nshort <- get_normalized_shortages(model, est@coef)
+#' nshort <- normalized_shortages(model, est@coef)
 #' }
 #' @export
-setGeneric("get_normalized_shortages", function(object, parameters) {
-  standardGeneric("get_normalized_shortages")
+setGeneric("normalized_shortages", function(object, parameters) {
+  standardGeneric("normalized_shortages")
 })
 
 #' Relative shortages.
@@ -89,7 +89,7 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortages are evaluated.
 #' @return A vector with the estimated normalized shortages.
-#' @rdname get_relative_shortages
+#' @rdname relative_shortages
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -111,11 +111,11 @@ setGeneric("get_normalized_shortages", function(object, parameters) {
 #' est <- estimate(model)
 #'
 #' # get estimated relative shortages
-#' rshort <- get_relative_shortages(model, est@coef)
+#' rshort <- relative_shortages(model, est@coef)
 #' }
 #' @export
-setGeneric("get_relative_shortages", function(object, parameters) {
-  standardGeneric("get_relative_shortages")
+setGeneric("relative_shortages", function(object, parameters) {
+  standardGeneric("relative_shortages")
 })
 
 #' Shortage probabilities.
@@ -125,7 +125,7 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 #' @param object A disequilibrium model object.
 #' @param parameters A vector of parameters at which the shortage probabilities are evaluated.
 #' @return A vector with the estimated shortage probabilities.
-#' @rdname get_shortage_probabilities
+#' @rdname shortage_probabilities
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -147,15 +147,15 @@ setGeneric("get_relative_shortages", function(object, parameters) {
 #' est <- estimate(model)
 #'
 #' # get the estimated shortage probabilities
-#' probs <- get_shortage_probabilities(model, est@coef)
+#' probs <- shortage_probabilities(model, est@coef)
 #' }
 #' @export
-setGeneric("get_shortage_probabilities", function(object, parameters) {
-  standardGeneric("get_shortage_probabilities")
+setGeneric("shortage_probabilities", function(object, parameters) {
+  standardGeneric("shortage_probabilities")
 })
 
-setGeneric("get_scaled_effect", function(object, estimation, variable, scale_function) {
-  standardGeneric("get_scaled_effect")
+setGeneric("scaled_effect", function(object, estimation, variable, scale_function) {
+  standardGeneric("scaled_effect")
 })
 
 #' Mean marginal effects
@@ -165,7 +165,7 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
 #' @return The mean of the estimated marginal effects of the passed variable.
-#' @rdname get_mean_marginal_effect
+#' @rdname mean_marginal_effect
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -187,11 +187,11 @@ setGeneric("get_scaled_effect", function(object, estimation, variable, scale_fun
 #' est <- estimate(model)
 #'
 #' # get the mean marginal effects of variable "X1"
-#' get_mean_marginal_effect(model, est, "X1")
+#' mean_marginal_effect(model, est, "X1")
 #' }
 #' @export
-setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
-  standardGeneric("get_mean_marginal_effect")
+setGeneric("mean_marginal_effect", function(object, estimation, variable) {
+  standardGeneric("mean_marginal_effect")
 })
 
 #' Marginal effects at the mean.
@@ -201,7 +201,7 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 #' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
 #' @param variable Variable name for which the effect is calculated.
 #' @return The marginal effect of the passed variable evaluated at the estimated mean.
-#' @rdname get_marginal_effect_at_mean
+#' @rdname marginal_effect_at_mean
 #' @examples
 #' \donttest{
 #' simulated_data <- simulate_model_data(
@@ -223,11 +223,11 @@ setGeneric("get_mean_marginal_effect", function(object, estimation, variable) {
 #' est <- estimate(model)
 #'
 #' # get the marginal effects at the mean of variable "X1"
-#' get_marginal_effect_at_mean(model, est, "X1")
+#' marginal_effect_at_mean(model, est, "X1")
 #' }
 #' @export
-setGeneric("get_marginal_effect_at_mean", function(object, estimation, variable) {
-  standardGeneric("get_marginal_effect_at_mean")
+setGeneric("marginal_effect_at_mean", function(object, estimation, variable) {
+  standardGeneric("marginal_effect_at_mean")
 })
 
 #' Checks if an observation is in a shortage stage.
@@ -282,26 +282,26 @@ setMethod(
   }
 )
 
-setMethod("get_shortage_variance", signature(object = "disequilibrium_model"), function(object) {
+setMethod("shortage_variance", signature(object = "disequilibrium_model"), function(object) {
     sqrt(object@system@demand@var + object@system@supply@var - 2 * object@system@demand@sigma *
         object@system@supply@sigma * object@system@rho)
 })
 
-#' @rdname get_normalized_shortages
+#' @rdname normalized_shortages
 setMethod(
-  "get_normalized_shortages", signature(object = "disequilibrium_model"),
+  "normalized_shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     (
       object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
         object@system@supply@independent_matrix %*% object@system@supply@alpha_beta
-    ) / get_shortage_variance(object)
+    ) / shortage_variance(object)
   }
 )
 
-#' @rdname get_relative_shortages
+#' @rdname relative_shortages
 setMethod(
-  "get_relative_shortages", signature(object = "disequilibrium_model"),
+  "relative_shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     (
@@ -311,59 +311,59 @@ setMethod(
   }
 )
 
-#' @rdname get_shortage_probabilities
+#' @rdname shortage_probabilities
 setMethod(
-  "get_shortage_probabilities", signature(object = "disequilibrium_model"),
+  "shortage_probabilities", signature(object = "disequilibrium_model"),
   function(object, parameters) {
-    pnorm(get_normalized_shortages(object, parameters))
+    pnorm(normalized_shortages(object, parameters))
   }
 )
 
 setMethod(
-  "get_scaled_effect", signature(object = "disequilibrium_model"),
+  "scaled_effect", signature(object = "disequilibrium_model"),
   function(object, estimation, variable, scale_function) {
     object@system <- set_parameters(object@system, estimation@coef)
     dvar <- paste0(object@system@demand@variable_prefix, variable)
     svar <- paste0(object@system@supply@variable_prefix, variable)
-    in_demand <- dvar %in% get_prefixed_independent_variables(object@system@demand)
-    in_supply <- svar %in% get_prefixed_independent_variables(object@system@supply)
+    in_demand <- dvar %in% prefixed_independent_variables(object@system@demand)
+    in_supply <- svar %in% prefixed_independent_variables(object@system@supply)
     scale <- scale_function(estimation@coef)
     if (in_demand && in_supply) {
       effect <- scale * (
         estimation@coef[dvar] - estimation@coef[svar]
-      ) / get_shortage_variance(object)
+      ) / shortage_variance(object)
       names(effect) <- paste0("B_", variable)
     }
     else if (in_demand) {
-      effect <- scale * estimation@coef[dvar] / get_shortage_variance(object)
+      effect <- scale * estimation@coef[dvar] / shortage_variance(object)
       names(effect) <- dvar
     }
     else {
-      effect <- -scale * estimation@coef[svar] / get_shortage_variance(object)
+      effect <- -scale * estimation@coef[svar] / shortage_variance(object)
       names(effect) <- svar
     }
     effect
   }
 )
 
-#' @rdname get_mean_marginal_effect
+#' @rdname mean_marginal_effect
 setMethod(
-  "get_mean_marginal_effect", signature(object = "disequilibrium_model"),
+  "mean_marginal_effect", signature(object = "disequilibrium_model"),
   function(object, estimation, variable) {
-    get_scaled_effect(
+    scaled_effect(
       object, estimation, variable,
-      function(x) mean(dnorm(get_normalized_shortages(object, x)))
+      function(x) mean(dnorm(normalized_shortages(object, x)))
     )
   }
 )
 
-#' @rdname get_marginal_effect_at_mean
+#' @rdname marginal_effect_at_mean
 setMethod(
-  "get_marginal_effect_at_mean", signature(object = "disequilibrium_model"),
+  "marginal_effect_at_mean", signature(object = "disequilibrium_model"),
   function(object, estimation, variable) {
-    get_scaled_effect(
+    scaled_effect(
       object, estimation, variable,
-      function(x) dnorm(mean(get_normalized_shortages(object, x)))
+      function(x) dnorm(mean(normalized_shortages(object, x)))
     )
   }
 )
@@ -372,6 +372,6 @@ setMethod(
 setMethod(
   "has_shortage", signature(object = "disequilibrium_model"),
   function(object, parameters) {
-    get_normalized_shortages(object, parameters) >= 0
+    normalized_shortages(object, parameters) >= 0
   }
 )

@@ -52,7 +52,7 @@ setMethod(
       demand_specification, supply_specification, data, correlated_shocks,
       demand_initializer, supply_initializer
     )
-    .Object@lagged_price_vector <- as.matrix(data[, get_lagged_price_variable(.Object)])
+    .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
 
     .Object@sample_separation <- TRUE
     .Object
@@ -60,7 +60,7 @@ setMethod(
 )
 
 setMethod(
-  "get_likelihood_variables", signature(object = "system_deterministic_adjustment"),
+  "likelihood_variables", signature(object = "system_deterministic_adjustment"),
   function(object) {
     likelihood_variables <- callNextMethod(object)
 
@@ -68,7 +68,7 @@ setMethod(
     pos <- len - ifelse(object@correlated_shocks, 3, 2)
     likelihood_variables <- c(
       likelihood_variables[1:pos],
-      get_price_differences_variable(object), likelihood_variables[(pos + 1):len]
+      price_differences_variable(object), likelihood_variables[(pos + 1):len]
     )
 
     likelihood_variables
@@ -80,7 +80,7 @@ setMethod(
   function(object, parameters) {
     object <- callNextMethod(object, parameters)
 
-    object@gamma <- parameters[get_price_differences_variable(object)]
+    object@gamma <- parameters[price_differences_variable(object)]
     object@delta <- object@gamma + object@supply@alpha - object@demand@alpha
 
     object <- calculate_system_moments(object)
@@ -228,14 +228,14 @@ setMethod(
     ) + colSums(
       ps_beta_d * c(object@supply@separation_subset)
     ))
-    if (!is.null(get_prefixed_price_variable(object@demand))) {
+    if (!is.null(prefixed_price_variable(object@demand))) {
       object@gradient <- cbind(
         sum(pd_alpha_d * object@demand@separation_subset) +
           sum(ps_alpha_d * object@supply@separation_subset),
         object@gradient
       )
     }
-    if (!is.null(get_prefixed_price_variable(object@supply))) {
+    if (!is.null(prefixed_price_variable(object@supply))) {
       object@gradient <- cbind(
         object@gradient,
         sum(pd_alpha_s * object@demand@separation_subset) +
@@ -264,7 +264,7 @@ setMethod(
       )
     }
     object@gradient <- t(object@gradient)
-    rownames(object@gradient) <- get_likelihood_variables(object)
+    rownames(object@gradient) <- likelihood_variables(object)
 
     object
   }
@@ -295,10 +295,10 @@ setMethod(
 
     scores <- pd_beta_d * di + ps_beta_d * si
 
-    if (!is.null(get_prefixed_price_variable(object@demand))) {
+    if (!is.null(prefixed_price_variable(object@demand))) {
       scores <- cbind(pd_alpha_d * di + ps_alpha_d * si, scores)
     }
-    if (!is.null(get_prefixed_price_variable(object@supply))) {
+    if (!is.null(prefixed_price_variable(object@supply))) {
       scores <- cbind(scores, pd_alpha_s * di + ps_alpha_s * si)
     }
     scores <- cbind(
@@ -312,7 +312,7 @@ setMethod(
       scores <- cbind(scores, pd_rho * di + ps_rho * si)
     }
 
-    colnames(scores) <- get_likelihood_variables(object)
+    colnames(scores) <- likelihood_variables(object)
 
     scores
   }

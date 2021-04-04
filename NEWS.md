@@ -1,3 +1,7 @@
+# diseq 0.2.0.9005
+
+* Removed get from access functions to reduce the verbosity of function calls. 
+
 # diseq 0.2.0.9004
 
 * Added validation functions for estimation input variables `gradient`, `hessian`, and `standard_errors`. 

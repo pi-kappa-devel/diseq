@@ -85,17 +85,17 @@ setMethod("gradient", signature(object = "equilibrium_model"), function(object, 
   partial_var_s <- partial_var_s(object@system)
   partial_rho <- partial_rho(object@system)
 
-  g <- rep(NA, length(get_likelihood_variables(object@system)))
-  names(g) <- get_likelihood_variables(object@system)
+  g <- rep(NA, length(likelihood_variables(object@system)))
+  names(g) <- likelihood_variables(object@system)
 
-  g[get_prefixed_price_variable(object@system@demand)] <- sum(partial_alpha_d)
-  g[get_prefixed_control_variables(object@system@demand)] <- colSums(partial_beta_d)
-  g[get_prefixed_price_variable(object@system@supply)] <- sum(partial_alpha_s)
-  g[get_prefixed_control_variables(object@system@supply)] <- colSums(partial_beta_s)
-  g[get_prefixed_variance_variable(object@system@demand)] <- sum(partial_var_d)
-  g[get_prefixed_variance_variable(object@system@supply)] <- sum(partial_var_s)
+  g[prefixed_price_variable(object@system@demand)] <- sum(partial_alpha_d)
+  g[prefixed_control_variables(object@system@demand)] <- colSums(partial_beta_d)
+  g[prefixed_price_variable(object@system@supply)] <- sum(partial_alpha_s)
+  g[prefixed_control_variables(object@system@supply)] <- colSums(partial_beta_s)
+  g[prefixed_variance_variable(object@system@demand)] <- sum(partial_var_d)
+  g[prefixed_variance_variable(object@system@supply)] <- sum(partial_var_s)
   if (object@system@correlated_shocks) {
-    g[get_correlation_variable(object@system)] <- sum(partial_rho)
+    g[correlation_variable(object@system)] <- sum(partial_rho)
   }
 
   as.matrix(-g)
@@ -114,7 +114,7 @@ setMethod("scores", signature(object = "equilibrium_model"), function(object, pa
   if (object@system@correlated_shocks) {
     scores <- cbind(scores, partial_rho(object@system))
   }
-  colnames(scores) <- get_likelihood_variables(object@system)
+  colnames(scores) <- likelihood_variables(object@system)
 
   -scores
 })

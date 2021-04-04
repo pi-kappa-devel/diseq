@@ -83,57 +83,57 @@ setMethod(
   }
 )
 
-setGeneric("get_demand_controls", function(object) {
-  standardGeneric("get_demand_controls")
+setGeneric("demand_controls", function(object) {
+  standardGeneric("demand_controls")
 })
 
-setMethod("get_demand_controls", signature(object = "simulated_model"), function(object) {
+setMethod("demand_controls", signature(object = "simulated_model"), function(object) {
   as.matrix(object@simulation_tbl[, grep("Xd", names(object@simulation_tbl))])
 })
 
-setGeneric("get_supply_controls", function(object) {
-  standardGeneric("get_supply_controls")
+setGeneric("supply_controls", function(object) {
+  standardGeneric("supply_controls")
 })
 
-setMethod("get_supply_controls", signature(object = "simulated_model"), function(object) {
+setMethod("supply_controls", signature(object = "simulated_model"), function(object) {
   as.matrix(object@simulation_tbl[, grep("Xs", names(object@simulation_tbl))])
 })
 
-setGeneric("get_common_controls", function(object) {
-  standardGeneric("get_common_controls")
+setGeneric("common_controls", function(object) {
+  standardGeneric("common_controls")
 })
 
-setMethod("get_common_controls", signature(object = "simulated_model"), function(object) {
+setMethod("common_controls", signature(object = "simulated_model"), function(object) {
   as.matrix(object@simulation_tbl[, grep("X\\d", names(object@simulation_tbl))])
 })
 
-setGeneric("get_simulated_demanded_quantities", function(object, prices) {
-  standardGeneric("get_simulated_demanded_quantities")
+setGeneric("simulated_demanded_quantities", function(object, prices) {
+  standardGeneric("simulated_demanded_quantities")
 })
 
 setMethod(
-  "get_simulated_demanded_quantities", signature(object = "simulated_model"),
+  "simulated_demanded_quantities", signature(object = "simulated_model"),
   function(object, prices) {
     as.vector(
       prices * object@alpha_d +
-        object@beta_d0 + get_demand_controls(object) %*% object@beta_d +
-        get_common_controls(object) %*% object@eta_d +
+        object@beta_d0 + demand_controls(object) %*% object@beta_d +
+        common_controls(object) %*% object@eta_d +
         object@simulation_tbl$u_d
     )
   }
 )
 
-setGeneric("get_simulated_supplied_quantities", function(object, prices) {
-  standardGeneric("get_simulated_supplied_quantities")
+setGeneric("simulated_supplied_quantities", function(object, prices) {
+  standardGeneric("simulated_supplied_quantities")
 })
 
 setMethod(
-  "get_simulated_supplied_quantities", signature(object = "simulated_model"),
+  "simulated_supplied_quantities", signature(object = "simulated_model"),
   function(object, prices) {
     as.vector(
       prices * object@alpha_s +
-        object@beta_s0 + get_supply_controls(object) %*% object@beta_s +
-        get_common_controls(object) %*% object@eta_s +
+        object@beta_s0 + supply_controls(object) %*% object@beta_s +
+        common_controls(object) %*% object@eta_s +
         object@simulation_tbl$u_s
     )
   }
@@ -237,9 +237,9 @@ setMethod(
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     scale <- (object@alpha_d - object@alpha_s)
-    x_d <- get_demand_controls(object)
-    x_s <- get_supply_controls(object)
-    x <- get_common_controls(object)
+    x_d <- demand_controls(object)
+    x_s <- supply_controls(object)
+    x <- common_controls(object)
 
     prices <- as.vector(
       (x %*% (object@eta_s - object@eta_d) +
@@ -248,8 +248,8 @@ setMethod(
         object@simulation_tbl$u_s - object@simulation_tbl$u_d
       ) / scale
     )
-    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
-    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
+    demanded_quantities <- simulated_demanded_quantities(object, prices)
+    supplied_quantities <- simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }
@@ -266,8 +266,8 @@ setMethod(
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     prices <- object@price_generator(nrow(object@simulation_tbl))
-    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
-    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
+    demanded_quantities <- simulated_demanded_quantities(object, prices)
+    supplied_quantities <- simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }
@@ -284,8 +284,8 @@ setMethod(
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     starting_prices <- object@price_generator(object@nobs)
-    r_d <- get_simulated_demanded_quantities(object, 0)
-    r_s <- get_simulated_supplied_quantities(object, 0)
+    r_d <- simulated_demanded_quantities(object, 0)
+    r_s <- simulated_supplied_quantities(object, 0)
 
     demand_columns <- grep("Xd", names(object@simulation_tbl))
     supply_columns <- grep("Xs", names(object@simulation_tbl))
@@ -320,13 +320,13 @@ setMethod(
             MASS::mvrnorm(n = 1, object@mu, object@sigma)
           )
           r_d[i_offset + t] <- (
-            object@beta_d0 + get_demand_controls(object)[i_offset + t, ] %*% object@beta_d +
-              get_common_controls(object)[i_offset + t, ] %*% object@eta_d +
+            object@beta_d0 + demand_controls(object)[i_offset + t, ] %*% object@beta_d +
+              common_controls(object)[i_offset + t, ] %*% object@eta_d +
               object@simulation_tbl$u_d[i_offset + t]
           )
           r_s[i_offset + t] <- (
-            object@beta_s0 + get_supply_controls(object)[i_offset + t, ] %*% object@beta_s +
-              get_common_controls(object)[i_offset + t, ] %*% object@eta_s +
+            object@beta_s0 + supply_controls(object)[i_offset + t, ] %*% object@beta_s +
+              common_controls(object)[i_offset + t, ] %*% object@eta_s +
               object@simulation_tbl$u_s[i_offset + t]
           )
         }
@@ -354,13 +354,13 @@ setMethod(
   "simulate_quantities_and_prices", signature(object = "simulated_deterministic_adjustment_model"),
   function(
            object, demanded_quantities, supplied_quantities, prices, starting_prices) {
-    r_d <- get_simulated_demanded_quantities(object, 0)
-    r_s <- get_simulated_supplied_quantities(object, 0)
+    r_d <- simulated_demanded_quantities(object, 0)
+    r_s <- simulated_supplied_quantities(object, 0)
     dr <- r_d - r_s
 
     if (class(object) == "simulated_stochastic_adjustment_model") {
       dr <- dr + object@gamma * (
-        object@beta_p0 + get_price_controls(object) %*% object@beta_p + object@simulation_tbl$u_p
+        object@beta_p0 + price_controls(object) %*% object@beta_p + object@simulation_tbl$u_p
       )
     }
 
@@ -377,8 +377,8 @@ setMethod(
       }
     }
 
-    demanded_quantities <- get_simulated_demanded_quantities(object, prices)
-    supplied_quantities <- get_simulated_supplied_quantities(object, prices)
+    demanded_quantities <- simulated_demanded_quantities(object, prices)
+    supplied_quantities <- simulated_supplied_quantities(object, prices)
 
     callNextMethod(object, demanded_quantities, supplied_quantities, prices, starting_prices)
   }
@@ -457,12 +457,12 @@ setMethod(
   }
 )
 
-setGeneric("get_price_controls", function(object) {
-  standardGeneric("get_price_controls")
+setGeneric("price_controls", function(object) {
+  standardGeneric("price_controls")
 })
 
 setMethod(
-  "get_price_controls", signature(object = "simulated_stochastic_adjustment_model"),
+  "price_controls", signature(object = "simulated_stochastic_adjustment_model"),
   function(object) {
     as.matrix(object@simulation_tbl[, grep("Xp", names(object@simulation_tbl))])
   }

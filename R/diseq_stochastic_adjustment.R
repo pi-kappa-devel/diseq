@@ -64,7 +64,7 @@ setMethod(
 )
 
 setMethod(
-  "get_shortage_variance", signature(object = "diseq_stochastic_adjustment"),
+  "shortage_variance", signature(object = "diseq_stochastic_adjustment"),
   function(object) {
     sqrt(object@system@demand@var + object@system@supply@var - 2 * object@system@demand@sigma *
       object@system@supply@sigma * object@system@rho_ds)
@@ -87,13 +87,13 @@ setMethod(
     if (object@system@correlated_shocks) {
       start <- c(start[1:(len - 1)], 1, start[len], 0, 0)
       names(start)[len:length(start)] <- c(
-        get_prefixed_variance_variable(object@system@price_equation),
-        paste0(get_correlation_variable(object@system), c("_DS", "_DP", "_SP"))
+        prefixed_variance_variable(object@system@price_equation),
+        paste0(correlation_variable(object@system), c("_DS", "_DP", "_SP"))
       )
     }
     else {
       start <- c(start, price_variance = 1)
-      names(start)[len + 1] <- get_prefixed_variance_variable(object@system@price_equation)
+      names(start)[len + 1] <- prefixed_variance_variable(object@system@price_equation)
     }
 
     start

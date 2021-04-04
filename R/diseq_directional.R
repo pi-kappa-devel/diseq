@@ -126,14 +126,14 @@ setMethod("gradient", signature(object = "diseq_directional"), function(object, 
         sum(partial_rho_of_loglh_s(object@system)[pd]))
   }
 
-  g <- rep(NA, length(get_likelihood_variables(object@system)))
-  names(g) <- get_likelihood_variables(object@system)
+  g <- rep(NA, length(likelihood_variables(object@system)))
+  names(g) <- likelihood_variables(object@system)
   g[colnames(object@system@demand@independent_matrix)] <- l_pbd
   g[colnames(object@system@supply@independent_matrix)] <- l_pbs
-  g[get_prefixed_variance_variable(object@system@demand)] <- l_pvard
-  g[get_prefixed_variance_variable(object@system@supply)] <- l_pvars
+  g[prefixed_variance_variable(object@system@demand)] <- l_pvard
+  g[prefixed_variance_variable(object@system@supply)] <- l_pvars
   if (object@system@correlated_shocks) {
-    g[get_correlation_variable(object@system)] <- l_prho
+    g[correlation_variable(object@system)] <- l_prho
   }
 
   as.matrix(-g)
@@ -166,7 +166,7 @@ setMethod("scores", signature(object = "diseq_directional"), function(object, pa
 
     scores <- cbind(scores, as.matrix(l_prho))
   }
-  colnames(scores) <- get_likelihood_variables(object@system)
+  colnames(scores) <- likelihood_variables(object@system)
 
   -scores
 })
@@ -196,8 +196,8 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
     l_prhoprho <- partial_rho_partial_rho_of_loglh(object@system)
   }
 
-  h <- rep(0, length(get_likelihood_variables(object@system)))
-  names(h) <- get_likelihood_variables(object@system)
+  h <- rep(0, length(likelihood_variables(object@system)))
+  names(h) <- likelihood_variables(object@system)
   h <- h %*% t(h)
   rownames(h) <- colnames(h)
 
@@ -206,67 +206,67 @@ setMethod("hessian", signature(object = "diseq_directional"), function(object, p
   h[rownames(l_pbdpbs), colnames(l_pbdpbs)] <- l_pbdpbs
   h[colnames(l_pbdpbs), rownames(l_pbdpbs)] <- t(l_pbdpbs)
 
-  h[get_prefixed_variance_variable(object@system@demand), names(l_pbdpvard)] <- t(l_pbdpvard)
-  h[names(l_pbdpvard), get_prefixed_variance_variable(object@system@demand)] <- l_pbdpvard
+  h[prefixed_variance_variable(object@system@demand), names(l_pbdpvard)] <- t(l_pbdpvard)
+  h[names(l_pbdpvard), prefixed_variance_variable(object@system@demand)] <- l_pbdpvard
 
-  h[get_prefixed_variance_variable(object@system@supply), names(l_pbdpvars)] <- t(l_pbdpvars)
-  h[names(l_pbdpvars), get_prefixed_variance_variable(object@system@supply)] <- l_pbdpvars
+  h[prefixed_variance_variable(object@system@supply), names(l_pbdpvars)] <- t(l_pbdpvars)
+  h[names(l_pbdpvars), prefixed_variance_variable(object@system@supply)] <- l_pbdpvars
 
   h[
-    get_prefixed_variance_variable(object@system@demand),
-    get_prefixed_variance_variable(object@system@demand)
+    prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@demand)
   ] <- l_pvardpvard
 
   h[
-    get_prefixed_variance_variable(object@system@demand),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@demand),
+    prefixed_variance_variable(object@system@supply)
   ] <- l_pvardpvars
   h[
-    get_prefixed_variance_variable(object@system@supply),
-    get_prefixed_variance_variable(object@system@demand)
+    prefixed_variance_variable(object@system@supply),
+    prefixed_variance_variable(object@system@demand)
   ] <- l_pvardpvars
 
   h[rownames(l_pbspbs), colnames(l_pbspbs)] <- l_pbspbs
 
-  h[get_prefixed_variance_variable(object@system@supply), names(l_pbspvars)] <- t(l_pbspvars)
-  h[names(l_pbspvars), get_prefixed_variance_variable(object@system@supply)] <- l_pbspvars
+  h[prefixed_variance_variable(object@system@supply), names(l_pbspvars)] <- t(l_pbspvars)
+  h[names(l_pbspvars), prefixed_variance_variable(object@system@supply)] <- l_pbspvars
 
-  h[get_prefixed_variance_variable(object@system@demand), names(l_pbspvard)] <- t(l_pbspvard)
-  h[names(l_pbspvard), get_prefixed_variance_variable(object@system@demand)] <- l_pbspvard
+  h[prefixed_variance_variable(object@system@demand), names(l_pbspvard)] <- t(l_pbspvard)
+  h[names(l_pbspvard), prefixed_variance_variable(object@system@demand)] <- l_pbspvard
 
   h[
-    get_prefixed_variance_variable(object@system@supply),
-    get_prefixed_variance_variable(object@system@supply)
+    prefixed_variance_variable(object@system@supply),
+    prefixed_variance_variable(object@system@supply)
   ] <- l_pvarspvars
 
   if (object@system@correlated_shocks) {
-    h[get_correlation_variable(object@system), names(l_pbdprho)] <- t(l_pbdprho)
-    h[names(l_pbdprho), get_correlation_variable(object@system)] <- l_pbdprho
+    h[correlation_variable(object@system), names(l_pbdprho)] <- t(l_pbdprho)
+    h[names(l_pbdprho), correlation_variable(object@system)] <- l_pbdprho
 
-    h[get_correlation_variable(object@system), names(l_pbsprho)] <- t(l_pbsprho)
-    h[names(l_pbsprho), get_correlation_variable(object@system)] <- l_pbsprho
+    h[correlation_variable(object@system), names(l_pbsprho)] <- t(l_pbsprho)
+    h[names(l_pbsprho), correlation_variable(object@system)] <- l_pbsprho
 
     h[
-      get_prefixed_variance_variable(object@system@demand),
-      get_correlation_variable(object@system)
+      prefixed_variance_variable(object@system@demand),
+      correlation_variable(object@system)
     ] <- l_pvardprho
     h[
-      get_correlation_variable(object@system),
-      get_prefixed_variance_variable(object@system@demand)
+      correlation_variable(object@system),
+      prefixed_variance_variable(object@system@demand)
     ] <- l_pvardprho
 
     h[
-      get_prefixed_variance_variable(object@system@supply),
-      get_correlation_variable(object@system)
+      prefixed_variance_variable(object@system@supply),
+      correlation_variable(object@system)
     ] <- l_pvarsprho
     h[
-      get_correlation_variable(object@system),
-      get_prefixed_variance_variable(object@system@supply)
+      correlation_variable(object@system),
+      prefixed_variance_variable(object@system@supply)
     ] <- l_pvarsprho
 
     h[
-      get_correlation_variable(object@system),
-      get_correlation_variable(object@system)
+      correlation_variable(object@system),
+      correlation_variable(object@system)
     ] <- l_prhoprho
   }
 
