@@ -379,8 +379,8 @@ setGeneric("hessian", function(object, parameters) {
 
 validate_gradient_option <- function(object, option) {
   allowed <- c("calculated", "numerical")
-  if (option %in% allowed) {
-    print_verbose(
+  if (!(option %in% allowed)) {
+    print_error(
       object@logger,
       paste0(
         "Invalid `gradient` option '", option, "'. Valid options are ('",
@@ -392,8 +392,8 @@ validate_gradient_option <- function(object, option) {
 
 validate_hessian_option <- function(object, option) {
   allowed <- c("skip", "calculated", "numerical")
-  if (option %in% allowed) {
-    print_verbose(
+  if (!(option %in% allowed)) {
+    print_error(
       object@logger,
       paste0(
         "Invalid `hessian` option '", option, "'. Valid options are ('",
@@ -405,8 +405,8 @@ validate_hessian_option <- function(object, option) {
 
 validate_standard_error_option <- function(object, option) {
   allowed <- c("homoscedastic", "heteroscedastic")
-  if (option %in% allowed || all(option %in% object@columns)) {
-    print_verbose(
+  if (!(option %in% allowed || all(option %in% object@columns))) {
+    print_error(
       object@logger,
       paste0(
         "Invalid `standard_error` option '", option, "'. Valid options are ('",

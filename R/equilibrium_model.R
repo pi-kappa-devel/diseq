@@ -1,5 +1,4 @@
 #' @include market_model.R
-#' @include derivatives_fiml.R
 #' @importFrom systemfit systemfit
 
 #' @title Equilibrium model estimated using full-information maximum likelihood.
@@ -76,27 +75,7 @@ setMethod(
 
 setMethod("gradient", signature(object = "equilibrium_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-
-  partial_alpha_d <- partial_alpha_d(object@system)
-  partial_beta_d <- partial_beta_d(object@system)
-  partial_alpha_s <- partial_alpha_s(object@system)
-  partial_beta_s <- partial_beta_s(object@system)
-  partial_var_d <- partial_var_d(object@system)
-  partial_var_s <- partial_var_s(object@system)
-  partial_rho <- partial_rho(object@system)
-
-  g <- rep(NA, length(likelihood_variables(object@system)))
-  names(g) <- likelihood_variables(object@system)
-
-  g[prefixed_price_variable(object@system@demand)] <- sum(partial_alpha_d)
-  g[prefixed_control_variables(object@system@demand)] <- colSums(partial_beta_d)
-  g[prefixed_price_variable(object@system@supply)] <- sum(partial_alpha_s)
-  g[prefixed_control_variables(object@system@supply)] <- colSums(partial_beta_s)
-  g[prefixed_variance_variable(object@system@demand)] <- sum(partial_var_d)
-  g[prefixed_variance_variable(object@system@supply)] <- sum(partial_var_s)
-  if (object@system@correlated_shocks) {
-    g[correlation_variable(object@system)] <- sum(partial_rho)
-  }
+  g <- colSums(calculate_gradient(object@system))
 
   as.matrix(-g)
 })
@@ -104,19 +83,7 @@ setMethod("gradient", signature(object = "equilibrium_model"), function(object, 
 #' @rdname scores
 setMethod("scores", signature(object = "equilibrium_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-
-  scores <- cbind(
-    partial_alpha_d(object@system), partial_beta_d(object@system),
-    partial_alpha_s(object@system), partial_beta_s(object@system),
-    partial_var_d(object@system), partial_var_s(object@system)
-  )
-
-  if (object@system@correlated_shocks) {
-    scores <- cbind(scores, partial_rho(object@system))
-  }
-  colnames(scores) <- likelihood_variables(object@system)
-
-  -scores
+  -calculate_gradient(object@system)
 })
 
 #' @describeIn estimate Equilibrium model estimation.

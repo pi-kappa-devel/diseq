@@ -1,5 +1,9 @@
 # diseq 0.2.0.9005
 
+* Reduced file size of equilibrium gradient calculation.
+
+# diseq 0.2.0.9005
+
 * Removed get from access functions to reduce the verbosity of function calls. 
 
 # diseq 0.2.0.9004
