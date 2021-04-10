@@ -10,11 +10,12 @@ setClass(
     mu_Q = "matrix",
     var_Q = "numeric",
     sigma_Q = "numeric",
-    cov_PQ = "numeric",
 
-    rho_PQ = "numeric",
-    rho1_PQ = "numeric",
-    rho2_PQ = "numeric",
+    rho_QP = "numeric",
+    rho_1QP = "numeric",
+    rho_2QP = "numeric",
+
+    sigma_QP = "numeric",
 
     h_Q = "matrix",
 
@@ -34,11 +35,12 @@ setClass(
     mu_Q = matrix(NA_real_),
     var_Q = NA_real_,
     sigma_Q = NA_real_,
-    cov_PQ = NA_real_,
 
-    rho_PQ = NA_real_,
-    rho1_PQ = NA_real_,
-    rho2_PQ = NA_real_,
+    sigma_QP = NA_real_,
+
+    rho_QP = NA_real_,
+    rho_1QP = NA_real_,
+    rho_2QP = NA_real_,
 
     h_Q = matrix(NA_real_),
 

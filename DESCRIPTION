@@ -1,7 +1,7 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.2.0.9006
-Date: 2021-04-06
+Version: 0.2.0.9007
+Date: 2021-04-10
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
@@ -60,9 +60,6 @@ Collate:
     'equation_basic.R'
     'system_basic.R'
     'derivatives_basic.R'
-    'equation_deterministic_adjustment.R'
-    'system_deterministic_adjustment.R'
-    'derivatives_deterministic_adjustment.R'
     'equation_directional.R'
     'system_directional.R'
     'derivatives_directional.R'
@@ -77,9 +74,13 @@ Collate:
     'diseq_deterministic_adjustment.R'
     'diseq_directional.R'
     'diseq_stochastic_adjustment.R'
+    'equation_deterministic_adjustment.R'
     'equilibrium_model.R'
+    'system_deterministic_adjustment.R'
+    'gradient_diseq_deterministic_adjustment.R'
     'system_fiml.R'
     'gradient_equilibrium_model.R'
+    'likelihood_diseq_deterministic_adjustment.R'
     'likelihood_equilibrium_model.R'
     'model_simulation.R'
 LinkingTo: 

@@ -75,7 +75,7 @@ setMethod(
 
 setMethod("gradient", signature(object = "equilibrium_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-  g <- colSums(calculate_gradient(object@system))
+  g <- colSums(calculate_system_scores(object@system))
 
   as.matrix(-g)
 })
@@ -83,7 +83,7 @@ setMethod("gradient", signature(object = "equilibrium_model"), function(object, 
 #' @rdname scores
 setMethod("scores", signature(object = "equilibrium_model"), function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)
-  -calculate_gradient(object@system)
+  -calculate_system_scores(object@system)
 })
 
 #' @describeIn estimate Equilibrium model estimation.

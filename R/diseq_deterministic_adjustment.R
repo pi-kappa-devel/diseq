@@ -1,5 +1,4 @@
 #' @include disequilibrium_model.R
-#' @include derivatives_deterministic_adjustment.R
 
 #' @title Disequilibrium model with deterministic price dynamics.
 #'
@@ -83,8 +82,8 @@ setMethod(
   "gradient", signature(object = "diseq_deterministic_adjustment"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
-    object@system <- calculate_system_gradient(object@system)
-    -object@system@gradient
+    gradient <- as.matrix(colSums(calculate_system_scores(object@system)))
+    -gradient
   }
 )
 

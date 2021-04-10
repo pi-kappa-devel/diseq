@@ -58,7 +58,3 @@ setMethod("set_parameters", signature(object = "system_fiml"), function(object, 
 
   object
 })
-
-setGeneric("calculate_gradient", function(object) {
-  standardGeneric("calculate_gradient")
-})

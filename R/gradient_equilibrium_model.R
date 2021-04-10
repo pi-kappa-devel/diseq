@@ -1,6 +1,6 @@
 #' @include system_fiml.R
 
-setMethod("calculate_gradient", signature(object = "system_fiml"),
+setMethod("calculate_system_scores", signature(object = "system_fiml"),
           function(object) {
   # nolint start
   ad <- object@demand@alpha
@@ -9,6 +9,8 @@ setMethod("calculate_gradient", signature(object = "system_fiml"),
   bs <- object@supply@beta
   sd <- object@demand@sigma
   ss <- object@supply@sigma
+  vd <- object@demand@var
+  vs <- object@supply@var
   xd <- object@demand@control_matrix
   xs <- object@supply@control_matrix
   dl <- object@delta

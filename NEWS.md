@@ -1,4 +1,8 @@
-# diseq 0.2.0.9005
+# diseq 0.2.0.9007
+
+* Reduced file size of deterministic adjustment gradient calculation.
+
+# diseq 0.2.0.9006
 
 * Reduced file size of equilibrium gradient calculation.
 
