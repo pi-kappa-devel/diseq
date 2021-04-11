@@ -11,8 +11,8 @@ setMethod("calculate_system_moments", signature(object = "system_fiml"),
   ss <- object@supply@sigma
   xd <- object@demand@control_matrix
   xs <- object@supply@control_matrix
-  dl <- object@delta
   r <- object@rho
+  dl <- object@delta
   xbd <- xd %*% bd
   xbs <- xs %*% bs
               

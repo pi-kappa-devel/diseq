@@ -1,3 +1,7 @@
+# diseq 0.2.0.9008
+
+* Reduced file size of basic model's derivative calculations.
+
 # diseq 0.2.0.9007
 
 * Reduced file size of deterministic adjustment gradient calculation.

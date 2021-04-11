@@ -12,8 +12,8 @@ setMethod("calculate_system_moments",
   ss <- object@supply@sigma
   xd <- object@demand@control_matrix
   xs <- object@supply@control_matrix
-  dl <- object@delta
   r <- object@rho
+  dl <- object@delta
   gm <- object@gamma
   LP <- object@lagged_price_vector
   xbd <- xd %*% bd
