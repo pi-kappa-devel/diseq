@@ -1,3 +1,7 @@
+# diseq 0.2.0.9009
+
+* Reduced file size of directional model's derivative calculations.
+
 # diseq 0.2.0.9008
 
 * Reduced file size of basic model's derivative calculations.

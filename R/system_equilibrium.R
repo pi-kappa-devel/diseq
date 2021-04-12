@@ -1,7 +1,7 @@
 #' @include equation_basic.R
 #' @include system_base.R
 setClass(
-  "system_fiml",
+  "system_equilibrium",
   contains = "system_base",
   representation(
     delta = "numeric",
@@ -32,7 +32,7 @@ setClass(
 )
 
 setMethod(
-  "initialize", "system_fiml",
+  "initialize", "system_equilibrium",
   function(
            .Object, quantity, price,
            demand_specification, supply_specification, data, correlated_shocks,
@@ -49,7 +49,8 @@ setMethod(
   }
 )
 
-setMethod("set_parameters", signature(object = "system_fiml"), function(object, parameters) {
+setMethod("set_parameters", signature(object = "system_equilibrium"),
+          function(object, parameters) {
   object <- callNextMethod(object, parameters)
 
   object@delta <- object@supply@alpha - object@demand@alpha

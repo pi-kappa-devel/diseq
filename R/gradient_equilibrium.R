@@ -1,6 +1,6 @@
-#' @include system_fiml.R
+#' @include system_equilibrium.R
 
-setMethod("calculate_system_scores", signature(object = "system_fiml"),
+setMethod("calculate_system_scores", signature(object = "system_equilibrium"),
           function(object) {
   # nolint start
   sd <- object@demand@sigma

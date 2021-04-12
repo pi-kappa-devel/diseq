@@ -1,5 +1,4 @@
 #' @include disequilibrium_model.R
-#' @include derivatives_basic.R
 
 #' @title Basic disequilibrium model with unknown sample separation.
 #'

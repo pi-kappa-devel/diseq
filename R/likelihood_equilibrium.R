@@ -1,6 +1,6 @@
-#' @include system_fiml.R
+#' @include system_equilibrium.R
 
-setMethod("calculate_system_moments", signature(object = "system_fiml"),
+setMethod("calculate_system_moments", signature(object = "system_equilibrium"),
           function(object) {
   # nolint start
   ad <- object@demand@alpha
@@ -41,7 +41,7 @@ setMethod("calculate_system_moments", signature(object = "system_fiml"),
   object
 })
 
-setMethod("calculate_system_loglikelihood", signature(object = "system_fiml"),
+setMethod("calculate_system_loglikelihood", signature(object = "system_equilibrium"),
           function(object) {
   # nolint start
   (-object@rho_1QP**2*(object@h_P*object@z_PQ/object@rho_1QP + object@h_Q*object@z_QP/object@rho_1QP + (log(object@sigma_P**2*object@sigma_Q**2/object@rho_1QP**2) + log(4*pi**2))/object@rho_1QP**2)/2)

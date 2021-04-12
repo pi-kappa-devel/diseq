@@ -79,5 +79,5 @@ test_that(paste0(
   "Calculated gradient of '", model_description(mdl),
   "' matches the numerical approximation"
 ), {
-  test_calculated_gradient(mdl, est@coef, 1e-1)
+  test_calculated_gradient(mdl, est@coef, 1e-4)
 })

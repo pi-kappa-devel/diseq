@@ -99,6 +99,10 @@ setMethod(
 
     .Object@control_matrix <- as.matrix(.Object@independent_matrix[, !price_selection])
     colnames(.Object@control_matrix) <- colnames(.Object@independent_matrix)[!price_selection]
+    .Object@independent_matrix <- .Object@independent_matrix[
+      ,
+      c(colnames(.Object@price_vector), colnames(.Object@control_matrix))
+    ]
 
     .Object
   }

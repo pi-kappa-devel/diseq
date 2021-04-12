@@ -14,6 +14,8 @@ setMethod("calculate_system_scores",
   bs <- object@supply@beta
   xd <- object@demand@control_matrix
   xs <- object@supply@control_matrix
+  Id <- object@demand@separation_subset
+  Is <- object@supply@separation_subset
   r <- object@rho
   dl <- object@delta
   muP <- object@mu_P
@@ -42,8 +44,6 @@ setMethod("calculate_system_scores",
   LP <- object@lagged_price_vector
   xbd <- xd %*% bd
   xbs <- xs %*% bs
-  Id <- object@demand@separation_subset
-  Is <- object@supply@separation_subset
 
   palpha_d <- -(Id*sS*sS**2*vS*(-dl*muP*r1DP*sD*sD**2*sP*sP*vD*vP*zPD - dl*muP*r1DP*sD*sD*sP*vP*vD*vP*zDP*(ad + dl) + dl*sD*sD**2*sP**3*vD*vP*(hD*hP*r1DP**2*rDP - hP**2*r1DP**2 + 1) + r1DP**2*sD**2*vP*(rDP*sD*sP*(dl*vP*vD + vP*(ad*dl**2*vP - ad*sd*(r*ss - sd) + dl*(ad**2*vP - r*sd*ss + vd))) - vD*vP*(2*ad*dl*vP + dl**2*vP - sd*(r*ss - sd)))*(-hD**2*r1DP**2*rDP + 2*hD*hP*r1DP**2*rDP**2 + hD*hP - hP**2*r1DP**2*rDP + rDP) + sD*sP*vP*vD*vP*(-hD**2*r1DP**2 + hD*hP*r1DP**2*rDP + 1)*(ad*dl**2*vP - ad*sd*(r*ss - sd) + dl*(ad**2*vP - r*sd*ss + vd))) + Is*sD*sD**2*vD*(-as*dl*muP*r1SP*sP*vP*sS*sS*vP*vS*zSP + as*sP*vP*sS*vP*vS*(as*dl*vP + ss*(r*sd - ss))*(hP*hS*r1SP**2*rSP - hS**2*r1SP**2 + 1) - dl*muP*r1SP*sP*sP*sS*sS**2*vP*vS*zPS + dl*sP**3*sS*sS**2*vP*vS*(-hP**2*r1SP**2 + hP*hS*r1SP**2*rSP + 1) + r1SP**2*vP*sS**2*(rSP*sP*sS*(as*vP*(as*dl*vP + ss*(r*sd - ss)) + dl*vP*vS) - vP*vS*(2*as*dl*vP + ss*(r*sd - ss)))*(-hP**2*r1SP**2*rSP + 2*hP*hS*r1SP**2*rSP**2 + hP*hS - hS**2*r1SP**2*rSP + rSP)))/(dl**2*sD**2*sD*vP*sP*sS**2*sS*vD*vP*vS)
   pbeta_d1 <- sweep(xd, MARGIN = 1, (Id*r1DP*sS*(sD*zPD + sP*zDP*(ad + dl)) + Is*r1SP*sD*(as*sP*zSP + sS*zPS))/(dl*sD*sP*sS), `*`)

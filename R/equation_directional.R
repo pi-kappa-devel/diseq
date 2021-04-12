@@ -20,11 +20,3 @@ setMethod(
     .Object
   }
 )
-
-setMethod(
-  "set_parameters", signature(object = "equation_directional"),
-  function(object, parameters) {
-    object <- callNextMethod(object, parameters)
-    object
-  }
-)

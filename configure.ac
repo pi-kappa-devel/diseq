@@ -1,4 +1,4 @@
-AC_INIT([diseq],[0.2.0.9008])
+AC_INIT([diseq],[0.2.0.9009])
 
 # Find the compiler and compiler flags used by R.
 : ${R_HOME=`R RHOME`}

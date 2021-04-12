@@ -33,5 +33,6 @@ setMethod(
 setMethod("set_parameters", signature(object = "system_basic"), function(object, parameters) {
   object <- callNextMethod(object, parameters)
   object <- calculate_system_moments(object)
+  object@lh <- calculate_system_likelihood(object)
   object
 })

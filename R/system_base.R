@@ -106,6 +106,10 @@ setGeneric("calculate_system_moments", function(object) {
   standardGeneric("calculate_system_moments")
 })
 
+setGeneric("calculate_system_likelihood", function(object) {
+  standardGeneric("calculate_system_likelihood")
+})
+
 setGeneric("calculate_system_loglikelihood", function(object) {
   standardGeneric("calculate_system_loglikelihood")
 })

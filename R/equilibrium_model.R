@@ -55,7 +55,7 @@ setMethod(
       quantity_column, price_column, demand_specification, supply_specification, NULL,
       correlated_shocks,
       data,
-      function(...) new("system_fiml", ...)
+      function(...) new("system_equilibrium", ...)
     )
     .Object@market_type_string <- "Equilibrium"
 

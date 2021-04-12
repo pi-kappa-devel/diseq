@@ -22,8 +22,6 @@ setMethod("hessian", signature(object = "diseq_basic"), function(object, paramet
   PsiD <- object@demand@Psi
   PsiS <- object@supply@Psi
 
-  xd <- xd[, c(2, 1, 3:ncol(xd))]
-  xs <- xs[, c(2, 1, 3:ncol(xs))]
   pbeta_d1 <- sweep(xd, MARGIN = 1, (psiS*r1*sd + ss*(PsiD*hD - psiD*r*r1))/(vd*ss)/object@lh, `*`)
   pbeta_s1 <- sweep(xs, MARGIN = 1, (psiD*r1*ss + sd*(PsiS*hS - psiS*r*r1))/(sd*vs)/object@lh, `*`)
   pvar_d <- (hD*psiS*r1*sd - ss*(-PsiD*hD**2 + PsiD + hD*psiD*r*r1))/(2*sd**3*ss)/object@lh
