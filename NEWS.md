@@ -1,3 +1,7 @@
+# diseq 0.2.1
+
+* Cumulative update of CRAN version.
+
 # diseq 0.2.0.9010
 
 * Reduced file size of stochastic adjustment model's derivative calculations.

@@ -21,14 +21,11 @@
 #'   \item Fair, R. C. (1971). A short-run forecasting model of the United States
 #' economy. Heath Lexington Books.
 #'   \item Fair, R. C., & Jaffee, D. M. (1972). Methods of Estimation for Markets in
-#' Disequilibrium. Econometrica, 40(3), 497.
-#' \href{https://doi.org/10.2307/1913181}{https://doi.org/10.2307/1913181}
+#' Disequilibrium. Econometrica, 40(3), 497. \doi{10.2307/1913181}
 #'   \item Maddala, G. S., & Nelson, F. D. (1974). Maximum Likelihood Methods for
-#' Models of Markets in Disequilibrium. Econometrica, 42(6), 1013.
-#' \href{https://doi.org/10.2307/1914215}{https://doi.org/10.2307/1914215}
+#' Models of Markets in Disequilibrium. Econometrica, 42(6), 1013. \doi{10.2307/1914215}
 #'   \item Hwang, H. (1980). A test of a disequilibrium model. Journal of Econometrics,
-#' 12(3), 319–333.
-#' \href{https://doi.org/10.1016/0304-4076(80)90059-7}{https://doi.org/10.1016/0304-4076(80)90059-7}
+#' 12(3), 319–333. \doi{10.1016/0304-4076(80)90059-7}
 #' }
 #'
 #' @source \itemize{
@@ -44,7 +41,7 @@
 #' data(houses)
 #'
 #' @docType data
-#' @keywords housing, datasets
+#' @keywords datasets
 #' @name houses
 #' @usage data(houses)
 #' @format A data frame with 138 rows and 7 columns
