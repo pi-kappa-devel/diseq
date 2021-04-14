@@ -105,8 +105,7 @@ setMethod(
   "minus_log_likelihood", signature(object = "diseq_stochastic_adjustment"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
-    object@system <- calculate_system_loglikelihood(object@system)
-    -sum(object@system@log_likelihood)
+    -sum(calculate_system_loglikelihood(object@system))
   }
 )
 
@@ -114,8 +113,7 @@ setMethod(
   "gradient", signature(object = "diseq_stochastic_adjustment"),
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
-    object@system <- calculate_system_gradient(object@system)
-    -object@system@gradient
+    -colSums(calculate_system_scores(object@system))
   }
 )
 

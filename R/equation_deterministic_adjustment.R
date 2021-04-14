@@ -22,11 +22,6 @@ setClass(
     z_PQ = "matrix",
     z_QP = "matrix",
 
-    gr_mu_Q = "matrix",
-    gr_var_Q = "matrix",
-    gr_cov_QP = "matrix",
-    gr_rho_QP = "matrix",
-
     gr = "matrix"
   ),
   prototype(

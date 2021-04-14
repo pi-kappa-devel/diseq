@@ -177,9 +177,9 @@ setGeneric("simulate_shocks", function(object) {
 })
 
 setMethod("simulate_shocks", signature(object = "simulated_model"), function(object) {
-  cov_ds <- object@sigma_d * object@sigma_s * object@rho_ds
+  sigma_ds <- object@sigma_d * object@sigma_s * object@rho_ds
   object@mu <- c(0, 0)
-  object@sigma <- matrix(c(object@sigma_d**2, cov_ds, cov_ds, object@sigma_s**2), 2, 2)
+  object@sigma <- matrix(c(object@sigma_d**2, sigma_ds, sigma_ds, object@sigma_s**2), 2, 2)
 
   disturbances <- MASS::mvrnorm(n = nrow(object@simulation_tbl), object@mu, object@sigma)
   colnames(disturbances) <- c("u_d", "u_s")
@@ -481,15 +481,15 @@ setMethod(
 setMethod(
   "simulate_shocks", signature(object = "simulated_stochastic_adjustment_model"),
   function(object) {
-    cov_ds <- object@sigma_d * object@sigma_s * object@rho_ds
-    cov_dp <- object@sigma_d * object@sigma_p * object@rho_dp
-    cov_sp <- object@sigma_s * object@sigma_p * object@rho_sp
+    sigma_ds <- object@sigma_d * object@sigma_s * object@rho_ds
+    sigma_dp <- object@sigma_d * object@sigma_p * object@rho_dp
+    sigma_sp <- object@sigma_s * object@sigma_p * object@rho_sp
 
     object@mu <- c(0, 0, 0)
     object@sigma <- matrix(
       c(
-        object@sigma_d**2, cov_ds, cov_dp, cov_ds,
-        object@sigma_s**2, cov_sp, cov_dp, cov_sp,
+        object@sigma_d**2, sigma_ds, sigma_dp, sigma_ds,
+        object@sigma_s**2, sigma_sp, sigma_dp, sigma_sp,
         object@sigma_p**2
       ),
       3, 3

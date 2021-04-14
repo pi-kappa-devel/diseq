@@ -16,7 +16,6 @@ setClass(
     sigma_Q = "numeric",
     h_Q = "matrix",
 
-    cov_QP = "numeric",
     rho_QP = "numeric",
     rho_1QP = "numeric",
     rho_2QP = "numeric",

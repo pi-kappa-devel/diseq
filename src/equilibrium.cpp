@@ -62,7 +62,7 @@ public:
 
   double sigma_P;
   double sigma_Q;
-  double cov_QP;
+  double sigma_QP;
   double rho_QP;
   double rho1_QP;
   double rho2_QP;
@@ -281,9 +281,9 @@ public:
     sigma_P = std::sqrt(var_P);
     sigma_Q = std::sqrt(var_Q);
 
-    cov_QP = (alphad * sigmas2 + alphas * sigmad2 - rho_sigmad_sigmas * (alphad + alphas)) /
+    sigma_QP = (alphad * sigmas2 + alphas * sigmad2 - rho_sigmad_sigmas * (alphad + alphas)) /
              std::pow(-alphad + alphas, 2);
-    rho_QP = cov_QP / sigma_P / sigma_Q;
+    rho_QP = sigma_QP / sigma_P / sigma_Q;
     rho1_QP = 1 / std::sqrt(1 - std::pow(rho_QP, 2));
     rho2_QP = rho_QP * rho1_QP;
     if (rho_QP == NA_REAL || std::fabs(rho_QP) >= 1) {

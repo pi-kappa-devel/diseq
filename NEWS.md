@@ -1,3 +1,7 @@
+# diseq 0.2.0.9010
+
+* Reduced file size of stochastic adjustment model's derivative calculations.
+
 # diseq 0.2.0.9009
 
 * Reduced file size of directional model's derivative calculations.
