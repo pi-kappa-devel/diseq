@@ -4,11 +4,17 @@
 \alias{marginal_effects}
 \alias{system_marginal}
 \alias{shortage_probability_marginal}
+\alias{system_marginal,disequilibrium_model-method}
+\alias{shortage_probability_marginal,disequilibrium_model-method}
 \title{Marginal effects}
 \usage{
 system_marginal(object, estimation, variable)
 
 shortage_probability_marginal(object, estimation, variable, aggregate = "mean")
+
+\S4method{system_marginal}{disequilibrium_model}(object, estimation, variable)
+
+\S4method{shortage_probability_marginal}{disequilibrium_model}(object, estimation, variable, aggregate = "mean")
 }
 \arguments{
 \item{object}{A disequilibrium model object.}

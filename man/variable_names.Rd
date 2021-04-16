@@ -7,6 +7,11 @@
 \alias{prefixed_price_variable}
 \alias{prefixed_control_variables}
 \alias{prefixed_variance_variable}
+\alias{prefixed_const_variable,equation_base-method}
+\alias{prefixed_independent_variables,equation_base-method}
+\alias{prefixed_price_variable,equation_base-method}
+\alias{prefixed_control_variables,equation_base-method}
+\alias{prefixed_variance_variable,equation_base-method}
 \title{Variable name access}
 \usage{
 prefixed_const_variable(object)
@@ -18,6 +23,16 @@ prefixed_price_variable(object)
 prefixed_control_variables(object)
 
 prefixed_variance_variable(object)
+
+\S4method{prefixed_const_variable}{equation_base}(object)
+
+\S4method{prefixed_independent_variables}{equation_base}(object)
+
+\S4method{prefixed_price_variable}{equation_base}(object)
+
+\S4method{prefixed_control_variables}{equation_base}(object)
+
+\S4method{prefixed_variance_variable}{equation_base}(object)
 }
 \arguments{
 \item{object}{An equation object.}

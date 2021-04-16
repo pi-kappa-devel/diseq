@@ -3,12 +3,18 @@
 \name{market_quantities}
 \alias{market_quantities}
 \alias{demanded_quantities}
+\alias{demanded_quantities,market_model-method}
 \alias{supplied_quantities}
+\alias{supplied_quantities,market_model-method}
 \title{Estimated market quantities.}
 \usage{
 demanded_quantities(object, parameters)
 
+\S4method{demanded_quantities}{market_model}(object, parameters)
+
 supplied_quantities(object, parameters)
+
+\S4method{supplied_quantities}{market_model}(object, parameters)
 }
 \arguments{
 \item{object}{A model object.}

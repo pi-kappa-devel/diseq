@@ -607,6 +607,7 @@ setGeneric(
   }
 )
 
+#' @rdname market_simulation
 setMethod(
   "simulate_data", signature(),
   function(model_type_string, nobs, tobs,
@@ -725,6 +726,7 @@ setGeneric(
 )
 
 
+#' @rdname market_simulation
 setMethod(
   "simulate_model", signature(),
   function(model_type_string, simulation_parameters, seed, verbose, ...) {

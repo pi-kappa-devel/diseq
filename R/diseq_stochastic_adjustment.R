@@ -72,6 +72,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "shortage_standard_deviation", signature(object = "diseq_stochastic_adjustment"),
   function(object, parameters) {

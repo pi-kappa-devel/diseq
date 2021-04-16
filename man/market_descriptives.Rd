@@ -4,11 +4,17 @@
 \alias{market_descriptives}
 \alias{demand_descriptives}
 \alias{supply_descriptives}
+\alias{demand_descriptives,market_model-method}
+\alias{supply_descriptives,market_model-method}
 \title{Market side descriptive statistics}
 \usage{
 demand_descriptives(object)
 
 supply_descriptives(object)
+
+\S4method{demand_descriptives}{market_model}(object)
+
+\S4method{supply_descriptives}{market_model}(object)
 }
 \arguments{
 \item{object}{A model object.}

@@ -200,6 +200,7 @@ setGeneric("quantities", function(object) {
   standardGeneric("quantities")
 })
 
+#' @rdname variable_names
 setMethod(
   "prefixed_const_variable", signature(object = "equation_base"),
   function(object) {
@@ -207,6 +208,7 @@ setMethod(
   }
 )
 
+#' @rdname variable_names
 setMethod(
   "prefixed_independent_variables", signature(object = "equation_base"),
   function(object) {
@@ -214,6 +216,7 @@ setMethod(
   }
 )
 
+#' @rdname variable_names
 setMethod(
   "prefixed_price_variable", signature(object = "equation_base"),
   function(object) {
@@ -221,6 +224,7 @@ setMethod(
   }
 )
 
+#' @rdname variable_names
 setMethod(
   "prefixed_control_variables", signature(object = "equation_base"),
   function(object) {
@@ -228,6 +232,7 @@ setMethod(
   }
 )
 
+#' @rdname variable_names
 setMethod(
   "prefixed_variance_variable", signature(object = "equation_base"),
   function(object) {

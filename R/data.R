@@ -1,3 +1,5 @@
+#' @importFrom rlang .data
+
 #' @title Credit market data for US housing starts
 #'
 #' @details
@@ -9,15 +11,15 @@
 #'
 #' \itemize{
 #'   \item \code{DATE} The date of the record.
-#'   \item \code{HS} Private non-farm housing starts in thousands of units (Not seasonally
-#' adjusted).
-#'   \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (beginning-of-month
-#' Data).
-#'   \item \code{DSLA} Savings capital (deposits) of savings and loan associations in millions
-#' of dollars.
+#'   \item \code{HS} Private non-farm housing starts in thousands of units
+#' (Not seasonally adjusted).
+#'   \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (
+#' beginning-of-month Data).
+#'   \item \code{DSLA} Savings capital (deposits) of savings and loan associations in
+#' millions of dollars.
 #'   \item \code{DMSB} Deposits of mutual savings banks in millions of dollars.
-#'   \item \code{DHLB} Advances of the federal home loan bank to savings and loan associations
-#' in million of dollars.
+#'   \item \code{DHLB} Advances of the federal home loan bank to savings and loan
+#' associations in million of dollars.
 #'   \item \code{W} Number of working days in month.
 #' }
 #' }
@@ -88,22 +90,23 @@ NULL
 #' @describeIn houses Generate Fair & Jaffee (1972) dataset
 #' @export
 fair_houses <- function() {
-  data(houses)
-  houses <- houses %>%
+  houses <- diseq::houses %>%
     dplyr::mutate(
       ID = 1,
-      DSF = DSLA + DMSB - dplyr::lag(DSLA + DMSB),
-      DHF = DHLB - dplyr::lag(DHLB),
-      MONTH = as.factor(sub("[0-9]{2}-([0-9]{2})-[0-9]{2}", "\\1", DATE)),
-      L2RM = dplyr::lag(RM, 2),
-      L1RM = dplyr::lag(RM),
-      L1HS = dplyr::lag(HS),
-      CSHS = cumsum(ifelse(is.na(L1HS), 0, L1HS)),
-      MA6DSF = (dplyr::lag(DSF, 6) + dplyr::lag(DSF, 5) + dplyr::lag(DSF, 4) +
-        dplyr::lag(DSF, 3) + dplyr::lag(DSF, 2) + dplyr::lag(DSF)) / 6,
-      MA3DHF = (dplyr::lag(DHF, 3) + dplyr::lag(DHF, 2) + dplyr::lag(DHF)) / 3,
+      DSF = .data$DSLA + .data$DMSB - dplyr::lag(.data$DSLA + .data$DMSB),
+      DHF = .data$DHLB - dplyr::lag(.data$DHLB),
+      MONTH = as.factor(sub("[0-9]{2}-([0-9]{2})-[0-9]{2}", "\\1", .data$DATE)),
+      L2RM = dplyr::lag(.data$RM, 2),
+      L1RM = dplyr::lag(.data$RM),
+      L1HS = dplyr::lag(.data$HS),
+      CSHS = cumsum(ifelse(is.na(.data$L1HS), 0, .data$L1HS)),
+      MA6DSF = (dplyr::lag(.data$DSF, 6) + dplyr::lag(.data$DSF, 5) +
+                dplyr::lag(.data$DSF, 4) + dplyr::lag(.data$DSF, 3) +
+                dplyr::lag(.data$DSF, 2) + dplyr::lag(.data$DSF)) / 6,
+      MA3DHF = (dplyr::lag(.data$DHF, 3) + dplyr::lag(.data$DHF, 2) +
+                dplyr::lag(.data$DHF)) / 3,
     ) %>%
-    dplyr::arrange(DATE) %>%
+    dplyr::arrange(.data$DATE) %>%
     dplyr::mutate(TREND = 1:dplyr::n())
   houses
 }

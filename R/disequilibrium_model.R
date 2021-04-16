@@ -210,6 +210,7 @@ setGeneric("shortage_probability_marginal",
 })
 
 
+#' @rdname shortage_analysis
 setMethod(
   "shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -219,6 +220,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "normalized_shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -226,6 +228,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "relative_shortages", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -236,6 +239,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "shortage_probabilities", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -243,6 +247,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "shortage_indicators", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -250,6 +255,7 @@ setMethod(
   }
 )
 
+#' @rdname shortage_analysis
 setMethod(
   "shortage_standard_deviation", signature(object = "disequilibrium_model"),
   function(object, parameters) {
@@ -259,6 +265,7 @@ setMethod(
   }
 )
 
+#' @rdname marginal_effects
 setMethod(
   "system_marginal", signature(object = "disequilibrium_model"),
   function(object, estimation, variable) {
@@ -283,6 +290,7 @@ setMethod(
   }
 )
 
+#' @rdname marginal_effects
 setMethod(
   "shortage_probability_marginal", signature(object = "disequilibrium_model"),
   function(object, estimation, variable, aggregate) {
@@ -294,7 +302,7 @@ setMethod(
     } else {
       allowed_aggergate <- c("mean", "at_the_mean")
       print_error(object@logger, paste0(
-        "Invalid `aggregate` option '", option, "'. Valid options are ('",
+        "Invalid `aggregate` option '", aggregate, "'. Valid options are ('",
         paste0(allowed_aggergate, collapse = "', '"), "')."))
     }
 

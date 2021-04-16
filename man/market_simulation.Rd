@@ -3,7 +3,9 @@
 \name{market_simulation}
 \alias{market_simulation}
 \alias{simulate_data}
+\alias{simulate_data,ANY-method}
 \alias{simulate_model}
+\alias{simulate_model,ANY-method}
 \title{Market model simulation}
 \usage{
 simulate_data(
@@ -33,7 +35,42 @@ simulate_data(
   verbose = 0
 )
 
+\S4method{simulate_data}{ANY}(
+  model_type_string,
+  nobs = NA_integer_,
+  tobs = NA_integer_,
+  alpha_d = NA_real_,
+  beta_d0 = NA_real_,
+  beta_d = NA_real_,
+  eta_d = NA_real_,
+  alpha_s = NA_real_,
+  beta_s0 = NA_real_,
+  beta_s = NA_real_,
+  eta_s = NA_real_,
+  gamma = NA_real_,
+  beta_p0 = NA_real_,
+  beta_p = NA_real_,
+  sigma_d = 1,
+  sigma_s = 1,
+  sigma_p = 1,
+  rho_ds = 0,
+  rho_dp = 0,
+  rho_sp = 0,
+  seed = NA_integer_,
+  price_generator = function(n) stats::rnorm(n = n, mean = 2.5, sd = 0.5),
+  control_generator = function(n) stats::rnorm(n = n, mean = 2.5, sd = 0.5),
+  verbose = 0
+)
+
 simulate_model(
+  model_type_string,
+  simulation_parameters,
+  seed = NA,
+  verbose = 0,
+  ...
+)
+
+\S4method{simulate_model}{ANY}(
   model_type_string,
   simulation_parameters,
   seed = NA,

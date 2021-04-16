@@ -3,12 +3,18 @@
 \name{market_aggregation}
 \alias{market_aggregation}
 \alias{aggregate_demand}
+\alias{aggregate_demand,market_model-method}
 \alias{aggregate_supply}
+\alias{aggregate_supply,market_model-method}
 \title{Market side aggregation.}
 \usage{
 aggregate_demand(object, parameters)
 
+\S4method{aggregate_demand}{market_model}(object, parameters)
+
 aggregate_supply(object, parameters)
+
+\S4method{aggregate_supply}{market_model}(object, parameters)
 }
 \arguments{
 \item{object}{A model object.}

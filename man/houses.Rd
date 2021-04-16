@@ -35,15 +35,15 @@ follows:
 
 \itemize{
   \item \code{DATE} The date of the record.
-  \item \code{HS} Private non-farm housing starts in thousands of units (Not seasonally
-adjusted).
-  \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (beginning-of-month
-Data).
-  \item \code{DSLA} Savings capital (deposits) of savings and loan associations in millions
-of dollars.
+  \item \code{HS} Private non-farm housing starts in thousands of units
+(Not seasonally adjusted).
+  \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (
+beginning-of-month Data).
+  \item \code{DSLA} Savings capital (deposits) of savings and loan associations in
+millions of dollars.
   \item \code{DMSB} Deposits of mutual savings banks in millions of dollars.
-  \item \code{DHLB} Advances of the federal home loan bank to savings and loan associations
-in million of dollars.
+  \item \code{DHLB} Advances of the federal home loan bank to savings and loan
+associations in million of dollars.
   \item \code{W} Number of working days in month.
 }
 }

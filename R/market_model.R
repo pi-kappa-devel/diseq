@@ -678,7 +678,6 @@ setGeneric("number_of_observations", function(object) {
 })
 
 #' @title Market side descriptive statistics
-#'
 #' @details Calculates and returns basic descriptive statistics for the model's demand
 #' or supply side data. Factor variables are excluded from the calculations. The function
 #' calculates and returns:
@@ -820,10 +819,12 @@ setMethod(
   }
 )
 
+#' @rdname market_descriptives
 setMethod("demand_descriptives", signature(object = "market_model"), function(object) {
   descriptives(object, object@system@demand@independent_variables)
 })
 
+#' @rdname market_descriptives
 setMethod("supply_descriptives", signature(object = "market_model"), function(object) {
   descriptives(object, object@system@supply@independent_variables)
 })
@@ -1018,6 +1019,7 @@ setGeneric("aggregate_demand", function(object, parameters) {
   standardGeneric("aggregate_demand")
 })
 
+#' @rdname market_aggregation
 setMethod("aggregate_demand", signature(object = "market_model"),
           function(object, parameters) {
   aggregate_equation(object, parameters, "demand")
@@ -1059,6 +1061,7 @@ setGeneric("demanded_quantities", function(object, parameters) {
   standardGeneric("demanded_quantities")
 })
 
+#' @rdname market_quantities
 setMethod(
   "demanded_quantities", signature(object = "market_model"),
   function(object, parameters) {
@@ -1073,6 +1076,7 @@ setGeneric("aggregate_supply", function(object, parameters) {
   standardGeneric("aggregate_supply")
 })
 
+#' @rdname market_aggregation
 setMethod("aggregate_supply", signature(object = "market_model"),
           function(object, parameters) {
   aggregate_equation(object, parameters, "supply")
@@ -1084,6 +1088,7 @@ setGeneric("supplied_quantities", function(object, parameters) {
   standardGeneric("supplied_quantities")
 })
 
+#' @rdname market_quantities
 setMethod(
   "supplied_quantities", signature(object = "market_model"),
   function(object, parameters) {
