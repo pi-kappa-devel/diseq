@@ -1,5 +1,15 @@
 #' @include equation_deterministic_adjustment.R
 #' @include system_base.R
+
+#' @describeIn system_classes Deterministic adjustment model's system class
+#' @slot gamma Excess demand coefficient.
+#' @slot delta \deqn{\delta = \gamma + \alpha_{d} - \alpha_{s}}
+#' @slot mu_P \deqn{\mu_{P} = \mathrm{E}P}
+#' @slot var_P \deqn{V_{P} = \mathrm{Var}P}
+#' @slot sigma_P \deqn{\sigma_{P} = \sqrt{V_{P}}}
+#' @slot h_P \deqn{h_{P} = \frac{P - \mu_{P}}{\sigma_{P}}}
+#' @slot lagged_price_vector A vector with the system's observed prices lagged by
+#' one date.
 setClass(
   "system_deterministic_adjustment",
   contains = "system_base",
@@ -12,19 +22,11 @@ setClass(
     sigma_P = "numeric",
     h_P = "matrix",
 
-    gr_mu_P = "matrix",
-    gr_var_P = "matrix",
-
-    log_likelihood = "matrix",
-
     lagged_price_vector = "matrix"
   ),
   prototype(
     gamma = NA_real_,
     delta = NA_real_,
-
-    log_likelihood = matrix(NA_real_),
-    gradient = matrix(NA_real_),
 
     lagged_price_vector = matrix(NA_real_)
   )

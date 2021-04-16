@@ -1,4 +1,25 @@
 #' @include equation_base.R
+
+#' @title System classes
+#'
+#' @details Classes with data and functionality describing systems of models.
+#' @name system_classes
+NULL
+
+#' @describeIn system_classes System base class
+#' @slot demand Demand equation.
+#' @slot supply Supply equation.
+#' @slot correlated_shocks Boolean indicating whether the shock of the equations of the
+#' system are correlated.
+#' @slot sample_separation Boolean indicating whether the sample of the system is
+#' separated.
+#' @slot quantity_variable The name of the quantity variable of the system.
+#' @slot price_variable The name of the price variable of the system.
+#' @slot quantity_vector A vector with the system's observed quantities.
+#' @slot price_vector A vector with the system's observed prices.
+#' @slot rho Correlation coefficient of demand and supply shocks.
+#' @slot rho1 \deqn{\rho_{1} = \frac{1}{\sqrt{1 - \rho}}}
+#' @slot rho2 \deqn{\rho_{2} = \rho\rho_{1}}
 setClass(
   "system_base",
   representation(
@@ -126,9 +147,12 @@ setMethod("lagged_price_variable", signature(object = "system_base"), function(o
   paste0("LAGGED_", object@demand@price_variable)
 })
 
-setMethod("price_differences_variable", signature(object = "system_base"), function(object) {
-  paste0(object@price_variable, "_DIFF")
-})
+setMethod(
+  "price_differences_variable", signature(object = "system_base"),
+  function(object) {
+    paste0(object@price_variable, "_DIFF")
+  }
+)
 
 setMethod("correlation_variable", signature(object = "system_base"), function(object) {
   "RHO"
@@ -156,14 +180,17 @@ setMethod("likelihood_variables", signature(object = "system_base"), function(ob
 })
 
 
-setMethod("set_parameters", signature(object = "system_base"), function(object, parameters) {
-  object@demand <- set_parameters(object@demand, parameters)
-  object@supply <- set_parameters(object@supply, parameters)
-  if (object@correlated_shocks) {
-    object@rho <- parameters[correlation_variable(object)]
-    object@rho <- ifelse(abs(object@rho) > 1, NA_real_, object@rho)
-    object@rho1 <- 1 / sqrt(1 - object@rho**2)
-    object@rho2 <- object@rho * object@rho1
+setMethod(
+  "set_parameters", signature(object = "system_base"),
+  function(object, parameters) {
+    object@demand <- set_parameters(object@demand, parameters)
+    object@supply <- set_parameters(object@supply, parameters)
+    if (object@correlated_shocks) {
+      object@rho <- parameters[correlation_variable(object)]
+      object@rho <- ifelse(abs(object@rho) > 1, NA_real_, object@rho)
+      object@rho1 <- 1 / sqrt(1 - object@rho**2)
+      object@rho2 <- object@rho * object@rho1
+    }
+    object
   }
-  object
-})
+)

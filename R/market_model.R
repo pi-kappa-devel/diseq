@@ -11,19 +11,25 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 utils::globalVariables("where")
 
-#' @title Model base class
+#' @title Market model classes
 #'
 #' @slot logger Logger object.
-#' @slot key_columns Vector of column names that uniquely identify data records. For panel data
-#'   this vector should contain an entity and a time point identifier.
+#' @slot key_columns Vector of column names that uniquely identify data records. For
+#' panel data this vector should contain an entity and a time point identifier.
 #' @slot time_column Column name for the time point data.
-#' @slot explanatory_columns Vector of explanatory column names for all model's equations.
-#' @slot data_columns Vector of model's data column names. This is the union of the quantity,
-#'   price and explanatory columns.
+#' @slot explanatory_columns Vector of explanatory column names for all model's
+#' equations.
+#' @slot data_columns Vector of model's data column names. This is the union of the
+#' quantity, price and explanatory columns.
 #' @slot columns Vector of primary key and data column names for all model's equations.
 #' @slot model_tibble Model data \code{tibble}.
 #' @slot model_type_string Model type string description.
 #' @slot system Model's system of equations.
+#' @name market_models
+#' @seealso initialize_market_model
+NULL
+
+#' @describeIn market_models Base class for market models
 setClass(
   "market_model",
   representation(
@@ -48,41 +54,47 @@ setClass(
 #' @title Model initialization
 #'
 #' @details
-#' ## Common initialization
+#' The following two subsections describe the common initialization steps of all market
+#' model classes.
 #'
-#' ### Variable construction
+#' \subsection{Variable construction}{
+#' The constructor prepares the model's variables using the passed specifications. The
+#' specification strings are expected to follow the syntax of
+#' \code{\link[stats]{formula}}. The construction of the model's data uses the variables
+#' that are extracted by these specification. The demand variables are extracted by a
+#' formula that uses the \code{quantity_column} on the left hand side and the
+#' \code{demand_specification} on the right hand side of the formula. The supply
+#' variables are constructed by the the\code{quantity_column} and the
+#' \code{supply_specification}. In the case of the
+#' \code{\linkS4class{diseq_stochastic_adjustment}} model, the price dynamics'
+#' variables are extracted using the \code{quantity_column} and the
+#' \code{price_specification}
+#' }
 #'
-#'   The constructor prepares the model's variables using the passed specifications. The
-#'   specification strings are expected to follow the
-#'   syntax of \code{\link[stats]{formula}}. The construction of the model's data uses the variables
-#'   that are extracted by these specification. The demand variables are extracted by a formula that
-#'   uses the \code{quantity_column} on the left hand side and the \code{demand_specification} on
-#'   the right hand side of the formula. The supply variables are constructed by the and the
-#'   \code{quantity_column} and the  \code{supply_specification}. In the case of the
-#'   \code{\linkS4class{diseq_stochastic_adjustment}} model, the price dynamics' variables are
-#'   extracted using the \code{quantity_column} and the \code{price_specification}
+#' \subsection{Data preparation}{
+#'   1. If the passed data set contains rows with NA values, they are dropped. If the
+#' verbosity level allows warnings, a warning is emitted reporting how many rows were
+#' dropped.
 #'
-#' ### Data preparation
+#'   2. After dropping the rows, factor levels may be invalidated. If needed, the
+#' constructor readjusts the factor variables by removing the unobserved levels. Factor
+#' indicators and interaction terms are automatically created.
 #'
-#'   1. If the passed data set contains rows with NA values, they are dropped. If the verbosity
-#'     level allows warnings, a warning is emitted reporting how many rows were dropped.
+#'   3. The primary key column is constructed by pasting the values of the key_columns.
 #'
-#'   2. After dropping the rows, factor levels may be invalidated. If needed the constructor
-#'     readjusts the factor variables by removing the unobserved levels. Factor indicators and
-#'     interaction terms are automatically created.
+#'   4. In the cases of the \code{\linkS4class{diseq_directional}},
+#' \code{\linkS4class{diseq_deterministic_adjustment}}, and
+#' the \code{\linkS4class{diseq_stochastic_adjustment}} models, a column with lagged
+#' prices is constructed. Since lagged prices are unavailable for the observations of
+#' the first time point, these observations are dropped. If the verbosity level allows
+#' the emission of information messages, the constructor prints the number of dropped
+#' observations.
 #'
-#'   3. The primary column is constructed by pasting the values of the key_columns.
+#'   5. In the cases of the \code{\linkS4class{diseq_directional}}
+#' and the \code{\linkS4class{diseq_stochastic_adjustment}} models, a column with price
+#' differences is created.
+#' }
 #'
-#'   4. In the case of the \code{\linkS4class{diseq_directional}},
-#'     \code{\linkS4class{diseq_deterministic_adjustment}}, and
-#'     the \code{\linkS4class{diseq_stochastic_adjustment}} models, a column with lagged prices
-#'     is constructed. Since lagged prices are unavailable for the observation of the first
-#'     time points, these observations are dropped. If the verbosity level allows the emission
-#'     of information messages, the constructor prints the number of dropped observations.
-#'
-#'   5. In the case of the \code{\linkS4class{diseq_directional}},
-#'     and the \code{\linkS4class{diseq_stochastic_adjustment}} models, a column with price
-#'     differences is created.
 #' @param .Object The object to be Constructed.
 #' @param verbose Verbosity level.
 #' @param key_columns Key columns of the data set.
@@ -113,7 +125,7 @@ setMethod(
     .Object@model_type_string <- model_type_string
     .Object@logger <- new("model_logger", verbose)
     .Object@system@correlated_shocks <- correlated_shocks
-    print_info(.Object@logger, "This is '", model_description(.Object), "' model")
+    print_info(.Object@logger, "This is '", model_name(.Object), "' model")
 
     .Object@key_columns <- key_columns
     .Object@time_column <- time_column
@@ -128,7 +140,8 @@ setMethod(
         all.vars(formula(paste0(price_column, " ~ ", price_specification)))
       ))
     }
-    .Object@data_columns <- unique(c(quantity_column, price_column, .Object@explanatory_columns))
+    .Object@data_columns <- unique(c(quantity_column, price_column,
+                                     .Object@explanatory_columns))
     .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
 
     ## Data assignment
@@ -173,7 +186,8 @@ setMethod(
       "Directional", "Deterministic Adjustment", "Stochastic Adjustment"
     )) {
       ## Generate lags
-      key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns != .Object@time_column])
+      key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns !=
+                                                  .Object@time_column])
       price_sym <- rlang::sym(price_column)
       time_sym <- rlang::sym(.Object@time_column)
       lagged_price_column <- paste0("LAGGED_", price_column)
@@ -223,7 +237,8 @@ setMethod(
       )
     }
 
-    print_verbose(.Object@logger, "Using columns ", paste0(.Object@columns, collapse = ", "), ".")
+    print_verbose(.Object@logger, "Using columns ",
+                  paste0(.Object@columns, collapse = ", "), ".")
 
     .Object
   }
@@ -235,28 +250,28 @@ setMethod(
 #' @param object A model object.
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
-#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
-#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
-#'   1.2, 3.1, c(0.8) # price equation
+#' model <- simulate_model(
+#'   "diseq_stochastic_adjustment", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
+#'     # supply coefficients
+#'     alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     # price equation coefficients
+#'     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
+#'   ),
+#'   seed = 31
 #' )
 #'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_stochastic_adjustment", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   "Xp1", # price dynamics specification
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # print the model
+#' # print short model information
 #' show(model)
 #' }
 #' @rdname show
 #' @export
+setGeneric("show")
+
+#' @rdname show
 setMethod("show", signature(object = "market_model"), function(object) {
   cat(sprintf(
     "\n%s Model for Markets in %s\n",
@@ -279,24 +294,21 @@ setMethod("show", signature(object = "market_model"), function(object) {
 #' @param object A model object.
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities, observed time points
-#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, -0.1), # demand coefficients
-#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
-#'   1.2, 3.1, c(0.8) # price equation
+#' model <- simulate_model(
+#'   "diseq_stochastic_adjustment", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
+#'     # supply coefficients
+#'     alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     # price equation coefficients
+#'     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
+#'   ),
+#'   seed = 556
 #' )
 #'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_stochastic_adjustment", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, time, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   "Xp1", # price dynamics specification
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # print the model
+#' # print model summary
 #' summary(model)
 #' }
 #' @rdname summary
@@ -323,22 +335,19 @@ setMethod("summary", signature(object = "market_model"), function(object) {
 #' @param x A model object.
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.03, -0.02), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(0.05, 0.02), # supply coefficients
+#' model <- simulate_model(
+#'   "diseq_basic", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.3, -0.2), eta_d = c(-0.03, -0.01),
+#'     # supply coefficients
+#'     alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03), eta_s = c(0.05, 0.02)
+#'   ),
+#'   seed = 44
 #' )
 #'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, time, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # print the model
+#' # show model's illustration plot
 #' plot(model)
 #' }
 #' @rdname plot
@@ -358,8 +367,8 @@ setMethod("plot", signature(x = "market_model"), function(x) {
 #' Maddala and Nelson (1974) \doi{10.2307/1914215}. The likelihoods expressions
 #' that the function uses are derived in
 #' Karapanagiotis (2020) \doi{10.2139/ssrn.3525622}. The function calculates
-#' the model's log likelihood by evaluating the log likelihood of each observation in the sample
-#' and summing the evaluation results.
+#' the model's log likelihood by evaluating the log likelihood of each observation in
+#' the sample and summing the evaluation results.
 #' @param object A model object.
 #' @param parameters A vector of parameters at which the function is to be evaluated.
 #' @return The opposite of the sum of the likelihoods evaluated for each observation.
@@ -369,10 +378,28 @@ setGeneric("minus_log_likelihood", function(object, parameters) {
   standardGeneric("minus_log_likelihood")
 })
 
+#' Gradient
+#'
+#' Returns the gradient of the opposite of the log-likelihood evaluated at the passed
+#' parameters.
+#' @param object A model object.
+#' @param parameters A vector of parameters at which the gradient is to be evaluated.
+#' @return The opposite of the model log likelihood's gradient.
+#' @rdname gradient
+#' @export
 setGeneric("gradient", function(object, parameters) {
   standardGeneric("gradient")
 })
 
+#' Hessian
+#'
+#' Returns the hessian of the opposite of the log-likelihood evaluated at the passed
+#' parameters.
+#' @param object A model object.
+#' @param parameters A vector of parameters at which the hessian is to be evaluated.
+#' @return The opposite of the model log likelihood's hessian.
+#' @rdname hessian
+#' @export
 setGeneric("hessian", function(object, parameters) {
   standardGeneric("hessian")
 })
@@ -419,44 +446,41 @@ validate_standard_error_option <- function(object, option) {
 #' Model estimation.
 #'
 #' All models are estimated using full information maximum likelihood. The
-#' \code{\linkS4class{equilibrium_model}} can also be estimated using two-stage least squares.
-#' The maximum likelihood estimation is based on \code{\link[bbmle]{mle2}}. If no starting
-#' values are provided, the function uses linear regression estimates as initializing values.
-#' The default optimization method is
-#' BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The implementation of the two-stage
-#' least square estimation of the \code{\linkS4class{equilibrium_model}} is based on
-#' \code{\link[systemfit]{systemfit}}.
+#' \code{\linkS4class{equilibrium_model}} can also be estimated using two-stage
+#' least squares. The maximum likelihood estimation is based on
+#' \code{\link[bbmle]{mle2}}. If no starting values are provided, the function uses
+#' linear regression estimates as initializing values. The default optimization method is
+#' BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The implementation of
+#' the two-stage least square estimation of the \code{\linkS4class{equilibrium_model}}
+#' is based on \code{\link[systemfit]{systemfit}}.
 #' @param object A model object.
-#' @param ... Named parameter used in the model's estimation. These are passed further down
-#'   to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
-#' parameters are passed
-#'   to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to
-#' \code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters
-#' are passed to \code{\link[bbmle]{mle2}}.
+#' @param ... Named parameter used in the model's estimation. These are passed further
+#' down to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
+#' parameters are passed to \code{\link[systemfit]{systemfit}}, if the method is set to
+#' \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of
+#' the models, the parameters are passed to \code{\link[bbmle]{mle2}}.
 #' @return The object that holds the estimation result.
 #' @rdname estimate
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
+#' # initialize the model using the houses dataset
 #' model <- new(
-#'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
+#'   "diseq_deterministic_adjustment", # model type
+#'   c("ID", "TREND"), "TREND", "HS", "RM", # keys, time, quantity, and price variables
+#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
+#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   fair_houses(), # data
+#'   correlated_shocks = FALSE # allow shocks to be correlated
 #' )
 #'
-#' # estimate the model object (by default the maximum optimization is using BFGS)
+#' # estimate the model object (BFGS is used by default)
 #' est <- estimate(model)
 #'
-#' # estimate the model by specifying the optimization details that are passed to the optimizer.
-#' est <- estimate(model, control = list(reltol = 1e-4), method = "BFGS")
+#' # estimate the model by specifying the optimization details passed to the optimizer.
+#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+#'
+#' # summarize results
+#' bbmle::summary(est)
 #' }
 #' @export
 setGeneric("estimate", function(object, ...) {
@@ -539,11 +563,13 @@ setMethod(
 #' Maximize the log-likelihood.
 #'
 #' Maximizes the log-likelihood using the
-#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} implementation of
-#' the BFGS algorithm. This function is primarily intended for advanced usage. The
-#' \code{\link{estimate}} functionality is a fast, analysis-oriented alternative. If
-#' the \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
-#' available, the function returns a trivial result list with status set equal to -1. If the
+#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}}
+#' implementation of the BFGS algorithm. This function is primarily intended for
+#' advanced usage. The \code{\link{estimate}} functionality is a fast,
+#' analysis-oriented alternative. If the
+#' \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
+#' available, the function returns a trivial result list with status set equal to -1.
+#' If the
 #' \href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17
 #' execution policies}
 #' are available, the implementation of the optimization is parallelized.
@@ -557,19 +583,16 @@ setMethod(
 #' @seealso estimate
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "equilibrium_model", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
-#' model <- new(
-#'   "equilibrium_model", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
+#' model <- simulate_model(
+#'   "equilibrium_model", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.9, beta_d0 = 14.9, beta_d = c(0.3, -0.2), eta_d = c(-0.03, -0.01),
+#'     # supply coefficients
+#'     alpha_s = 0.9, beta_s0 = 3.2, beta_s = c(0.03), eta_s = c(0.05, 0.02)
+#'   ),
+#'   seed = 99
 #' )
 #'
 #' # maximize the model's log-likelihood
@@ -578,6 +601,7 @@ setMethod(
 #'   start = NULL, step = 1e-5,
 #'   objective_tolerance = 1e-4, gradient_tolerance = 1e-3
 #' )
+#' mll
 #' }
 #' @export
 setGeneric("maximize_log_likelihood", function(object, start, step, objective_tolerance,
@@ -598,26 +622,23 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 #' @rdname scores
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#' model <- simulate_model(
+#'   "diseq_basic", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.6), eta_d = c(-0.2),
+#'     # supply coefficients
+#'     alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03, 1.2), eta_s = c(0.1)
+#'   ),
+#'   seed = 7523
 #' )
 #'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model object (by default the maximum optimization is using BFGS)
+#' # estimate the model object (BFGS is used by default)
 #' est <- estimate(model)
 #'
 #' # Calculate the score matrix
-#' scores <- scores(model, est@coef)
+#' head(scores(model, est@coef))
 #' }
 #' @export
 setGeneric("scores", function(object, parameters) {
@@ -637,17 +658,17 @@ setGeneric("set_clustered_errors", function(object, ...) {
 #' A unique identifying string for the model.
 #' @param object A model object.
 #' @return A string representation of the model.
-#' @rdname model_description
+#' @rdname model_name
 #' @export
-setGeneric("model_description", function(object) {
-  standardGeneric("model_description")
+setGeneric("model_name", function(object) {
+  standardGeneric("model_name")
 })
 
 #' Number of observations.
 #'
-#' Returns the number of observations that are used by an initialized model. The number of
-#' used observations may differ
-#' from the numbers of observations of the data set that was passed to the model's initialization.
+#' Returns the number of observations that are used by an initialized model. The number
+#' of used observations may differ from the numbers of observations of the data set
+#' that was passed to the model's initialization.
 #' @param object A model object.
 #' @return The number of used observations.
 #' @rdname number_of_observations
@@ -656,30 +677,58 @@ setGeneric("number_of_observations", function(object) {
   standardGeneric("number_of_observations")
 })
 
+#' @title Market side descriptive statistics
+#'
+#' @details Calculates and returns basic descriptive statistics for the model's demand
+#' or supply side data. Factor variables are excluded from the calculations. The function
+#' calculates and returns:
+#' \itemize{
+#' \item \code{nobs} Number of observations.
+#' \item \code{nmval} Number of missing values.
+#' \item \code{min} Minimum observation.
+#' \item \code{max} Maximum observation.
+#' \item \code{range} Observations' range.
+#' \item \code{sum} Sum of observations.
+#' \item \code{median} Median observation.
+#' \item \code{mean} Mean observation.
+#' \item \code{mean_se} Mean squared error.
+#' \item \code{mean_ce} Confidence interval bound.
+#' \item \code{var} Variance.
+#' \item \code{sd} Standard deviation.
+#' \item \code{coef_var} Coefficient of variation.
+#' }
+#' @param object A model object.
+#' @return A data \code{tibble} containing descriptive statistics.
+#' @examples
+#' # initialize the basic model using the houses dataset
+#' model <- new(
+#'   "diseq_basic", # model type
+#'   c("ID", "TREND"), "HS", "RM", # keys, quantity, and price variables
+#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
+#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   fair_houses(), # data
+#'   correlated_shocks = FALSE # allow shocks to be correlated
+#' )
+#'
+#' # get descriptive statistics of demand side variables
+#' demand_descriptives(model)
+#'
+#' # get descriptive statistics of supply side variables
+#' supply_descriptives(model)
+#' @name market_descriptives
+NULL
 
 setGeneric("descriptives", function(object, variables) {
   standardGeneric("descriptives")
 })
 
-#' Demand descriptive statistics
-#'
-#' Calculates and returns basic descriptive statistics for the model's demand data. Factor
-#' variables are excluded from the calculations.
-#' @param object A model object.
-#' @return A data \code{tibble} containing descriptive statistics.
-#' @rdname demand_descriptives
+#' @describeIn market_descriptives Demand descriptive statistics.
 #' @export
 setGeneric("demand_descriptives", function(object) {
   standardGeneric("demand_descriptives")
 })
 
-#' Supply descriptive statistics
-#'
-#' Calculates and returns basic descriptive statistics for the model's supply data. Factor
-#' variables are excluded from  the calculations.
-#' @param object A model object.
-#' @return A data \code{tibble} containing descriptive statistics.
-#' @rdname supply_descriptives
+#' @describeIn market_descriptives Supply descriptive statistics.
 #' @export
 setGeneric("supply_descriptives", function(object) {
   standardGeneric("supply_descriptives")
@@ -730,8 +779,8 @@ setMethod(
   }
 )
 
-#' @rdname model_description
-setMethod("model_description", signature(object = "market_model"), function(object) {
+#' @rdname model_name
+setMethod("model_name", signature(object = "market_model"), function(object) {
   paste0(
     object@model_type_string, " with ",
     ifelse(object@system@correlated_shocks, "correlated", "independent"), " shocks"
@@ -739,7 +788,8 @@ setMethod("model_description", signature(object = "market_model"), function(obje
 })
 
 #' @rdname number_of_observations
-setMethod("number_of_observations", signature(object = "market_model"), function(object) {
+setMethod("number_of_observations", signature(object = "market_model"),
+          function(object) {
   nrow(object@model_tibble)
 })
 
@@ -749,7 +799,10 @@ setMethod(
     if (is.null(variables)) {
       variables <- object@columns
     }
-    variables <- variables[sapply(variables, function(c) !is.factor(object@model_tibble[, c]))]
+    variables <- variables[sapply(
+      variables,
+      function(c) !is.factor(object@model_tibble[[c]])
+    )]
 
     tibble::as_tibble(apply(
       object@model_tibble[, variables], 2,
@@ -767,12 +820,10 @@ setMethod(
   }
 )
 
-#' @rdname demand_descriptives
 setMethod("demand_descriptives", signature(object = "market_model"), function(object) {
   descriptives(object, object@system@demand@independent_variables)
 })
 
-#' @rdname supply_descriptives
 setMethod("supply_descriptives", signature(object = "market_model"), function(object) {
   descriptives(object, object@system@supply@independent_variables)
 })
@@ -781,7 +832,8 @@ setGeneric("calculate_initializing_values", function(object) {
   standardGeneric("calculate_initializing_values")
 })
 
-setMethod("calculate_initializing_values", signature(object = "market_model"), function(object) {
+setMethod("calculate_initializing_values", signature(object = "market_model"),
+          function(object) {
   dlm <- object@system@demand@linear_model
 
   slm <- object@system@supply@linear_model
@@ -834,7 +886,8 @@ setMethod("calculate_initializing_values", signature(object = "market_model"), f
   )
   start <- c(start, slm$coefficients[start_names])
 
-  if (object@model_type_string %in% c("Deterministic Adjustment", "Stochastic Adjustment")) {
+  if (object@model_type_string %in% c("Deterministic Adjustment",
+                                      "Stochastic Adjustment")) {
     start <- c(start, gamma = 1)
     names(start)[length(start)] <- price_differences_variable(object@system)
   }
@@ -867,37 +920,59 @@ setMethod(
     names(initializing_vector) <- likelihood_variables(object@system)
     print_debug(
       object@logger, "Using starting values: ",
-      paste(names(initializing_vector), initializing_vector, sep = " = ", collapse = ", ")
+      paste(names(initializing_vector), initializing_vector, sep = " = ",
+            collapse = ", ")
     )
 
     initializing_vector
   }
 )
 
-
-#' Demand aggregation.
+#' @title Market side aggregation.
 #'
-#' Calculates the sample's aggregate demand at the passed set of parameters.
+#' @details Calculates the sample's aggregate demand or supply at the passed set of
+#' parameters. If the model is static, as is for example the case of
+#' \code{\linkS4class{equilibrium_model}}, then all observation are aggregated. If the
+#' used data have a time dimension and aggregation per date is required, it can be
+#' manually performed using the \code{\link{demanded_quantities}} and
+#' \code{\link{supplied_quantities}} functions. If the model has a dynamic component,
+#' such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
+#' and supplied quantities are automatically calculated per date.
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
-#' @return The sum of the demanded quantities evaluated at the given parameters.
-#' @rdname aggregate_demand
-#' @seealso demanded_quantities
+#' @return The sum of the estimated demanded or supplied quantities evaluated at the
+#' given parameters.
+#' @name market_aggregation
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
+#' # initialize the basic model using the houses dataset
 #' model <- new(
 #'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
+#'   c("ID", "TREND"), "HS", "RM", # keys, quantity, and price variables
+#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
+#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   fair_houses(), # data
+#'   correlated_shocks = FALSE # allow shocks to be correlated
+#' )
+#'
+#' # estimate the model object (BFGS is used by default)
+#' est <- estimate(model)
+#'
+#' # get estimated aggregate demand
+#' aggregate_demand(model, est@coef)
+#'
+#' # simulate the deterministic adjustment model
+#' model <- simulate_model(
+#'   "diseq_deterministic_adjustment", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.6, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
+#'     # supply coefficients
+#'     alpha_s = 0.2, beta_s0 = 4.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     # price equation coefficients
+#'     gamma = 0.9
+#'   ), seed = 1356
 #' )
 #'
 #' # estimate the model object
@@ -905,55 +980,85 @@ setMethod(
 #'
 #' # get estimated aggregate demand
 #' aggregate_demand(model, est@coef)
+#'
+#' # get estimated aggregate demand
+#' aggregate_supply(model, est@coef)
 #' }
+#' @seealso demanded_quantities, supplied_quantities
+NULL
+
+setGeneric("aggregate_equation", function(object, parameters, equation) {
+  standardGeneric("aggregate_equation")
+})
+
+setMethod("aggregate_equation", signature(object = "market_model"),
+          function(object, parameters, equation) {
+  object@system <- set_parameters(object@system, parameters)
+  quantities <- quantities(slot(object@system, equation))
+  aggregate_name <- paste0("aggregate_", equation)
+  result <- NULL
+  if (!is.null(object@time_column)) {
+    time_symbol <- rlang::sym(object@time_column)
+    aggregate_symbol <- rlang::sym(aggregate_name)
+    result <- object@model_tibble[, object@time_column] %>%
+      dplyr::mutate(!!aggregate_symbol := quantities) %>%
+      dplyr::group_by(!!time_symbol) %>%
+      dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
+  } else {
+    result <- sum(quantities)
+    names(result) <- aggregate_name
+  }
+  result
+})
+
+
+#' @describeIn market_aggregation Demand aggregation.
 #' @export
 setGeneric("aggregate_demand", function(object, parameters) {
   standardGeneric("aggregate_demand")
 })
 
-#' @rdname aggregate_demand
-setMethod("aggregate_demand", signature(object = "market_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  aggregate(object@system@demand)
+setMethod("aggregate_demand", signature(object = "market_model"),
+          function(object, parameters) {
+  aggregate_equation(object, parameters, "demand")
 })
 
-#' Demanded quantities.
+#' @title Estimated market quantities.
 #'
-#' Calculates the demanded quantity for each observation.
+#' @details Calculates and returns the estimated demanded or supplied quantities for
+#' each observation at the passed vector of parameters.
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
-#' @return A vector with the demanded quantities evaluated at the given parameter vector.
-#' @rdname demanded_quantities
-#' @seealso aggregate_demand
+#' @return A vector with the demanded quantities evaluated at the given parameter
+#' vector.
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
+#' # initialize the model using the houses dataset
 #' model <- new(
 #'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
+#'   c("ID", "TREND"), "HS", "RM", # keys, quantity, and price variables
+#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
+#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   fair_houses(), # data
+#'   correlated_shocks = FALSE # allow shocks to be correlated
 #' )
 #'
-#' # estimate the model object
+#' # estimate the model object (BFGS is used by default)
 #' est <- estimate(model)
 #'
-#' # get estimated demanded quantities
-#' demq <- demanded_quantities(model, est@coef)
+#' # get estimated demanded and supplied quantities
+#' head(cbind(demanded_quantities(model, est@coef),
+#'      supplied_quantities(model, est@coef)))
 #' }
+#' @name market_quantities
+NULL
+
+#' @describeIn market_quantities Estimated demanded quantities.
 #' @export
 setGeneric("demanded_quantities", function(object, parameters) {
   standardGeneric("demanded_quantities")
 })
 
-#' @rdname demanded_quantities
 setMethod(
   "demanded_quantities", signature(object = "market_model"),
   function(object, parameters) {
@@ -962,85 +1067,23 @@ setMethod(
   }
 )
 
-#' Supply aggregation.
-#'
-#' Calculates the sample's aggregate supply at the passed set of parameters.
-#' @param object A model object.
-#' @param parameters A vector of model's parameters.
-#' @return The sum of the supplied quantities evaluated at the given parameters.
-#' @rdname aggregate_supply
-#' @seealso supplied_quantities
-#' @examples
-#' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model object
-#' est <- estimate(model)
-#'
-#' # get estimated aggregate supply
-#' aggregate_supply(model, est@coef)
-#' }
+#' @describeIn market_aggregation Supply aggregation.
 #' @export
 setGeneric("aggregate_supply", function(object, parameters) {
   standardGeneric("aggregate_supply")
 })
 
-#' @rdname aggregate_supply
-setMethod("aggregate_supply", signature(object = "market_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  aggregate(object@system@supply)
+setMethod("aggregate_supply", signature(object = "market_model"),
+          function(object, parameters) {
+  aggregate_equation(object, parameters, "supply")
 })
 
-#' Supplied quantities.
-#'
-#' Calculates the supplied quantity for each observation.
-#' @param object A model object.
-#' @param parameters A vector of model's parameters.
-#' @return A vector with the supplied quantities evaluated at the given parameter vector.
-#' @rdname supplied_quantities
-#' @seealso aggregate_supply
-#' @examples
-#' \donttest{
-#' simulated_data <- simulate_model_data(
-#'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
-#'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-#' )
-#'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model object
-#' est <- estimate(model)
-#'
-#' # get estimated supplied quantities
-#' supq <- supplied_quantities(model, est@coef)
-#' }
+#' @describeIn market_quantities Estimated supplied quantities.
 #' @export
 setGeneric("supplied_quantities", function(object, parameters) {
   standardGeneric("supplied_quantities")
 })
 
-#' @rdname supplied_quantities
 setMethod(
   "supplied_quantities", signature(object = "market_model"),
   function(object, parameters) {

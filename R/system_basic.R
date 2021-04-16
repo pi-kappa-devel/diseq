@@ -1,6 +1,9 @@
 #' @include equation_basic.R
 #' @include system_base.R
 #' @importFrom stats dnorm pnorm
+
+#' @describeIn system_classes Basic model's system class
+#' @slot lh Likelihood values for each observation.
 setClass(
   "system_basic",
   contains = "system_base",
@@ -30,9 +33,12 @@ setMethod(
   }
 )
 
-setMethod("set_parameters", signature(object = "system_basic"), function(object, parameters) {
-  object <- callNextMethod(object, parameters)
-  object <- calculate_system_moments(object)
-  object@lh <- calculate_system_likelihood(object)
-  object
-})
+setMethod(
+  "set_parameters", signature(object = "system_basic"),
+  function(object, parameters) {
+    object <- callNextMethod(object, parameters)
+    object <- calculate_system_moments(object)
+    object@lh <- calculate_system_likelihood(object)
+    object
+  }
+)

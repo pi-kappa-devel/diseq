@@ -16,7 +16,7 @@ number_of_observations(object)
 The number of used observations.
 }
 \description{
-Returns the number of observations that are used by an initialized model. The number of
-used observations may differ
-from the numbers of observations of the data set that was passed to the model's initialization.
+Returns the number of observations that are used by an initialized model. The number
+of used observations may differ from the numbers of observations of the data set
+that was passed to the model's initialization.
 }

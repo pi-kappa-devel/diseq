@@ -1,3 +1,16 @@
+# diseq 0.3.0.9000
+
+* Changes in model simulation.
+ - Simplified simulation calls (changes the user space).
+ - Re-factored simulation code and exported additional functions. 
+ - Added marginal system effect methods, and unified marginal probabilities effects methods (changes the user space).
+* Improvements in documentation.
+ - Minor typos corrections.
+ - Added new examples.
+ - Documented formulas in system and equation classes. 
+ - Modified some of the examples to use the `houses` dataset.
+ - Grouped documentation entries.
+
 # diseq 0.2.1
 
 * Cumulative update of CRAN version.

@@ -1,10 +1,10 @@
 
-* Compile reconfigured native sources
+* Before releasing
+** Compile reconfigured native sources
 #+begin_src shell :dir .. :results output 
 rm configure && autoreconf && Rscript -e "devtools::clean_dll(); devtools::document()"
 #+end_src
 
-* Before releasing
 ** Make documentation
 
 #+begin_src R :dir .. :results output :async

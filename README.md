@@ -187,7 +187,7 @@ This is a basic example that illustrates how a model of the package can
 be estimated. The package is loaded in the standard way.
 
 ``` r
-require(diseq)
+library(diseq)
 ```
 
 The example uses simulated data. The *diseq* package offers a function
@@ -195,7 +195,7 @@ to simulate data from data generating processes that correspond to the
 models that the package provides.
 
 ``` r
-model_tbl <- simulate_model_data(
+model_tbl <- simulate_data(
   "diseq_basic", 10000, 5,
   -1.9, 12.9, c(2.1, -0.7), c(3.5, 6.25),
   2.8, 10.2, c(0.65), c(1.15, 4.2),

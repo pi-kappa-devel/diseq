@@ -1,7 +1,7 @@
 #' @include system_stochastic_adjustment.R
 
 validate_variance <- function(var) {
-  if (!is.na(var) && var < 0) {
+  if (!is.na(var) && var <= 0) {
     var <- NA_real_
   }
   var
@@ -100,14 +100,15 @@ setMethod("calculate_system_moments",
 
   object@psi_D <- dnorm(object@omega_D / object@zeta)
   object@psi_S <- dnorm(object@omega_S / object@zeta)
-  object@Psi_D <- 1 - pnorm(object@omega_D / object@zeta, lower.tail = FALSE)
-  object@Psi_S <- 1 - pnorm(object@omega_S / object@zeta, lower.tail = FALSE)
+  object@Psi_D <- pnorm(object@omega_D / object@zeta, lower.tail = FALSE)
+  object@Psi_S <- pnorm(object@omega_S / object@zeta, lower.tail = FALSE)
 
-  object@L_D <- pnorm(object@omega_S / object@zeta,
-                      lower.tail = FALSE) * exp(object@w_D) / (
+  object@g_D <- object@psi_D / object@Psi_D
+  object@g_S <- object@psi_S / object@Psi_S
+
+  object@L_D <- object@Psi_S * exp(object@w_D) / (
                         2 * pi * object@sigma_D * object@sigma_P * sqrt(object@zeta_SS))
-  object@L_S <- pnorm(object@omega_D / object@zeta,
-                      lower.tail = FALSE) * exp(object@w_S) / (
+  object@L_S <- object@Psi_D * exp(object@w_S) / (
                         2 * pi * object@sigma_S * object@sigma_P * sqrt(object@zeta_DD))
 
   object@g_D <- dnorm(object@omega_D / object@zeta) / pnorm(object@omega_D / object@zeta,

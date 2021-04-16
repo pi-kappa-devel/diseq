@@ -1,35 +1,22 @@
 #' @include disequilibrium_model.R
 
-#' @title Disequilibrium model with stochastic price dynamics.
+#' @describeIn market_models Disequilibrium model with stochastic price dynamics.
 #'
-#' @description The disequilibrium model with stochastic price adjustment is described by a
-#' system of four equations. Three of of them form a stochastic linear system of market equations
-#' equations coupled with a stochastic price evolution equation. The fourth equation is the short
-#' side rule. In contrast to the deterministic counterpart, the model does not impose any
-#' separation rule on the sample. It is estimated using full information maximum likelihood.
+#' @description
+#' \subsection{diseq_stochastic_adjustment}{
+#' The disequilibrium model with stochastic price adjustment is described
+#' by a system of four equations. Three of of them form a stochastic linear system of
+#' market equations equations coupled with a stochastic price evolution equation. The
+#' fourth equation is the short side rule. In contrast to the deterministic counterpart,
+#' the model does not impose any separation rule on the sample. It is estimated using
+#' full information maximum likelihood.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
 #' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
 #' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
 #' \deqn{\Delta P_{nt} =
 #'     \frac{1}{\gamma} \left( D_{nt} - S_{nt} \right) +  X_{p,nt}'\beta_{p} + u_{p,nt}.}
-#'
-#' @examples
-#' simulated_data <- simulate_model_data(
-#'   "diseq_stochastic_adjustment", 500, 3, # model type, observed entities and time points
-#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, 0.1), # demand coefficients
-#'   0.1, 5.1, c(0.9), c(-0.5, 0.2), # supply coefficients
-#'   1.4, 3.1, c(0.8) # price adjustment coefficient
-#' )
-#'
-#' # initialize the model
-#' model <- new(
-#'   "diseq_stochastic_adjustment", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1", # equation specifications
-#'   simulated_data, # data
-#'   correlated_shocks = TRUE # allow shocks to be correlated
-#' )
+#' }
 #' @export
 setClass(
   "diseq_stochastic_adjustment",
@@ -40,6 +27,28 @@ setClass(
 
 #' @describeIn initialize_market_model Disequilibrium model with stochastic price
 #'   adjustment constructor
+#' @examples
+#' simulated_data <- simulate_data(
+#'   # model type, observed entities and time points
+#'   "diseq_stochastic_adjustment", 500, 3,
+#'   # demand coefficients
+#'   -0.1, 9.8, c(0.3, -0.2), c(0.6, 0.1),
+#'   # supply coefficients
+#'   0.1, 5.1, c(0.9), c(-0.5, 0.2),
+#'   # price adjustment coefficient
+#'   1.4, 3.1, c(0.8)
+#' )
+#'
+#' # initialize the model
+#' model <- new(
+#'   "diseq_stochastic_adjustment", # model type
+#'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
+#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1", # equation specifications
+#'   simulated_data, # data
+#'   correlated_shocks = TRUE # allow shocks to be correlated
+#' )
+#'
+#' show(model)
 setMethod(
   "initialize", "diseq_stochastic_adjustment",
   function(
@@ -64,10 +73,11 @@ setMethod(
 )
 
 setMethod(
-  "shortage_variance", signature(object = "diseq_stochastic_adjustment"),
-  function(object) {
-    sqrt(object@system@demand@var + object@system@supply@var - 2 * object@system@demand@sigma *
-      object@system@supply@sigma * object@system@rho_ds)
+  "shortage_standard_deviation", signature(object = "diseq_stochastic_adjustment"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    sqrt(object@system@demand@var + object@system@supply@var -
+      2 * object@system@demand@sigma * object@system@supply@sigma * object@system@rho_ds)
   }
 )
 
@@ -109,6 +119,7 @@ setMethod(
   }
 )
 
+#' @rdname gradient
 setMethod(
   "gradient", signature(object = "diseq_stochastic_adjustment"),
   function(object, parameters) {

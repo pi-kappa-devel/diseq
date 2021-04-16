@@ -21,12 +21,11 @@ estimate(object, ...)
 \arguments{
 \item{object}{A model object.}
 
-\item{...}{Named parameter used in the model's estimation. These are passed further down
-  to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
-parameters are passed
-  to \code{\link[systemfit]{systemfit}}, if the method is set to \code{2SLS}, or to
-\code{\link[bbmle]{mle2}} for any other method. For the rest of the models, the parameters
-are passed to \code{\link[bbmle]{mle2}}.}
+\item{...}{Named parameter used in the model's estimation. These are passed further
+down to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
+parameters are passed to \code{\link[systemfit]{systemfit}}, if the method is set to
+\code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of
+the models, the parameters are passed to \code{\link[bbmle]{mle2}}.}
 
 \item{gradient}{One of two potential options: `numerical` and `calculated`. By
 default, all the models are estimated using the analytic expressions of their
@@ -45,26 +44,27 @@ heteroscedasticity adjusted (Huber-White) standard errors. If the vector is
 supplied, the variance-covariance matrix is calculated by grouping the score matrix
 based on the passed variables.}
 
-\item{method}{A string specifying the estimation method. When the passed value is among
-\code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
+\item{method}{A string specifying the estimation method. When the passed value is
+among \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
 and \code{Brent}, the model is estimated using
-full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality. When
-\code{2SLS} is supplied, the model is estimated using two-stage least squares based on
-\code{\link[systemfit]{systemfit}}. In this case, the function returns a list containing
-the first and second stage estimates. The default value is \code{BFGS}.}
+full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality.
+When \code{2SLS} is supplied, the model is estimated using two-stage least squares
+based on \code{\link[systemfit]{systemfit}}. In this case, the function returns a
+list containing the first and second stage estimates. The default value is
+\code{BFGS}.}
 }
 \value{
 The object that holds the estimation result.
 }
 \description{
 All models are estimated using full information maximum likelihood. The
-\code{\linkS4class{equilibrium_model}} can also be estimated using two-stage least squares.
-The maximum likelihood estimation is based on \code{\link[bbmle]{mle2}}. If no starting
-values are provided, the function uses linear regression estimates as initializing values.
-The default optimization method is
-BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The implementation of the two-stage
-least square estimation of the \code{\linkS4class{equilibrium_model}} is based on
-\code{\link[systemfit]{systemfit}}.
+\code{\linkS4class{equilibrium_model}} can also be estimated using two-stage
+least squares. The maximum likelihood estimation is based on
+\code{\link[bbmle]{mle2}}. If no starting values are provided, the function uses
+linear regression estimates as initializing values. The default optimization method is
+BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The implementation of
+the two-stage least square estimation of the \code{\linkS4class{equilibrium_model}}
+is based on \code{\link[systemfit]{systemfit}}.
 }
 \section{Functions}{
 \itemize{
@@ -75,25 +75,23 @@ least square estimation of the \code{\linkS4class{equilibrium_model}} is based o
 
 \examples{
 \donttest{
-simulated_data <- simulate_model_data(
-  "diseq_basic", 500, 3, # model type, observed entities, observed time points
-  -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-  0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
-)
-
-# initialize the model
+# initialize the model using the houses dataset
 model <- new(
-  "diseq_basic", # model type
-  c("id", "date"), "Q", "P", # keys, quantity, and price variables
-  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-  simulated_data, # data
-  correlated_shocks = TRUE # allow shocks to be correlated
+  "diseq_deterministic_adjustment", # model type
+  c("ID", "TREND"), "TREND", "HS", "RM", # keys, time, quantity, and price variables
+  "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
+  "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+  fair_houses(), # data
+  correlated_shocks = FALSE # allow shocks to be correlated
 )
 
-# estimate the model object (by default the maximum optimization is using BFGS)
+# estimate the model object (BFGS is used by default)
 est <- estimate(model)
 
-# estimate the model by specifying the optimization details that are passed to the optimizer.
-est <- estimate(model, control = list(reltol = 1e-4), method = "BFGS")
+# estimate the model by specifying the optimization details passed to the optimizer.
+est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+
+# summarize results
+bbmle::summary(est)
 }
 }

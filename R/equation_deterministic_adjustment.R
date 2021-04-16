@@ -1,6 +1,18 @@
 #' @include equation_base.R
 
-#' @title Deterministic adjustment disequilibrium model equation class
+#' @describeIn equation_classes Deterministic adjustment disequilibrium model equation
+#' class
+#' @slot mu_Q \deqn{\mu_{Q} = \mathrm{E}Q}
+#' @slot var_Q \deqn{V_{Q} = \mathrm{Var}Q}
+#' @slot sigma_Q \deqn{\sigma_{Q} = \sqrt{\mathrm{Var}Q}}
+#' @slot rho_QP \deqn{\rho_{Q} =
+#' \frac{\mathrm{Cov}(Q,P)}{\sqrt{\mathrm{Var}Q\mathrm{Var}P}}}
+#' @slot rho_1QP \deqn{\rho_{1,QP} = \frac{1}{\sqrt{1 - \rho_{QP}}}}
+#' @slot rho_2QP \deqn{\rho_{2,QP} = \rho_{QP}\rho_{1,QP}}
+#' @slot sigma_QP \deqn{\sigma_{QP} = \mathrm{Cov}(Q,P)}
+#' @slot h_Q As in slot \code{h}
+#' @slot z_PQ As in slot \code{z}
+#' @slot z_QP As in slot \code{z}
 setClass(
   "equation_deterministic_adjustment",
   contains = "equation_base",

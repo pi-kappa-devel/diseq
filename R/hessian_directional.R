@@ -1,5 +1,6 @@
 #' @include diseq_directional.R
 
+#' @rdname hessian
 setMethod("hessian", signature(object = "diseq_directional"),
           function(object, parameters) {
   object@system <- set_parameters(object@system, parameters)

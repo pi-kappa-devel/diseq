@@ -1,6 +1,9 @@
 #' @include equation_basic.R
 
-#' @title Directional disequilibrium model equation class
+#' @describeIn equation_classes Directional disequilibrium model equation class
+#'
+#' @slot separation_subset A vector of indicators specifying the observations of the
+#' sample described by this equation according to the separation rule of the model.
 setClass(
   "equation_directional",
   contains = "equation_basic",

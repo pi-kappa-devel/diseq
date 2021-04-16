@@ -25,7 +25,7 @@ library(diseq)
 library(magrittr)
 ```
 
-Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_model_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
+Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
 
 ```{r setup.data}
 nobs <- 2000
@@ -54,7 +54,7 @@ rho_sp <- 0.0
 
 seed <- 443
 
-stochastic_adjustment_data <- simulate_model_data(
+stochastic_adjustment_data <- simulate_data(
   "diseq_stochastic_adjustment", nobs, tobs,
   alpha_d, beta_d0, beta_d, eta_d,
   alpha_s, beta_s0, beta_s, eta_s,
@@ -213,35 +213,51 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c(price_column, "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) mean_marginal_effect(bsmdl, bsmdl_est, v),
+  function(v) shortage_probability_marginal(bsmdl, bsmdl_est, v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) mean_marginal_effect(drmdl, drmdl_est, v),
+  function(v) shortage_probability_marginal(drmdl, drmdl_est, v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) mean_marginal_effect(damdl, damdl_est, v),
+  function(v) shortage_probability_marginal(damdl, damdl_est, v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) mean_marginal_effect(samdl, samdl_est, v),
+  function(v) shortage_probability_marginal(samdl, samdl_est, v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
-  function(v) marginal_effect_at_mean(bsmdl, bsmdl_est, v),
+  function(v) {
+    shortage_probability_marginal(bsmdl, bsmdl_est, v,
+      aggregate = "at_the_mean"
+    )
+  },
   USE.NAMES = FALSE
 )
 drmdl_mem <- sapply(variables,
-  function(v) marginal_effect_at_mean(drmdl, drmdl_est, v),
+  function(v) {
+    shortage_probability_marginal(drmdl, drmdl_est, v,
+      aggregate = "at_the_mean"
+    )
+  },
   USE.NAMES = FALSE
 )
 damdl_mem <- sapply(variables,
-  function(v) marginal_effect_at_mean(damdl, damdl_est, v),
+  function(v) {
+    shortage_probability_marginal(damdl, damdl_est, v,
+      aggregate = "at_the_mean"
+    )
+  },
   USE.NAMES = FALSE
 )
 samdl_mem <- sapply(variables,
-  function(v) marginal_effect_at_mean(samdl, samdl_est, v),
+  function(v) {
+    shortage_probability_marginal(samdl, samdl_est, v,
+      aggregate = "at_the_mean"
+    )
+  },
   USE.NAMES = FALSE
 )
 
@@ -274,9 +290,9 @@ How is the sample separated post-estimation? The indices of the observations for
 
 ```{r analysis.shortages}
 abs_estsep <- c(
-  nobs = length(has_shortage(bsmdl, bsmdl_est@coef)),
-  nshortages = sum(has_shortage(bsmdl, bsmdl_est@coef)),
-  nsurpluses = sum(!has_shortage(bsmdl, bsmdl_est@coef))
+  nobs = length(shortage_indicators(bsmdl, bsmdl_est@coef)),
+  nshortages = sum(shortage_indicators(bsmdl, bsmdl_est@coef)),
+  nsurpluses = sum(!shortage_indicators(bsmdl, bsmdl_est@coef))
 )
 print(abs_estsep)
 
@@ -289,7 +305,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
     ggplot2::geom_density() +
     ggplot2::ggtitle(paste0(
       "Normalized shortages density (",
-      model_description(bsmdl), ")"
+      model_name(bsmdl), ")"
     ))
 }
 ```

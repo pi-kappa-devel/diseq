@@ -3,6 +3,7 @@
 \docType{data}
 \name{houses}
 \alias{houses}
+\alias{fair_houses}
 \title{Credit market data for US housing starts}
 \format{
 A data frame with 138 rows and 7 columns
@@ -19,12 +20,19 @@ A data frame with 138 rows and 7 columns
 }
 \usage{
 data(houses)
+
+fair_houses()
 }
 \description{
-A dataset containing the monthly mortgage rates and other attributes of the US market
-for new, non-farm houses from July 1958 to December 1969. The variables are as follows:
+Credit market data for US housing starts
 }
 \details{
+\subsection{The basic houses dataset (\code{houses})}{
+
+A dataset containing the monthly mortgage rates and other attributes of the US market
+for new, non-farm houses from July 1958 to December 1969. The variables are as
+follows:
+
 \itemize{
   \item \code{DATE} The date of the record.
   \item \code{HS} Private non-farm housing starts in thousands of units (Not seasonally
@@ -32,16 +40,55 @@ adjusted).
   \item \code{RM} FHA Mortgage rate series on new homes in units of 100 (beginning-of-month
 Data).
   \item \code{DSLA} Savings capital (deposits) of savings and loan associations in millions
-of Dollars.
+of dollars.
   \item \code{DMSB} Deposits of mutual savings banks in millions of dollars.
   \item \code{DHLB} Advances of the federal home loan bank to savings and loan associations
 in million of dollars.
   \item \code{W} Number of working days in month.
 }
 }
+
+\subsection{Generate the variables of the Fair & Jaffee (1972) dataset.
+(\code{fair_houses})}{
+
+Loads the \code{\link{houses}} dataset and creates the additional variables used by
+Fair & Jaffee (1972) \doi{10.2307/1913181}. These are
+\itemize{
+  \item \code{ID} A dummy entity identifier that is always equal to one since the
+houses data have only a time series component.
+  \item \code{DSF} Flow of deposits in savings and loan associations and mutual
+savings banks in million of dollars. Equal to \deqn{DSLA_{t} + DMSB_{t} - (DSLA_{t-1}
++ DMSB_{t-1}).}
+  \item \code{DHF} Flow of advances of the federal home loan bank to savings and loan
+associations in million of dollars. Equal to \deqn{DHLB_{t} - DHLB_{t-1}.}
+  \item \code{MONTH} The month of the date of the observation.
+  \item \code{L1RM} FHA Mortgage rate series on new homes in units of 100, lagged by
+one date.
+  \item \code{L2RM} FHA Mortgage rate series on new homes in units of 100, lagged by
+two dates.
+  \item \code{L1HS} Private non-farm housing starts in thousands of units (Not
+seasonally adjusted), lagged by one date.
+  \item \code{CSHS} The cumulative sum of past housing starts. Used to proxy the
+stock of houses
+  \item \code{MA6DSF} Moving average of order 6 of the flow of deposits in savings
+associations and loan associations and  mutual savings banks.
+  \item \code{MA3DHF} Moving average of order 3 of the flow of advances of the
+federal home loan bank to savings and loan associations.
+  \item \code{TREND} A time trend variable.
+}
+
+Returns A modified version of the \code{houses} dataset.
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{fair_houses}: Generate Fair & Jaffee (1972) dataset
+}}
+
 \examples{
 data(houses)
-
+head(houses)
+head(fair_houses())
 }
 \references{
 \itemize{

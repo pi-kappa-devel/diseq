@@ -67,21 +67,29 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
 }
 
 
-test_marginal_effect <- function(effect, mdl, params, column) {
+test_marginal_effect <- function(effect, mdl, params, column, aggregate) {
   testthat::expect(
-    !is.na(effect(mdl, params, column)),
+    !is.na(effect(mdl, params, column, aggregate)),
     sprintf("Failed to calculate marginal effect of %s", column)
   )
 }
 
 
 test_aggregation <- function(aggregation, mdl, params) {
-  testthat::expect(!is.na(aggregation(mdl, params)), sprintf("Failed to calculate aggregate"))
+  result <- aggregation(mdl, params)
+  testthat::expect(
+    (is.null(dim(result)) && !is.na(result)) ||
+      (!is.null(dim(result)) && !all(is.na(result[[2]]))),
+    sprintf("Failed to calculate aggregate")
+  )
 }
 
 
-test_shortages <- function(shortages, mdl, params) {
-  testthat::expect(!any(is.na(shortages(mdl, params))), sprintf("Failed to calculate shortages"))
+test_shortages <- function(shortage_function, mdl, params) {
+  testthat::expect(
+    !any(is.na(shortage_function(mdl, params))),
+    sprintf("Failed to calculate shortages")
+  )
 }
 
 
@@ -90,7 +98,10 @@ test_scores <- function(mdl, params) {
   n <- diseq::number_of_observations(mdl)
   k <- length(diseq:::likelihood_variables(mdl@system))
   testthat::expect(any(dim(scores) == c(n, k)), sprintf("Score has wrong dimensions"))
-  testthat::expect(!any(is.na(scores(mdl, params))), sprintf("Failed to calculate scores"))
+  testthat::expect(
+    !any(is.na(scores(mdl, params))),
+    sprintf("Failed to calculate scores")
+  )
 }
 
 
@@ -118,15 +129,7 @@ load_or_simulate_model <- function(model_string, parameters) {
     load(stored_data_filename)
   }
   else {
-    model_tibble <- simulate_model_data(
-      model_string, parameters$nobs, parameters$tobs,
-      parameters$alpha_d, parameters$beta_d0, parameters$beta_d, parameters$eta_d,
-      parameters$alpha_s, parameters$beta_s0, parameters$beta_s, parameters$eta_s,
-      parameters$gamma, parameters$beta_p0, parameters$beta_p,
-      parameters$sigma_d, parameters$sigma_s, parameters$sigma_p,
-      parameters$rho_ds, parameters$rho_dp, parameters$rho_sp,
-      seed
-    )
+    model_tibble <- do.call(simulate_data, c(model_string, parameters, seed = seed))
     if (file.exists("devel-environment")) {
       save(model_tibble, file = stored_data_filename)
     }

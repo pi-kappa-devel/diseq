@@ -1,23 +1,34 @@
 #' @include disequilibrium_model.R
 
-#' @title Directional disequilibrium model with sample separation.
+#' @describeIn market_models Directional disequilibrium model with sample separation.
 #'
-#' @description The directional disequilibrium model consists of three equations and a separation
-#' rule. The market is described by a linear demand, a linear supply equation and the short side
-#' rule. The separation
-#' rule splits the sample into regimes of excess supply and excess demand. If a price change is
-#' positive at the time point of the observation, then the observation is classified as being in an
-#' excess demand regime. Otherwise, it is assumed that it represents an excess supply state. The
+#' @description
+#' \subsection{diseq_directional}{
+#' The directional disequilibrium model consists of three equations and a
+#' separation rule. The market is described by a linear demand, a linear supply
+#' equation and the short side rule. The separation rule splits the sample into regimes
+#' of excess supply and excess demand. If a price change is positive at the time point
+#' of the observation, then the observation is classified as being in an excess demand
+#' regime. Otherwise, it is assumed that it represents an excess supply state. The
 #' model is estimated using full information maximum likelihood.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
 #' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
 #' \deqn{Q_{nt} = \min\{D_{nt},S_{nt}\},}
 #' \deqn{\Delta P_{nt} \ge 0 \Longrightarrow D_{nt} \ge S_{nt}.}
-#'
+#' }
+#' @export
+setClass(
+  "diseq_directional",
+  contains = "disequilibrium_model",
+  representation(),
+  prototype()
+)
+
+#' @describeIn initialize_market_model Directional disequilibrium model base constructor
 #' @examples
 #' \donttest{
-#' simulated_data <- simulate_model_data(
+#' simulated_data <- simulate_data(
 #'   "diseq_directional", 500, 3, # model type, observed entities, observed time points
 #'   -0.2, 4.3, c(0.03, 0.02), c(0.03, 0.01), # demand coefficients
 #'   0.0, 4.0, c(0.03), c(0.05, 0.02) # supply coefficients
@@ -31,16 +42,9 @@
 #'   simulated_data, # data
 #'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
+#'
+#' show(model)
 #' }
-#' @export
-setClass(
-  "diseq_directional",
-  contains = "disequilibrium_model",
-  representation(),
-  prototype()
-)
-
-#' @describeIn initialize_market_model Directional disequilibrium model base constructor
 setMethod(
   "initialize", "diseq_directional",
   function(
@@ -100,13 +104,20 @@ setMethod(
   }
 )
 
-setMethod("gradient", signature(object = "diseq_directional"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  -colSums(calculate_system_scores(object@system))
-})
+#' @rdname gradient
+setMethod(
+  "gradient", signature(object = "diseq_directional"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    -colSums(calculate_system_scores(object@system))
+  }
+)
 
 #' @rdname scores
-setMethod("scores", signature(object = "diseq_directional"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  -calculate_system_scores(object@system)
-})
+setMethod(
+  "scores", signature(object = "diseq_directional"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    -calculate_system_scores(object@system)
+  }
+)

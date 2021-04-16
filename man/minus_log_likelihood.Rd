@@ -36,6 +36,6 @@ Returns the opposite of the log-likelihood. The likelihood functions are based o
 Maddala and Nelson (1974) \doi{10.2307/1914215}. The likelihoods expressions
 that the function uses are derived in
 Karapanagiotis (2020) \doi{10.2139/ssrn.3525622}. The function calculates
-the model's log likelihood by evaluating the log likelihood of each observation in the sample
-and summing the evaluation results.
+the model's log likelihood by evaluating the log likelihood of each observation in
+the sample and summing the evaluation results.
 }

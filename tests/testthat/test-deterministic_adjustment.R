@@ -23,7 +23,7 @@ test_that(paste0("Model can be simulated"), {
 })
 
 est <- NULL
-test_that(paste0(model_description(mdl), " can be estimated"), {
+test_that(paste0(model_name(mdl), " can be estimated"), {
   est <<- estimate(mdl,
     control = optimization_control,
     method = optimization_method, standard_errors = "heteroscedastic"
@@ -31,17 +31,17 @@ test_that(paste0(model_description(mdl), " can be estimated"), {
   expect_is(est, "mle2")
 })
 
-test_that(paste0("Estimates of '", model_description(mdl), "' are accurate"), {
+test_that(paste0("Estimates of '", model_name(mdl), "' are accurate"), {
   test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
 test_that(paste0("Mean marginal effect can be calculated"), {
-  test_marginal_effect(mean_marginal_effect, mdl, est, "P")
-  test_marginal_effect(mean_marginal_effect, mdl, est, "Xd1")
-  test_marginal_effect(mean_marginal_effect, mdl, est, "X2")
-  test_marginal_effect(marginal_effect_at_mean, mdl, est, "P")
-  test_marginal_effect(marginal_effect_at_mean, mdl, est, "Xs1")
-  test_marginal_effect(marginal_effect_at_mean, mdl, est, "X2")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "P", "mean")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "Xd1", "mean")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "X2", "mean")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "P", "at_the_mean")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "Xs1", "at_the_mean")
+  test_marginal_effect(shortage_probability_marginal, mdl, est, "X2", "at_the_mean")
 })
 
 test_that(paste0("Aggregation can be calculated"), {
@@ -60,7 +60,7 @@ test_that(paste0("Scores can be calculated"), {
 
 test_that(paste0(
   "Calculated gradient of '",
-  model_description(mdl), "' matches the numerical approximation"
+  model_name(mdl), "' matches the numerical approximation"
 ), {
   test_calculated_gradient(mdl, est@coef, 1e-5)
 })

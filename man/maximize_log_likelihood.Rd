@@ -37,30 +37,29 @@ A list with the optimization output.
 }
 \description{
 Maximizes the log-likelihood using the
-\href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} implementation of
-the BFGS algorithm. This function is primarily intended for advanced usage. The
-\code{\link{estimate}} functionality is a fast, analysis-oriented alternative. If
-the \href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
-available, the function returns a trivial result list with status set equal to -1. If the
+\href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}}
+implementation of the BFGS algorithm. This function is primarily intended for
+advanced usage. The \code{\link{estimate}} functionality is a fast,
+analysis-oriented alternative. If the
+\href{https://www.gnu.org/software/gsl/doc/html/multimin.html}{\code{GSL}} is not
+available, the function returns a trivial result list with status set equal to -1.
+If the
 \href{https://en.cppreference.com/w/cpp/algorithm/execution_policy_tag_t}{C++17
 execution policies}
 are available, the implementation of the optimization is parallelized.
 }
 \examples{
 \donttest{
-simulated_data <- simulate_model_data(
-  "equilibrium_model", 500, 3, # model type, observed entities, observed time points
-  -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-  0.9, 3.2, c(0.03), c(0.05, 0.02) # supply coefficients
-)
-
-# initialize the model
-model <- new(
-  "equilibrium_model", # model type
-  c("id", "date"), "Q", "P", # keys, quantity, and price variables
-  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-  simulated_data, # data
-  correlated_shocks = TRUE # allow shocks to be correlated
+model <- simulate_model(
+  "equilibrium_model", list(
+    # observed entities, observed time points
+    nobs = 500, tobs = 3,
+    # demand coefficients
+    alpha_d = -0.9, beta_d0 = 14.9, beta_d = c(0.3, -0.2), eta_d = c(-0.03, -0.01),
+    # supply coefficients
+    alpha_s = 0.9, beta_s0 = 3.2, beta_s = c(0.03), eta_s = c(0.05, 0.02)
+  ),
+  seed = 99
 )
 
 # maximize the model's log-likelihood
@@ -69,6 +68,7 @@ mll <- maximize_log_likelihood(
   start = NULL, step = 1e-5,
   objective_tolerance = 1e-4, gradient_tolerance = 1e-3
 )
+mll
 }
 }
 \seealso{

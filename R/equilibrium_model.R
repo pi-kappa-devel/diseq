@@ -1,11 +1,13 @@
 #' @include market_model.R
 #' @importFrom systemfit systemfit
 
-#' @title Equilibrium model estimated using full-information maximum likelihood.
+#' @describeIn market_models Equilibrium model
 #'
-#' @description The equilibrium model consists of thee equations. The demand, the
-#' supply and the market clearing equations. The model can be estimated using both full information
-#' maximum likelihood and two-stage least squares.
+#' @description
+#' \subsection{equilibrium_model}{
+#' The equilibrium model consists of thee equations. The demand, the
+#' supply and the market clearing equations. The model can be estimated using both full
+#' information maximum likelihood and two-stage least squares.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
 #' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
@@ -13,12 +15,21 @@
 #'
 #' A necessary identification condition is that
 #' there is at least one control that is exclusively part of the demand and one control
-#' that is exclusively part of the supply equation. In the first stage of the two-stage least
-#' square estimation, prices are regressed on remaining controls from both the
-#' demand and supply equations. In the second stage, the demand and supply equation is estimated
-#' using the fitted prices instead of the observed.
+#' that is exclusively part of the supply equation. In the first stage of the two-stage
+#' least square estimation, prices are regressed on remaining controls from both the
+#' demand and supply equations. In the second stage, the demand and supply equation is
+#' estimated using the fitted prices instead of the observed.
+#' }
+#' @export
+setClass(
+  "equilibrium_model",
+  contains = "market_model",
+  representation()
+)
+
+#' @describeIn initialize_market_model Equilibrium model constructor
 #' @examples
-#' simulated_data <- simulate_model_data(
+#' simulated_data <- simulate_data(
 #'   "equilibrium_model", 500, 3, # model type, observed entities and time points
 #'   -0.9, 14.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
 #'   0.9, 3.2, c(0.3), c(0.5, 0.02) # supply coefficients
@@ -32,14 +43,8 @@
 #'   simulated_data, # data
 #'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
-#' @export
-setClass(
-  "equilibrium_model",
-  contains = "market_model",
-  representation()
-)
-
-#' @describeIn initialize_market_model Full information maximum likelihood model constructor
+#'
+#' show(model)
 setMethod(
   "initialize", "equilibrium_model",
   function(
@@ -73,27 +78,35 @@ setMethod(
 )
 
 
-setMethod("gradient", signature(object = "equilibrium_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  g <- colSums(calculate_system_scores(object@system))
+#' @rdname gradient
+setMethod(
+  "gradient", signature(object = "equilibrium_model"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    g <- colSums(calculate_system_scores(object@system))
 
-  as.matrix(-g)
-})
+    as.matrix(-g)
+  }
+)
 
 #' @rdname scores
-setMethod("scores", signature(object = "equilibrium_model"), function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  -calculate_system_scores(object@system)
-})
+setMethod(
+  "scores", signature(object = "equilibrium_model"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    -calculate_system_scores(object@system)
+  }
+)
 
 #' @describeIn estimate Equilibrium model estimation.
-#' @param method A string specifying the estimation method. When the passed value is among
-#' \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
+#' @param method A string specifying the estimation method. When the passed value is
+#' among \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
 #' and \code{Brent}, the model is estimated using
-#' full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality. When
-#' \code{2SLS} is supplied, the model is estimated using two-stage least squares based on
-#' \code{\link[systemfit]{systemfit}}. In this case, the function returns a list containing
-#' the first and second stage estimates. The default value is \code{BFGS}.
+#' full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality.
+#' When \code{2SLS} is supplied, the model is estimated using two-stage least squares
+#' based on \code{\link[systemfit]{systemfit}}. In this case, the function returns a
+#' list containing the first and second stage estimates. The default value is
+#' \code{BFGS}.
 setMethod(
   "estimate", signature(object = "equilibrium_model"),
   function(object, method = "BFGS", ...) {

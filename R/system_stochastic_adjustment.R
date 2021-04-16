@@ -1,5 +1,56 @@
 #' @include equation_stochastic_adjustment.R
 #' @include system_base.R
+
+#' @describeIn system_classes Stochastic adjustment model's system class
+#' @slot price_equation Price equation.
+#' @slot zeta \deqn{\zeta = \sqrt{1 - \rho_{DS}^2 - \rho_{DP}^2 - \rho_{SP}^2 +
+#' 2 \rho_DP \rho_DS \rho_SP}}
+#' @slot zeta_DD \deqn{\zeta_{DD} = 1 - \rho_{SP}^2}
+#' @slot zeta_DS \deqn{\zeta_{DS} = \rho_{DS} - \rho_{DP}\rho_{SP}}
+#' @slot zeta_DP \deqn{\zeta_{DP} = \rho_{DP} - \rho_{DS}\rho_{SP}}
+#' @slot zeta_SS \deqn{\zeta_{SS} = 1 - \rho_{DP}^2}
+#' @slot zeta_SP \deqn{\zeta_{SP} = \rho_{SP} - \rho_{DS}\rho_{DP}}
+#' @slot zeta_PP \deqn{\zeta_{PP} = 1 - \rho_{DS}^2}
+#' @slot mu_D \deqn{\mu_{D} = \mathrm{E}D}
+#' @slot var_D \deqn{V_{D} = \mathrm{Var}D}
+#' @slot sigma_D \deqn{\sigma_{D} = \sqrt{V_{D}}}
+#' @slot mu_S \deqn{\mu_{S} = \mathrm{E}S}
+#' @slot var_S \deqn{V_{S} = \mathrm{Var}S}
+#' @slot sigma_S \deqn{\sigma_{S} = \sqrt{V_{S}}}
+#' @slot sigma_DP \deqn{\sigma_{DP} = \mathrm{Cov}(D, P)}
+#' @slot sigma_DS \deqn{\sigma_{DS} = \mathrm{Cov}(D, S)}
+#' @slot sigma_SP \deqn{\sigma_{SP} = \mathrm{Cov}(S, P)}
+#' @slot rho_DS \deqn{\rho_{DS} =
+#' \frac{\mathrm{Cov}(D,S)}{\sqrt{\mathrm{Var}D\mathrm{Var}S}}}
+#' @slot rho_DP \deqn{\rho_{DP} =
+#' \frac{\mathrm{Cov}(D,P)}{\sqrt{\mathrm{Var}D\mathrm{Var}P}}}
+#' @slot rho_SP \deqn{\rho_{SP} =
+#' \frac{\mathrm{Cov}(S,P)}{\sqrt{\mathrm{Var}S\mathrm{Var}P}}}
+#' @slot h_D \deqn{h_{D} = \frac{D - \mu_{D}}{\sigma_{D}}}
+#' @slot h_S \deqn{h_{S} = \frac{S - \mu_{S}}{\sigma_{S}}}
+#' @slot z_DP \deqn{z_{DP} = \frac{h_{D} - \rho_{DP}h_{P}}{\sqrt{1 - \rho_{DP}^2}}}
+#' @slot z_PD \deqn{z_{PD} = \frac{h_{P} - \rho_{PD}h_{D}}{\sqrt{1 - \rho_{PD}^2}}}
+#' @slot z_SP \deqn{z_{SP} = \frac{h_{S} - \rho_{SP}h_{P}}{\sqrt{1 - \rho_{SP}^2}}}
+#' @slot z_PS \deqn{z_{PS} = \frac{h_{P} - \rho_{PS}h_{S}}{\sqrt{1 - \rho_{PS}^2}}}
+#' @slot omega_D \deqn{\omega_{D} = \frac{h_{D}\zeta_{DD} - h_{S}\zeta_{DS} -
+#' h_{P}\zeta_{DP}}{\zeta_{DD}}}
+#' @slot omega_S \deqn{\omega_{S} = \frac{h_{S}\zeta_{SS} - h_{S}\zeta_{SS} -
+#' h_{P}\zeta_{SP}}{\zeta_{SS}}}
+#' @slot w_D \deqn{w_{D} = - \frac{h_{D}^2 - 2 h_{D} h_{P} \rho_{DP} +
+#' h_{P}^2}{2\zeta_{SS}}}
+#' @slot w_S \deqn{w_{S} = - \frac{h_{S}^2 - 2 h_{S} h_{P} \rho_{SP} +
+#' h_{P}^2}{2\zeta_{DD}}}
+#' @slot psi_D \deqn{\psi_{D} = \phi\left(\frac{\omega_{D}}{\zeta}\right)}
+#' @slot psi_S \deqn{\psi_{S} = \phi\left(\frac{\omega_{S}}{\zeta}\right)}
+#' @slot Psi_D \deqn{\Psi_{D} = 1 - \Phi\left(\frac{\omega_{D}}{\zeta}\right)}
+#' @slot Psi_S \deqn{\Psi_{S} = 1 - \Phi\left(\frac{\omega_{S}}{\zeta}\right)}
+#' @slot g_D \deqn{g_{D} = \frac{\psi_{D}}{\Psi_{D}}}
+#' @slot g_S \deqn{g_{S} = \frac{\psi_{S}}{\Psi_{S}}}
+#' @slot rho_ds Shadows \code{rho} in the \linkS4class{diseq_stochastic_adjustment} model
+#' @slot rho_dp Correlation of demand and price equations' shocks.
+#' @slot rho_sp Correlation of supply and price equations' shocks.
+#' @slot L_D Likelihood conditional on excess supply.
+#' @slot L_S Likelihood conditional on excess demand.
 setClass(
   "system_stochastic_adjustment",
   contains = "system_base",

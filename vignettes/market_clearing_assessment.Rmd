@@ -47,7 +47,7 @@ rho_ds <- 0.0
 
 seed <- 42
 
-eq_data <- simulate_model_data(
+eq_data <- simulate_data(
   "equilibrium_model", nobs, tobs,
   alpha_d, beta_d0, beta_d, eta_d,
   alpha_s, beta_s0, beta_s, eta_s,

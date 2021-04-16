@@ -1,6 +1,30 @@
 #' @import methods
 
-#' @title Equation base class
+#' @title Equation classes
+#'
+#' @details Classes with data and functionality describing equations of model systems.
+#' @name equation_classes
+NULL
+
+#' @describeIn equation_classes Equation base class
+#' @slot prefixed_specification The equation formula using prefixed variables.
+#' @slot formula The equation formula.
+#' @slot linear_model The estimated equation using linear regression.
+#' @slot name The name of the equation.
+#' @slot variable_prefix A prefix string for the variables of the equation.
+#' @slot independent_variables A vector with the right hand side variable names.
+#' @slot price_variable The price variable name.
+#' @slot control_variables Independent variables without the price variable.
+#' @slot independent_matrix A model data matrix with columns corresponding to the set
+#' of independent variables.
+#' @slot price_vector The vector of prices.
+#' @slot control_matrix A model data matrix with columns corresponding to the set
+#' of independent variables without prices.
+#' @slot alpha_beta A vector of right hand side coefficients.
+#' @slot alpha The price coefficient.
+#' @slot beta A vector of right hand side coefficient without the price coefficient.
+#' @slot var The variance of the equation's shock.
+#' @slot sigma The standard deviation of the equation's shock.
 setClass(
   "equation_base",
   representation(
@@ -22,10 +46,7 @@ setClass(
     alpha = "numeric",
     beta = "matrix",
     var = "numeric",
-    sigma = "numeric",
-
-    equation_log_likelihood = "matrix",
-    equation_gradient = "matrix"
+    sigma = "numeric"
   ),
   prototype(
     prefixed_specification = NULL,
@@ -46,10 +67,7 @@ setClass(
     alpha = 0,
     beta = matrix(NA_real_),
     var = NA_real_,
-    sigma = NA_real_,
-
-    equation_log_likelihood = matrix(NA_real_),
-    equation_gradient = matrix(NA_real_)
+    sigma = NA_real_
   )
 )
 
@@ -95,10 +113,14 @@ setMethod(
 
     price_selection <- paste0(prefix, price) == colnames(.Object@independent_matrix)
     .Object@price_vector <- as.matrix(.Object@independent_matrix[, price_selection])
-    colnames(.Object@price_vector) <- colnames(.Object@independent_matrix)[price_selection]
+    colnames(.Object@price_vector) <- colnames(
+      .Object@independent_matrix
+    )[price_selection]
 
     .Object@control_matrix <- as.matrix(.Object@independent_matrix[, !price_selection])
-    colnames(.Object@control_matrix) <- colnames(.Object@independent_matrix)[!price_selection]
+    colnames(.Object@control_matrix) <- colnames(
+      .Object@independent_matrix
+    )[!price_selection]
     .Object@independent_matrix <- .Object@independent_matrix[
       ,
       c(colnames(.Object@price_vector), colnames(.Object@control_matrix))
@@ -116,62 +138,51 @@ setMethod("show_implementation", signature(object = "equation_base"), function(o
   cat(sprintf("  %-18s: %s\n", object@name, deparse(object@formula)))
 })
 
-#' Constant coefficient variable name.
-#'
-#' The constant coefficient name is constructed by concatenating the equation prefix
-#' with \code{CONST}.
+#' @title Variable name access
+#' @description Methods that provide access to the prefixed variable names that the
+#' package uses.
 #' @param object An equation object.
-#' @return The constant coefficient name.
-#' @rdname prefixed_const_variable
+#' @return The prefixed variable name(s).
+#' @name variable_names
+NULL
+
+#' @describeIn variable_names Constant coefficient variable name.
+#' @description \code{prefixed_const_variable}: The constant coefficient name is
+#' constructed by concatenating the equation prefix with \code{CONST}.
 #' @export
 setGeneric("prefixed_const_variable", function(object) {
   standardGeneric("prefixed_const_variable")
 })
 
-#' Independent variable names.
-#'
-#' The names of the independent variables are constructed by concatenating the equation prefix
-#' with the column names of the data \code{tibble}.
-#' @param object An equation object.
-#' @return A vector with the independent variable names.
-#' @rdname prefixed_independent_variables
+#' @describeIn variable_names Independent variable names.
+#' @description \code{prefixed_independent_variables}: The names of the independent
+#' variables are constructed by concatenating the equation prefix with the column names
+#' of the data \code{tibble}.
 #' @export
 setGeneric("prefixed_independent_variables", function(object) {
   standardGeneric("prefixed_independent_variables")
 })
 
-#' Price coefficient variable name.
-#'
-#' The price coefficient name is constructed by concatenating the equation prefix
-#' with the name of the price column.
-#' @param object An equation object.
-#' @return The price coefficient variable name.
-#' @rdname prefixed_price_variable
+#' @describeIn variable_names Price coefficient variable name.
+#' @description \code{prefixed_price_variable}: The price coefficient name is
+#' constructed by concatenating the equation prefix with the name of the price column.
 #' @export
 setGeneric("prefixed_price_variable", function(object) {
   standardGeneric("prefixed_price_variable")
 })
 
-#' Control variable names.
-#'
-#' The controls of the equation are the independent variables without the price variable.
-#' Their names are constructed by concatenating the equation prefix with the name of
-#' the price column.
-#' @param object An equation object.
-#' @return A vector with the control variable names.
-#' @rdname prefixed_control_variables
+#' @describeIn variable_names Control variable names.
+#' @description \code{prefixed_control_variables}: The controls of the equation are the
+#' independent variables without the price variable. Their names are constructed by
+#' concatenating the equation prefix with the name of the price column.
 #' @export
 setGeneric("prefixed_control_variables", function(object) {
   standardGeneric("prefixed_control_variables")
 })
 
-#' Variance variable name.
-#'
-#' The variance variables is constructed by concatenating the equation prefix with
-#' "VARIANCE".
-#' @param object An equation object.
-#' @return The variable name for the variance of the shock of the equation.
-#' @rdname prefixed_variance_variable
+#' @describeIn variable_names Variance variable name.
+#' @description \code{prefixed_control_variables}: The variance variables is
+#' constructed by concatenating the equation prefix with \code{VARIANCE}.
 #' @export
 setGeneric("prefixed_variance_variable", function(object) {
   standardGeneric("prefixed_variance_variable")
@@ -189,12 +200,13 @@ setGeneric("quantities", function(object) {
   standardGeneric("quantities")
 })
 
-#' @rdname prefixed_const_variable
-setMethod("prefixed_const_variable", signature(object = "equation_base"), function(object) {
-  paste0(object@variable_prefix, "CONST")
-})
+setMethod(
+  "prefixed_const_variable", signature(object = "equation_base"),
+  function(object) {
+    paste0(object@variable_prefix, "CONST")
+  }
+)
 
-#' @rdname prefixed_price_variable
 setMethod(
   "prefixed_independent_variables", signature(object = "equation_base"),
   function(object) {
@@ -202,40 +214,44 @@ setMethod(
   }
 )
 
-#' @rdname prefixed_price_variable
-setMethod("prefixed_price_variable", signature(object = "equation_base"), function(object) {
-  colnames(object@price_vector)
-})
-
-#' @rdname prefixed_price_variable
-setMethod("prefixed_control_variables", signature(object = "equation_base"), function(object) {
-  colnames(object@control_matrix)
-})
-
-#' @rdname prefixed_variance_variable
-setMethod("prefixed_variance_variable", signature(object = "equation_base"), function(object) {
-  paste0(object@variable_prefix, "VARIANCE")
-})
-
-setMethod("set_parameters", signature(object = "equation_base"), function(object, parameters) {
-  object@alpha_beta <- as.matrix(parameters[prefixed_independent_variables(object)])
-  if (!is.null(prefixed_price_variable(object))) {
-    object@alpha <- parameters[prefixed_price_variable(object)]
+setMethod(
+  "prefixed_price_variable", signature(object = "equation_base"),
+  function(object) {
+    colnames(object@price_vector)
   }
-  object@beta <- as.matrix(parameters[prefixed_control_variables(object)])
-  object@var <- parameters[prefixed_variance_variable(object)]
-  if (object@var < 0) {
-    object@var <- NA_real_
+)
+
+setMethod(
+  "prefixed_control_variables", signature(object = "equation_base"),
+  function(object) {
+    colnames(object@control_matrix)
   }
-  object@sigma <- sqrt(object@var)
-  object
-})
+)
+
+setMethod(
+  "prefixed_variance_variable", signature(object = "equation_base"),
+  function(object) {
+    paste0(object@variable_prefix, "VARIANCE")
+  }
+)
+
+setMethod(
+  "set_parameters", signature(object = "equation_base"),
+  function(object, parameters) {
+    object@alpha_beta <- as.matrix(parameters[prefixed_independent_variables(object)])
+    if (!is.null(prefixed_price_variable(object))) {
+      object@alpha <- parameters[prefixed_price_variable(object)]
+    }
+    object@beta <- as.matrix(parameters[prefixed_control_variables(object)])
+    object@var <- parameters[prefixed_variance_variable(object)]
+    if (object@var <= 0) {
+      object@var <- NA_real_
+    }
+    object@sigma <- sqrt(object@var)
+    object
+  }
+)
 
 setMethod("quantities", signature(object = "equation_base"), function(object) {
   object@independent_matrix %*% object@alpha_beta
-})
-
-# uses aggregate generic from stats
-setMethod("aggregate", signature(x = "equation_base"), function(x) {
-  sum(quantities(x))
 })

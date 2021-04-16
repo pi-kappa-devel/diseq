@@ -21,13 +21,13 @@ test_that(paste0("Model can be simulated"), {
 })
 
 est <- NULL
-test_that(paste0(model_description(mdl), " can be estimated"), {
+test_that(paste0(model_name(mdl), " can be estimated"), {
   est <<- estimate(mdl, control = optimization_control, method = optimization_method)
   expect_is(est, "mle2")
 })
 
 test_that(paste0(
-  "Maximum likelihood estimates of '", model_description(mdl),
+  "Maximum likelihood estimates of '", model_name(mdl),
   "' are accurate"
 ), {
   test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)
@@ -44,17 +44,17 @@ test_that(paste0("Scores can be calculated"), {
 })
 
 reg <- NULL
-test_that(paste0("First stage of '", model_description(mdl), "' can be estimated"), {
+test_that(paste0("First stage of '", model_name(mdl), "' can be estimated"), {
   reg <<- estimate(mdl, method = "2SLS")
   expect_is(reg$first_stage_model, "lm")
 })
 
-test_that(paste0("Second stage of '", model_description(mdl), "' can be estimated"), {
+test_that(paste0("Second stage of '", model_name(mdl), "' can be estimated"), {
   expect_is(reg$system_model, "systemfit")
 })
 
 test_that(paste0(
-  "Two-stage least squares estimates of '", model_description(mdl),
+  "Two-stage least squares estimates of '", model_name(mdl),
   "' are accurate"
 ), {
   order <- c(
@@ -66,7 +66,7 @@ test_that(paste0(
   )
 })
 
-test_that(paste0("Optimization of '", model_description(mdl), "' using GSL succeeds"), {
+test_that(paste0("Optimization of '", model_name(mdl), "' using GSL succeeds"), {
   mll <<- maximize_log_likelihood(mdl,
     start = NULL, step = 1e-5,
     objective_tolerance = 1e-4,
@@ -76,7 +76,7 @@ test_that(paste0("Optimization of '", model_description(mdl), "' using GSL succe
 })
 
 test_that(paste0(
-  "Calculated gradient of '", model_description(mdl),
+  "Calculated gradient of '", model_name(mdl),
   "' matches the numerical approximation"
 ), {
   test_calculated_gradient(mdl, est@coef, 1e-4)

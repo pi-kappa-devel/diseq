@@ -91,7 +91,5 @@ setMethod("calculate_system_loglikelihood",
   lld[!object@demand@separation_subset] <- 0
   lls[!object@supply@separation_subset] <- 0
 
-  object@log_likelihood <- lld + lls
-
-  object
+  lld + lls
 })

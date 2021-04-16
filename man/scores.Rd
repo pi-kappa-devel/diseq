@@ -40,25 +40,22 @@ of the results.
 }
 \examples{
 \donttest{
-simulated_data <- simulate_model_data(
-  "diseq_basic", 500, 3, # model type, observed entities, observed time points
-  -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-  0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+model <- simulate_model(
+  "diseq_basic", list(
+    # observed entities, observed time points
+    nobs = 500, tobs = 3,
+    # demand coefficients
+    alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.6), eta_d = c(-0.2),
+    # supply coefficients
+    alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03, 1.2), eta_s = c(0.1)
+  ),
+  seed = 7523
 )
 
-# initialize the model
-model <- new(
-  "diseq_basic", # model type
-  c("id", "date"), "Q", "P", # keys, quantity, and price variables
-  "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
-  simulated_data, # data
-  correlated_shocks = TRUE # allow shocks to be correlated
-)
-
-# estimate the model object (by default the maximum optimization is using BFGS)
+# estimate the model object (BFGS is used by default)
 est <- estimate(model)
 
 # Calculate the score matrix
-scores <- scores(model, est@coef)
+head(scores(model, est@coef))
 }
 }
