@@ -31,12 +31,12 @@ Market side aggregation.
 \details{
 Calculates the sample's aggregate demand or supply at the passed set of
 parameters. If the model is static, as is for example the case of
-\code{\linkS4class{equilibrium_model}}, then all observation are aggregated. If the
+\code{\linkS4class{equilibrium_model}}, then all observations are aggregated. If the
 used data have a time dimension and aggregation per date is required, it can be
 manually performed using the \code{\link{demanded_quantities}} and
 \code{\link{supplied_quantities}} functions. If the model has a dynamic component,
 such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
-and supplied quantities are automatically calculated per date.
+and supplied quantities are automatically aggregated for each time point.
 }
 \section{Functions}{
 \itemize{

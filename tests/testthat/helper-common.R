@@ -67,9 +67,9 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
 }
 
 
-test_marginal_effect <- function(effect, mdl, params, column, aggregate) {
+test_marginal_effect <- function(effect, mdl, est, column, aggregate) {
   testthat::expect(
-    !is.na(effect(mdl, params, column, aggregate)),
+    !is.na(effect(mdl, est@coef, column, aggregate)),
     sprintf("Failed to calculate marginal effect of %s", column)
   )
 }

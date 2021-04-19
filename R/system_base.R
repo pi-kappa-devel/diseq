@@ -107,10 +107,18 @@ setMethod("summary_implementation", signature(object = "system_base"), function(
   cat(sprintf("  %-18s: %s\n", "Price Var", object@price_variable))
 })
 
+#' @describeIn variable_names Lagged price variable name.
+#' @description \code{lagged_price_variable}: The lagged price variable name is
+#' constructed by concatenating \code{LAGGED} with the price variable name.
+#' @export
 setGeneric("lagged_price_variable", function(object) {
   standardGeneric("lagged_price_variable")
 })
 
+#' @describeIn variable_names Price differences variable name.
+#' @description \code{price_differences_variable}: The price difference variable name is
+#' constructed by concatenating the price variable name with \code{DIFF}.
+#' @export
 setGeneric("price_differences_variable", function(object) {
   standardGeneric("price_differences_variable")
 })
@@ -143,10 +151,12 @@ setGeneric("calculate_system_scores", function(object) {
   standardGeneric("calculate_system_scores")
 })
 
+#' @rdname variable_names
 setMethod("lagged_price_variable", signature(object = "system_base"), function(object) {
   paste0("LAGGED_", object@demand@price_variable)
 })
 
+#' @rdname variable_names
 setMethod(
   "price_differences_variable", signature(object = "system_base"),
   function(object) {
@@ -178,7 +188,6 @@ setMethod("likelihood_variables", signature(object = "system_base"), function(ob
 
   likelihood_variables
 })
-
 
 setMethod(
   "set_parameters", signature(object = "system_base"),

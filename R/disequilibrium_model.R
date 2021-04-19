@@ -149,7 +149,7 @@ setGeneric("shortage_standard_deviation", function(object, parameters) {
 #'
 #' Returns the estimated effect of a variable.
 #' @param object A disequilibrium model object.
-#' @param estimation A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).
+#' @param parameters A vector of parameters.
 #' @param variable Variable name for which the effect is calculated.
 #' @param aggregate Mode of aggregation. Valid options are "mean" (the default) and
 #' "at_the_mean".
@@ -170,13 +170,13 @@ setGeneric("shortage_standard_deviation", function(object, parameters) {
 #' est <- estimate(model, control = list(maxit = 1e+5))
 #'
 #' # get the mean marginal effect of variable "RM" on the shortage probabilities
-#' shortage_probability_marginal(model, est, "RM")
+#' shortage_probability_marginal(model, est@coef, "RM")
 #'
 #' # get the marginal effect at the mean of variable "RM" on the shortage probabilities
-#' shortage_probability_marginal(model, est, "CSHS", aggregate = "at_the_mean")
+#' shortage_probability_marginal(model, est@coef, "CSHS", aggregate = "at_the_mean")
 #'
 #' # get the marginal effect of variable "RM" on the system
-#' system_marginal(model, est, "RM")
+#' shortage_marginal(model, est@coef, "RM")
 #' }
 #' @name marginal_effects
 NULL
@@ -189,8 +189,8 @@ NULL
 #' \deqn{M_{x} = \frac{\beta_{d, x} - \beta_{s, x}}{\sqrt{\sigma_{d, x}^{2} +
 #' \sigma_{s, x}^{2} - 2 \rho_{ds} \sigma_{d, x} \sigma_{s, x}}}.}
 #' @export
-setGeneric("system_marginal", function(object, estimation, variable) {
-  standardGeneric("system_marginal")
+setGeneric("shortage_marginal", function(object, parameters, variable) {
+  standardGeneric("shortage_marginal")
 })
 
 #' @describeIn marginal_effects Marginal effect on shortage probabilities
@@ -205,7 +205,7 @@ setGeneric("system_marginal", function(object, estimation, variable) {
 #' density.
 #' @export
 setGeneric("shortage_probability_marginal",
-           function(object, estimation, variable, aggregate = "mean") {
+           function(object, parameters, variable, aggregate = "mean") {
   standardGeneric("shortage_probability_marginal")
 })
 
@@ -267,13 +267,13 @@ setMethod(
 
 #' @rdname marginal_effects
 setMethod(
-  "system_marginal", signature(object = "disequilibrium_model"),
-  function(object, estimation, variable) {
-    var <- shortage_standard_deviation(object, estimation@coef)
+  "shortage_marginal", signature(object = "disequilibrium_model"),
+  function(object, parameters, variable) {
+    var <- shortage_standard_deviation(object, parameters)
     dname <- paste0(object@system@demand@variable_prefix, variable)
-    dvar <- estimation@coef[dname]
+    dvar <- parameters[dname]
     sname <- paste0(object@system@supply@variable_prefix, variable)
-    svar <- estimation@coef[sname]
+    svar <- parameters[sname]
     in_demand <- dname %in% prefixed_independent_variables(object@system@demand)
     in_supply <- sname %in% prefixed_independent_variables(object@system@supply)
     if (in_demand && in_supply) {
@@ -293,7 +293,7 @@ setMethod(
 #' @rdname marginal_effects
 setMethod(
   "shortage_probability_marginal", signature(object = "disequilibrium_model"),
-  function(object, estimation, variable, aggregate) {
+  function(object, parameters, variable, aggregate) {
     marginal_scale_function <- NULL
     if (aggregate == "mean") {
       marginal_scale_function <- function(x) mean(dnorm(normalized_shortages(object, x)))
@@ -306,7 +306,7 @@ setMethod(
         paste0(allowed_aggergate, collapse = "', '"), "')."))
     }
 
-    marginal_scale <- marginal_scale_function(estimation@coef)
-    system_marginal(object, estimation, variable) * marginal_scale
+    marginal_scale <- marginal_scale_function(parameters)
+    shortage_marginal(object, parameters, variable) * marginal_scale
   }
 )

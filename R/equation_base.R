@@ -37,6 +37,7 @@ setClass(
     independent_variables = "vector",
     price_variable = "character",
     control_variables = "vector",
+    quantity_variable = "character",
 
     independent_matrix = "matrix",
     price_vector = "matrix",
@@ -107,6 +108,7 @@ setMethod(
     .Object@independent_variables <- independent
     .Object@price_variable <- price
     .Object@control_variables <- controls
+    .Object@quantity_variable <- quantity
 
     .Object@independent_matrix <- model_matrix
     colnames(.Object@independent_matrix) <- prefixed_variables
@@ -164,7 +166,7 @@ setGeneric("prefixed_independent_variables", function(object) {
 })
 
 #' @describeIn variable_names Price coefficient variable name.
-#' @description \code{prefixed_price_variable}: The price coefficient name is
+#' @description \code{prefixed_price_variable}: The price variable name is
 #' constructed by concatenating the equation prefix with the name of the price column.
 #' @export
 setGeneric("prefixed_price_variable", function(object) {
@@ -181,11 +183,20 @@ setGeneric("prefixed_control_variables", function(object) {
 })
 
 #' @describeIn variable_names Variance variable name.
-#' @description \code{prefixed_control_variables}: The variance variables is
+#' @description \code{prefixed_control_variables}: The variance variable is
 #' constructed by concatenating the equation prefix with \code{VARIANCE}.
 #' @export
 setGeneric("prefixed_variance_variable", function(object) {
   standardGeneric("prefixed_variance_variable")
+})
+
+#' @describeIn variable_names Quantity variable name.
+#' @description \code{prefixed_quantity_variable}: The quantity variable name is
+#' constructed by concatenating the equation prefix with the name of the quantity
+#' column.
+#' @export
+setGeneric("prefixed_quantity_variable", function(object) {
+  standardGeneric("prefixed_quantity_variable")
 })
 
 setGeneric("set_parameters", function(object, parameters) {
@@ -240,6 +251,14 @@ setMethod(
   }
 )
 
+#' @rdname variable_names
+setMethod(
+  "prefixed_quantity_variable", signature(object = "equation_base"),
+  function(object) {
+    paste0(object@variable_prefix, object@quantity_variable)
+  }
+)
+
 setMethod(
   "set_parameters", signature(object = "equation_base"),
   function(object, parameters) {
@@ -258,5 +277,7 @@ setMethod(
 )
 
 setMethod("quantities", signature(object = "equation_base"), function(object) {
-  object@independent_matrix %*% object@alpha_beta
+  qs <- object@independent_matrix %*% object@alpha_beta
+  colnames(qs) <- prefixed_quantity_variable(object)
+  qs
 })

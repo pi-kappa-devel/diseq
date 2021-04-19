@@ -2,24 +2,24 @@
 % Please edit documentation in R/disequilibrium_model.R
 \name{marginal_effects}
 \alias{marginal_effects}
-\alias{system_marginal}
+\alias{shortage_marginal}
 \alias{shortage_probability_marginal}
-\alias{system_marginal,disequilibrium_model-method}
+\alias{shortage_marginal,disequilibrium_model-method}
 \alias{shortage_probability_marginal,disequilibrium_model-method}
 \title{Marginal effects}
 \usage{
-system_marginal(object, estimation, variable)
+shortage_marginal(object, parameters, variable)
 
-shortage_probability_marginal(object, estimation, variable, aggregate = "mean")
+shortage_probability_marginal(object, parameters, variable, aggregate = "mean")
 
-\S4method{system_marginal}{disequilibrium_model}(object, estimation, variable)
+\S4method{shortage_marginal}{disequilibrium_model}(object, parameters, variable)
 
-\S4method{shortage_probability_marginal}{disequilibrium_model}(object, estimation, variable, aggregate = "mean")
+\S4method{shortage_probability_marginal}{disequilibrium_model}(object, parameters, variable, aggregate = "mean")
 }
 \arguments{
 \item{object}{A disequilibrium model object.}
 
-\item{estimation}{A model estimation object (i.e. a \code{\link[bbmle]{mle2}} object).}
+\item{parameters}{A vector of parameters.}
 
 \item{variable}{Variable name for which the effect is calculated.}
 
@@ -34,7 +34,7 @@ Returns the estimated effect of a variable.
 }
 \section{Functions}{
 \itemize{
-\item \code{system_marginal}: Marginal effect on market system
+\item \code{shortage_marginal}: Marginal effect on market system
 
 Returns the estimated marginal effect of a variable on the market system. For a
 system variable \eqn{x} with demand coefficient \eqn{\beta_{d, x}} and supply
@@ -70,12 +70,12 @@ model <- new(
 est <- estimate(model, control = list(maxit = 1e+5))
 
 # get the mean marginal effect of variable "RM" on the shortage probabilities
-shortage_probability_marginal(model, est, "RM")
+shortage_probability_marginal(model, est@coef, "RM")
 
 # get the marginal effect at the mean of variable "RM" on the shortage probabilities
-shortage_probability_marginal(model, est, "CSHS", aggregate = "at_the_mean")
+shortage_probability_marginal(model, est@coef, "CSHS", aggregate = "at_the_mean")
 
 # get the marginal effect of variable "RM" on the system
-system_marginal(model, est, "RM")
+shortage_marginal(model, est@coef, "RM")
 }
 }

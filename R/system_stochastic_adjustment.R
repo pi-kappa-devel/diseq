@@ -145,13 +145,22 @@ setMethod(
     }
 
     .Object <- callNextMethod(
-      .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
-      demand_initializer, supply_initializer
+      .Object, quantity, price, demand_specification, supply_specification, data,
+      correlated_shocks, demand_initializer, supply_initializer
     )
     .Object@price_equation <- new(
       "equation_stochastic_adjustment", quantity, price, price_specification, data,
       "Price Equation", "P_"
     )
+    # The standard equation initialization correctly creates the control matrix
+    # needed in the models' calculations. We only need to adjust the formula for the
+    # `show` and `summary` functions.
+    .Object@price_equation@formula <- formula(paste0(
+      price_differences_variable(.Object), " ~ (",
+      prefixed_quantity_variable(.Object@demand), " - ",
+      prefixed_quantity_variable(.Object@supply), ") + ", price_specification
+    ))
+
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
 
     .Object
@@ -175,7 +184,8 @@ setMethod(
     pos <- len - ifelse(object@correlated_shocks, 3, 2)
     likelihood_variables <- c(
       likelihood_variables[1:pos],
-      price_differences_variable(object), prefixed_control_variables(object@price_equation),
+      price_differences_variable(object),
+      prefixed_control_variables(object@price_equation),
       likelihood_variables[(pos + 1):len]
     )
 

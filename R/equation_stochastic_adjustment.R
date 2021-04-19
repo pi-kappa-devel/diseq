@@ -10,7 +10,9 @@ setClass(
 setMethod(
   "initialize", "equation_stochastic_adjustment",
   function(.Object, quantity, price, specification, data, name, prefix) {
-    .Object <- callNextMethod(.Object, quantity, price, specification, data, name, prefix)
+    .Object <- callNextMethod(
+      .Object, quantity, price, specification, data, name, prefix
+    )
     .Object
   }
 )

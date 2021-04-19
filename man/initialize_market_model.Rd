@@ -120,8 +120,10 @@ formula that uses the \code{quantity_column} on the left hand side and the
 variables are constructed by the the\code{quantity_column} and the
 \code{supply_specification}. In the case of the
 \code{\linkS4class{diseq_stochastic_adjustment}} model, the price dynamics'
-variables are extracted using the \code{quantity_column} and the
-\code{price_specification}
+variables are extracted using the \code{price_specification}. The
+\code{price_specification} for the \code{\linkS4class{diseq_stochastic_adjustment}}
+should contain only terms other than that of excess demand. The excess demand term of
+the price equation is automatically added by the constructor.
 }
 
 \subsection{Data preparation}{

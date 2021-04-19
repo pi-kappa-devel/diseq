@@ -213,24 +213,24 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c(price_column, "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(bsmdl, bsmdl_est, v),
+  function(v) shortage_probability_marginal(bsmdl, bsmdl_est@coef, v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(drmdl, drmdl_est, v),
+  function(v) shortage_probability_marginal(drmdl, drmdl_est@coef, v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(damdl, damdl_est, v),
+  function(v) shortage_probability_marginal(damdl, damdl_est@coef, v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(samdl, samdl_est, v),
+  function(v) shortage_probability_marginal(samdl, samdl_est@coef, v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(bsmdl, bsmdl_est, v,
+    shortage_probability_marginal(bsmdl, bsmdl_est@coef, v,
       aggregate = "at_the_mean"
     )
   },
@@ -238,7 +238,7 @@ bsmdl_mem <- sapply(variables,
 )
 drmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(drmdl, drmdl_est, v,
+    shortage_probability_marginal(drmdl, drmdl_est@coef, v,
       aggregate = "at_the_mean"
     )
   },
@@ -246,7 +246,7 @@ drmdl_mem <- sapply(variables,
 )
 damdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(damdl, damdl_est, v,
+    shortage_probability_marginal(damdl, damdl_est@coef, v,
       aggregate = "at_the_mean"
     )
   },
@@ -254,7 +254,7 @@ damdl_mem <- sapply(variables,
 )
 samdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(samdl, samdl_est, v,
+    shortage_probability_marginal(samdl, samdl_est@coef, v,
       aggregate = "at_the_mean"
     )
   },

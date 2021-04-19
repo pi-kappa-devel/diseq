@@ -67,8 +67,10 @@ setClass(
 #' variables are constructed by the the\code{quantity_column} and the
 #' \code{supply_specification}. In the case of the
 #' \code{\linkS4class{diseq_stochastic_adjustment}} model, the price dynamics'
-#' variables are extracted using the \code{quantity_column} and the
-#' \code{price_specification}
+#' variables are extracted using the \code{price_specification}. The
+#' \code{price_specification} for the \code{\linkS4class{diseq_stochastic_adjustment}}
+#' should contain only terms other than that of excess demand. The excess demand term of
+#' the price equation is automatically added by the constructor.
 #' }
 #'
 #' \subsection{Data preparation}{
@@ -738,8 +740,7 @@ setMethod(
   function(object, est) {
     est@details$original_hessian <- est@details$hessian
     scores <- scores(object, est@coef)
-    nobs <- nrow(scores)
-    adjustment <- MASS::ginv(t(scores) %*% scores) / nobs
+    adjustment <- MASS::ginv(t(scores) %*% scores)
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
     est@vcov <- MASS::ginv(est@details$hessian)
     est
@@ -754,26 +755,20 @@ setMethod(
         object@logger, "Cluster variable is not among model data variables."
       )
     }
-    cluster_var <- rlang::syms(cluster_errors_by)
     est@details$original_hessian <- est@details$hessian
+    cluster_var <- rlang::syms(cluster_errors_by)
     clustered_scores <- tibble::tibble(
       object@model_tibble %>% dplyr::select(!!!cluster_var),
       tibble::as_tibble(scores(object, est@coef))
     ) %>%
       dplyr::group_by(!!!cluster_var) %>%
-      dplyr::summarise_all(~ sum(.) / sqrt(length(.))) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(!(!!!cluster_var)) %>%
-      as.matrix()
-    nobs <- nrow(object@model_tibble)
-    npars <- ncol(clustered_scores)
-    ncls <- object@model_tibble %>%
-      dplyr::distinct(!!!cluster_var) %>%
-      dplyr::count() %>%
-      as.integer()
-    adjustment <- MASS::ginv(t(clustered_scores) %*% clustered_scores) / ncls
+      dplyr::group_map(~t(as.matrix(.)) %*% (as.matrix(.)))
+    est@details$number_of_clusters <- length(clustered_scores)
+    adjustment <- MASS::ginv(Reduce("+", clustered_scores))
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
-    est@vcov <- MASS::ginv(est@details$hessian)
+    est@vcov <- MASS::ginv(est@details$hessian) * (
+      est@details$number_of_clusters / (est@details$number_of_clusters - 1)
+    )
     est
   }
 )
@@ -933,12 +928,12 @@ setMethod(
 #'
 #' @details Calculates the sample's aggregate demand or supply at the passed set of
 #' parameters. If the model is static, as is for example the case of
-#' \code{\linkS4class{equilibrium_model}}, then all observation are aggregated. If the
+#' \code{\linkS4class{equilibrium_model}}, then all observations are aggregated. If the
 #' used data have a time dimension and aggregation per date is required, it can be
 #' manually performed using the \code{\link{demanded_quantities}} and
 #' \code{\link{supplied_quantities}} functions. If the model has a dynamic component,
 #' such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
-#' and supplied quantities are automatically calculated per date.
+#' and supplied quantities are automatically aggregated for each time point.
 #' @param object A model object.
 #' @param parameters A vector of model's parameters.
 #' @return The sum of the estimated demanded or supplied quantities evaluated at the
@@ -996,18 +991,16 @@ setMethod("aggregate_equation", signature(object = "market_model"),
           function(object, parameters, equation) {
   object@system <- set_parameters(object@system, parameters)
   quantities <- quantities(slot(object@system, equation))
-  aggregate_name <- paste0("aggregate_", equation)
   result <- NULL
   if (!is.null(object@time_column)) {
     time_symbol <- rlang::sym(object@time_column)
-    aggregate_symbol <- rlang::sym(aggregate_name)
+    aggregate_symbol <- rlang::sym(colnames(quantities))
     result <- object@model_tibble[, object@time_column] %>%
       dplyr::mutate(!!aggregate_symbol := quantities) %>%
       dplyr::group_by(!!time_symbol) %>%
       dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
   } else {
     result <- sum(quantities)
-    names(result) <- aggregate_name
   }
   result
 })

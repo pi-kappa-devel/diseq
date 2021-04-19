@@ -1,3 +1,15 @@
+# diseq 0.3.0.9002
+
+* Fixed bug in `show` and `summary` methods of `diseq_stochastic_adjustment`.
+* Fixed bug in calculation of clustered standard errors.
+* Changed input arguments of marginal effect calls to match the interface of the remaining post-analysis calls (changes the user space).
+* Added `prefixed_quantity_variable` method.
+* Added implementation figure.
+
+# diseq 0.3.0.9001
+
+* Fixed R check missing documentation entries.
+
 # diseq 0.3.0.9000
 
 * Changes in model simulation.
