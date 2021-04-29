@@ -73,7 +73,7 @@ jobs:
       - name: Install MacOs system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install --cask mactex
+          brew install texinfo
           ln -s /usr/bin/texi2dvi /usr/local/bin/texi2dvi
           ln -s /usr/bin/texi2pdf /usr/local/bin/texi2pdf
           brew install gsl
