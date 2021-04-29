@@ -74,7 +74,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install --cask mactex
-          eval "$(/usr/libexec/path_helper)"
+          ln -s /usr/bin/texi2dvi /usr/local/bin/texi2dvi
+          ln -s /usr/bin/texi2pdf /usr/local/bin/texi2pdf
           brew install gsl
 
       - name: Install dependencies
