@@ -16,6 +16,7 @@
 README*.html
 vignettes/*.html
 vignettes/*.pdf
+!vignettes/diseq_package.pdf
 vignettes/*.R
 doc*
 docs
