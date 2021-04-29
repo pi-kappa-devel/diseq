@@ -73,7 +73,7 @@ jobs:
       - name: Install MacOs system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install texlive
+          brew install --cask basictex
           brew install gsl
 
       - name: Install dependencies
