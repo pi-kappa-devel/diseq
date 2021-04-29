@@ -74,10 +74,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
-          echo $PATH
-          which texi2dvi
-          echo "$(which texi2dvi):" >> $PATH
-          echo $PATH
+          ln -s "$(which texi2dvi):" /usr/bin/texi2dvi
 
       - name: Install dependencies
         run: |
