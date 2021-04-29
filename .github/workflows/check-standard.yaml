@@ -68,12 +68,12 @@ jobs:
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
-          choco install gsl --pre --source=mingw
+          choco install gnuwin
 
       - name: Install MacOs system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install --cask basictex
+          brew install --cask mactex
           eval "$(/usr/libexec/path_helper)"
           brew install gsl
 
