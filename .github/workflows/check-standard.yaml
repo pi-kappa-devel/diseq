@@ -75,7 +75,8 @@ jobs:
         run: |
           brew install gsl
           echo $PATH
-          echo "/opt/local/bin:/opt/local/sbin:/sw/bin:/sw/sbin" >> $PATH
+          which texi2dvi
+          echo "$(which texi2dvi)" >> $PATH
           echo $PATH
 
       - name: Install dependencies
