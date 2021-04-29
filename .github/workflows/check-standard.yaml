@@ -74,7 +74,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
-          echo "/opt/local/bin:/opt/local/sbin:/sw/bin:/sw/sbin" >> $GITHUB_PATH
+          echo $PATH
+          echo "/opt/local/bin:/opt/local/sbin:/sw/bin:/sw/sbin" >> $PATH
+          echo $PATH
 
       - name: Install dependencies
         run: |
