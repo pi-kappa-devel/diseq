@@ -74,6 +74,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
+          sudo csrutil disable
           sudo ln -s "$(which texi2dvi)" /usr/bin/texi2dvi
 
       - name: Install dependencies
