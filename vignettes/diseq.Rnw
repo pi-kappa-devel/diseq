@@ -1,0 +1,7 @@
+\documentclass{article}
+\usepackage{pdfpages}
+%\VignetteIndexEntry{The R Package diseq: Estimation Methods for Markets in Equilibrium and Disequilibrium}
+
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{diseq_package.pdf}
+\end{document}

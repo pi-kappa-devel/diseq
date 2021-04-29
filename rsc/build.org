@@ -5,6 +5,11 @@
 rm configure && autoreconf && Rscript -e "devtools::clean_dll(); devtools::document()"
 #+end_src
 
+** Reduce software paper size
+#+begin_src R :dir .. :results output :async
+tools::compactPDF("./vignettes/diseq_package.pdf", gs_quality = "ebook")
+#+end_src
+
 ** Make documentation
 
 #+begin_src R :dir .. :results output :async
