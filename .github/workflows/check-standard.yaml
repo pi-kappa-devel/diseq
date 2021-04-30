@@ -74,8 +74,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
-          brew install mactex
-          bash --login
+          TEXI2DVI=/usr/local/bin/texi2dvi  ## Added by Ken
+          R_TEXI2DVICMD=${R_TEXI2DVICMD-${TEXI2DVI-'/usr/local/opt/texinfo/bin/texi2dvi'}}
 
       - name: Install dependencies
         run: |
@@ -86,6 +86,7 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
+          
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(build_args = "--compact-vignettes=both", args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
