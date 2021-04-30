@@ -74,6 +74,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
+          brew install basictex
 
       - name: Install dependencies
         run: |
@@ -88,6 +89,8 @@ jobs:
         run: |
           options(crayon.enabled = TRUE)
           Sys.setenv(TEXI2DVI = system("which texi2dvi", intern = TRUE), R_TEXI2DVICMD = "emulation")
+          Sys.which("pdflatex")
+          system("which pdflatex")
           Sys.getenv(c("R_HOME", "R_PAPERSIZE", "R_PRINTCMD", "HOST", "PATH", "TEXI2DVI", "R_TEXI2DVICMD"))
           rcmdcheck::rcmdcheck(build_args = "--compact-vignettes=both", args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
