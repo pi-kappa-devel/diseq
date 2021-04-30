@@ -74,7 +74,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install gsl
-          sudo ln -s /usr/local/bin/texi2dvi /usr/bin/texi2dvi
+          brew install mactex
+          bash --login
 
       - name: Install dependencies
         run: |
