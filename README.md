@@ -291,8 +291,37 @@ est <- estimate(mdl)
 bbmle::summary(est)
 ```
 
-    ## Length  Class   Mode 
-    ##      1   mle2     S4
+    ## Maximum likelihood estimation
+    ## 
+    ## Call:
+    ## `bbmle::mle2`(list(skip.hessian = TRUE, start = c(D_P = 2.20196877751699, 
+    ## D_CONST = 11.2388922841303, D_Xd1 = 0.270903396323925, D_Xd2 = -0.0866785170449159, 
+    ## D_X1 = 1.44062383641357, D_X2 = 4.46769000498207, S_P = 2.19994905762293, 
+    ## S_CONST = 10.2218850028638, S_Xs1 = 0.59622703822817, S_X1 = 1.43857649730767, 
+    ## S_X2 = 4.46672975897316, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
+    ## ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
+    ##     gr = function(...) gradient(object, ...)))
+    ## 
+    ## Coefficients:
+    ##              Estimate Std. Error  z value  Pr(z)    
+    ## D_P        -1.9277826  0.0643871 -29.9405 <2e-16 ***
+    ## D_CONST    12.7187450  0.1665723  76.3557 <2e-16 ***
+    ## D_Xd1       2.1041794  0.0386208  54.4831 <2e-16 ***
+    ## D_Xd2      -0.6396308  0.0293756 -21.7742 <2e-16 ***
+    ## D_X1        3.4902260  0.0398746  87.5300 <2e-16 ***
+    ## D_X2        6.2935478  0.0385864 163.1028 <2e-16 ***
+    ## S_P         2.8065335  0.0120090 233.7023 <2e-16 ***
+    ## S_CONST    10.1644425  0.0494381 205.5993 <2e-16 ***
+    ## S_Xs1       0.6782140  0.0097622  69.4737 <2e-16 ***
+    ## S_X1        1.1295126  0.0104475 108.1137 <2e-16 ***
+    ## S_X2        4.1981877  0.0103540 405.4635 <2e-16 ***
+    ## D_VARIANCE  1.0177756  0.0303119  33.5767 <2e-16 ***
+    ## S_VARIANCE  1.0026251  0.0074199 135.1273 <2e-16 ***
+    ## RHO        -0.0238756  0.0376718  -0.6338 0.5262    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## -2 log L: 138110.5
 
 # Design and functionality
 
@@ -376,7 +405,7 @@ The code is distributed under the MIT License.
 
 # References
 
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 
 <div id="ref-balestra1987">
 

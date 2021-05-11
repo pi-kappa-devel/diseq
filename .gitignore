@@ -16,7 +16,7 @@
 README*.html
 vignettes/*.html
 vignettes/*.pdf
-!vignettes/diseq_package.pdf
+!vignettes/diseq.pdf
 vignettes/*.R
 doc*
 docs
@@ -42,3 +42,5 @@ config.log
 config.status
 aclocal.m4
 doc
+/doc/
+/Meta/

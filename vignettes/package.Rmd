@@ -1,0 +1,13 @@
+---
+title: "The R Package diseq: Estimation Methods for Markets in Equilibrium and Disequilibrium"
+output:
+  rmarkdown::html_vignette:
+    toc: false
+vignette: >
+  %\VignetteIndexEntry{The R Package diseq: Estimation Methods for Markets in Equilibrium and Disequilibrium}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+<iframe src="diseq.pdf" style="width:100%;height:80vmin;"/>
+
+

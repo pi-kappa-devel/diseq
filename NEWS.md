@@ -1,3 +1,15 @@
+# diseq 0.3.1
+
+* Cumulative update of CRAN version.
+
+# diseq 0.3.0.9004
+
+* Included package article in documentation website.
+
+# diseq 0.3.0.9003
+
+* Added package article.
+
 # diseq 0.3.0.9002
 
 * Fixed bug in `show` and `summary` methods of `diseq_stochastic_adjustment`.
