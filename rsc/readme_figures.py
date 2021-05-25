@@ -179,9 +179,9 @@ def diseq_basic_figure():
 
     ax.plot(q, demand(q), color=colors["market-force"])
     ax.plot(q, supply(q), color=colors["market-force"])
-    ax.plot(q[q < qeq], demand(q[q < qeq]), "-", alpha=0.8, ls="dashdot",
+    ax.plot(q[q < qeq], demand(q[q < qeq]), alpha=0.8, ls="dashdot",
             color=colors["identification"])
-    ax.plot(q[q < qeq], supply(q[q < qeq]), "-",
+    ax.plot(q[q < qeq], supply(q[q < qeq]),
             alpha=0.8, ls="dashdot", color=colors["identification"])
     ax.plot([dsh, ssh], [psh, psh], color=colors["shortage"])
     ax.plot(dsh, psh, "o", mfc="none", color=colors["shortage"])
@@ -233,10 +233,8 @@ def diseq_directional_figure():
 
     ax.plot(q, demand(q), color=colors["market-force"])
     ax.plot(q, supply(q), color=colors["market-force"])
-    ax.plot(q[q < qeq], supply(q[q < qeq]), "-",
-            ls="dashdot", color=colors["identification"])
-    ax.plot(q[q < qeq], demand(q[q < qeq]), "-",
-            ls="dashdot", color=colors["identification"])
+    ax.plot(q[q < qeq], supply(q[q < qeq]), ls="dashdot", color=colors["identification"])
+    ax.plot(q[q < qeq], demand(q[q < qeq]), ls="dashdot", color=colors["identification"])
 
     ax.annotate(
         "Observed if\n$\Delta P > 0$",
@@ -281,10 +279,8 @@ def diseq_deterministic_adjustment_figure():
 
     ax.plot(q, demand(q), color=colors["market-force"])
     ax.plot(q, supply(q), color=colors["market-force"])
-    ax.plot(q[q < qeq], supply(q[q < qeq]), "-",
-            ls="dashdot", color=colors["identification"])
-    ax.plot(q[q < qeq], demand(q[q < qeq]), "-",
-            ls="dashdot", color=colors["identification"])
+    ax.plot(q[q < qeq], supply(q[q < qeq]), ls="dashdot", color=colors["identification"])
+    ax.plot(q[q < qeq], demand(q[q < qeq]), ls="dashdot", color=colors["identification"])
     ax.plot([dsh, ssh], [psh, psh], color=colors["shortage"])
     ax.plot([dsu, ssu], [psu, psu], color=colors["shortage"])
     ax.plot(dsh, psh, "o", mfc="none", color=colors["shortage"])
@@ -349,9 +345,9 @@ def diseq_stochastic_adjustment_figure():
 
     ax.plot(q, demand(q), color=colors["market-force"])
     ax.plot(q, supply(q), color=colors["market-force"])
-    ax.plot(q[q < qeq], demand(q[q < qeq]), "-",
+    ax.plot(q[q < qeq], demand(q[q < qeq]),
             alpha=0.8, ls="dashdot", color=colors["identification"])
-    ax.plot(q[q < qeq], supply(q[q < qeq]), "-",
+    ax.plot(q[q < qeq], supply(q[q < qeq]),
             alpha=0.8, ls="dashdot", color=colors["identification"])
     ax.plot([dsh, ssh], [psh, psh], color=colors["shortage"])
     ax.plot(dsh, psh, "o", mfc="none", color=colors["shortage"])
