@@ -127,6 +127,9 @@ Online documentation is available for both the [released](https://www.diseq.pika
 ```r
 ?? diseq
 ```
+An overview of the package's functionality was presented in the session Trends, Markets, Models of the [useR!2021](https://user2021.r-project.org/) conference. The recording of the session, including the talk for this package, can be found in the video that follows. The presentation slides of the talk are also available [here](https://talks.pikappa.eu/useR!2021/slides.html).
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Kkjkny94dgU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 # A practical example
 

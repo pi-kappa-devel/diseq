@@ -1,3 +1,8 @@
+# diseq 0.3.1.9001
+
+* Added link useR!2021 video and slides in the README file.
+* Fixed math display issues in GITHUB markdown page.
+
 # diseq 0.3.1
 
 * Cumulative update of CRAN version.

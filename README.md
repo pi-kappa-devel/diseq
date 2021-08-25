@@ -42,15 +42,7 @@ two-stage least squares (Theil 1953) or full information maximum
 likelihood (Karapanagiotis, n.d.). Asymptotically, these methods are
 equivalent (Balestra and Varadharajan-Krishnakumar 1987).
 
-\[
-\begin{equation}
-\begin{aligned}
-D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
-S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
-Q_{n t} &= D_{n t} = S_{n t}
-\end{aligned} \tag{EM} \label{equilibrium}
-\end{equation}
-\] <img src='man/figures/equilibrium_model.png'/>
+<img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bequation%7D%0A%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20D_%7Bn%20t%7D%20%3D%20S_%7Bn%20t%7D%0A%5Cend%7Baligned%7D%20%5Ctag%7BEM%7D%20%5Clabel%7Bequilibrium%7D%0A%5Cend%7Bequation%7D'/> <img src='man/figures/equilibrium_model.png'/>
 
 ## The basic disequilibrium model
 
@@ -65,15 +57,7 @@ to the demand or the supply side since the estimation of the model will
 allocate the observations on the demand or supply side so that the
 likelihood is maximized.
 
-\[
-\begin{equation}
-\begin{aligned}
-D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
-S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
-Q_{n t} &= \min\{D_{n t},S_{n t}\}
-\end{aligned} \tag{BM} \label{basic}
-\end{equation}
-\] <img src='man/figures/diseq_basic.png'/>
+<img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bequation%7D%0A%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20D_%7Bn%20t%7D%20%3D%20S_%7Bn%20t%7D%0A%5Cend%7Baligned%7D%20%5Ctag%7BEM%7D%20%5Clabel%7Bequilibrium%7D%0A%5Cend%7Bequation%7D'/> <img src='man/figures/diseq_basic.png'/>
 
 ## The directional disequilibrium model
 
@@ -90,16 +74,7 @@ also, when inaccurate, intensifies misspecification problems. Therefore,
 the additional structure of the directional model does not guarantee
 better estimates in comparison with the basic model.
 
-\[
-\begin{equation}
-\begin{aligned}
-D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
-S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
-Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
-\Delta P_{n t} &\ge 0 \implies D_{n t} \ge S_{n t}
-\end{aligned} \tag{DM} \label{directional}
-\end{equation}
-\] <img src='man/figures/diseq_directional.png'/>
+<img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bequation%7D%0A%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20D_%7Bn%20t%7D%20%3D%20S_%7Bn%20t%7D%0A%5Cend%7Baligned%7D%20%5Ctag%7BEM%7D%20%5Clabel%7Bequilibrium%7D%0A%5Cend%7Bequation%7D'/> <img src='man/figures/diseq_directional.png'/>
 
 ## A disequilibrium model with deterministic price dynamics
 
@@ -117,16 +92,7 @@ dynamics, that accounts for market forces that are in alignment with
 standard economic reasoning. By letting \(\gamma\) approach zero, the
 equilibrium model can be obtained as a limiting case of this model.
 
-\[
-\begin{equation}
-\begin{aligned}
-D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
-S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
-Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
-\Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right)
-\end{aligned} \tag{DA} \label{deterministic_adjustment}
-\end{equation}
-\] <img src='man/figures/diseq_deterministic_adjustment.png'/>
+<img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bequation%7D%0A%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20D_%7Bn%20t%7D%20%3D%20S_%7Bn%20t%7D%0A%5Cend%7Baligned%7D%20%5Ctag%7BEM%7D%20%5Clabel%7Bequilibrium%7D%0A%5Cend%7Bequation%7D'/> <img src='man/figures/diseq_deterministic_adjustment.png'/>
 
 ## A disequilibrium model with stochastic price dynamics
 
@@ -141,16 +107,7 @@ freedom, accompanied, however, by a significant increase in estimation
 complexity, which can hinder the stability of the procedure and the
 numerical accuracy of the outcomes.
 
-\[
-\begin{equation}
-\begin{aligned}
-D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
-S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
-Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
-\Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right) +  X_{p, n t}'\beta_{p} + u_{p, n t}
-\end{aligned} \tag{SA} \label{stochastic_adjustment}
-\end{equation}
-\] <img src='man/figures/diseq_stochastic_adjustment.png'/>
+<img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Bequation%7D%0A%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20D_%7Bn%20t%7D%20%3D%20S_%7Bn%20t%7D%0A%5Cend%7Baligned%7D%20%5Ctag%7BEM%7D%20%5Clabel%7Bequilibrium%7D%0A%5Cend%7Bequation%7D'/> <img src='man/figures/diseq_stochastic_adjustment.png'/>
 
 # Installation and documentation
 
@@ -180,6 +137,15 @@ package. The documentation files can also accessed in `R` by typing
 ``` r
 ?? diseq
 ```
+
+An overview of the package’s functionality was presented in the session
+Trends, Markets, Models of the
+[useR\!2021](https://user2021.r-project.org/) conference. The recording
+of the session, including the talk for this package, can be found in the
+video that follows. The presentation slides of the talk are also
+available [here](https://talks.pikappa.eu/useR!2021/slides.html).
+
+<a style="display:block;margin:auto" href="https://www.youtube.com/watch?v=Kkjkny94dgU" target="_blank"><img src="http://img.youtube.com/vi/Kkjkny94dgU/0.jpg"  alt="Session Recording" width="560" height="315" border="10" /></a>
 
 # A practical example
 
