@@ -23,7 +23,6 @@ document <- gsub("\\\\\\[\\n",
 		"<img src='https://render.githubusercontent.com/render/math?math=" ,
 		document)
 document <- gsub("\\n\\\\]", "'/>", document)
-document <- gsub("\\\\\\(\\\\ge\\\\\\)", "&GreaterEqual;", document)
 matches <- gregexpr("\\\\begin\\{equation\\}.+?\\\\end\\{equation\\}", document)
 regmatches(document, matches) <- lapply(
   regmatches(document, matches), 

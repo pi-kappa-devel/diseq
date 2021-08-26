@@ -219,10 +219,10 @@ supply_specification <- "Xs1 + X1 + X2"
   - The verbosity level controls the level of messaging. The object
     displays
       - error: always,
-      - warning: &GreaterEqual; 1,
-      - info: &GreaterEqual; 2,
-      - verbose: &GreaterEqual; 3 and
-      - debug: &GreaterEqual; 4.
+      - warning: ≥ 1,
+      - info: ≥ 2,
+      - verbose: ≥ 3 and
+      - debug: ≥ 4.
 
 <!-- end list -->
 
@@ -342,22 +342,13 @@ estimation of the other three disequilibrium models of *diseq*.
 
 The package is planned to be expanded in the following ways:
 
-  - Firstly, it is planned for the package to become more inclusive by
-    adding additional market models.
-  - Secondly, the main implementation is currently written directly in
-    *R* and is single-threaded using only one processor for the
-    estimations of the models. For the numerically intensive likelihood
-    optimizations that the package employs, this results to extended
-    execution times when the models are estimated using large datasets.
-    Alternative likelihood optimizations are gradually implemented in
-    *C++* using a concurrent design. The equilibrium implementation is
-    already implemented. It is planned for future versions to provide
-    *C++* implementations also for the remaining models.
-  - Thirdly, it is planned to include single-command functionality for
-    the market-clearing tests (Karapanagiotis, n.d.; Hwang 1980; Quandt
-    1978).
-  - Fourthly, it is planned to include additional estimation methods
-    (Zilinskas and Bogle 2006; Quandt and Ramsey 1978).
+1.  The package should become more inclusive by adding additional market
+    models.
+2.  Single-command functionality for the market-clearing tests
+    (e.g. (Karapanagiotis, n.d.; Hwang 1980; Quandt 1978)) should be
+    included in the package.
+3.  Alternative estimation methods (e.g (Zilinskas and Bogle 2006;
+    Quandt and Ramsey 1978)) could also be implemented.
 
 # Contributors
 

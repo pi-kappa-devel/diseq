@@ -1,3 +1,7 @@
+# diseq 0.3.1.9003
+
+* Updated README planned extensions section.
+
 # diseq 0.3.1.9002
 
 * Changed the simulation parameters of the `basic_usage` vignette to produce more balanced sample data in the models that use sample separation.
