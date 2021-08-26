@@ -31,19 +31,19 @@ Prepare the data. Normally this step is long and it depends on the nature of the
 nobs <- 2000
 tobs <- 5
 
-alpha_d <- -0.1
-beta_d0 <- 9.8
-beta_d <- c(0.3, -0.2)
+alpha_d <- -0.3
+beta_d0 <- 6.8
+beta_d <- c(0.3, -0.02)
 eta_d <- c(0.6, -0.1)
 
-alpha_s <- 0.1
-beta_s0 <- 5.1
+alpha_s <- 0.6
+beta_s0 <- 2.1
 beta_s <- c(0.9)
 eta_s <- c(-0.5, 0.2)
 
 gamma <- 1.2
-beta_p0 <- 3.1
-beta_p <- c(0.8)
+beta_p0 <- 0.9
+beta_p <- c(-0.1)
 
 sigma_d <- 1
 sigma_s <- 1
@@ -199,8 +199,7 @@ damdl_est <- estimate(damdl,
   standard_errors = c("id")
 )
 samdl_est <- estimate(samdl,
-  control = optimization_controls, method = optimization_method,
-  standard_errors = c("id")
+  control = optimization_controls, method = optimization_method
 )
 ```
 ## Post estimation analysis 

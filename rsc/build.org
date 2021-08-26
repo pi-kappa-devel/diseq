@@ -18,13 +18,19 @@ pkgdown::build_site(lazy = FALSE)
 
 rmarkdown::render('README.Rmd', output_format = 'github_document')
 document <- paste(readLines('README.md'), collapse = "\n")
+document <- gsub("\\\\tag.+\\\\label.+?\\}", "", document)
 document <- gsub("\\\\\\[\\n", 
 		"<img src='https://render.githubusercontent.com/render/math?math=" ,
 		document)
 document <- gsub("\\n\\\\]", "'/>", document)
+document <- gsub("\\\\\\(\\\\ge\\\\\\)", "&GreaterEqual;", document)
 matches <- gregexpr("\\\\begin\\{equation\\}.+?\\\\end\\{equation\\}", document)
-regmatches(document, matches) <- lapply(regmatches(document, matches), 
-					function(x) URLencode(x, TRUE))
+regmatches(document, matches) <- lapply(
+  regmatches(document, matches), 
+  function(x) { 
+    x <- gsub("\\\\begin\\{equation\\}[[:space:]](.+?)[[:space:]]\\\\end\\{equation\\}", "\\1", x)
+    URLencode(x, TRUE)
+  })
 document <- gsub("<iframe.+?iframe>", '<a style="display:block;margin:auto" href="https://www.youtube.com/watch?v=Kkjkny94dgU" target="_blank"><img src="http://img.youtube.com/vi/Kkjkny94dgU/0.jpg"  alt="Session Recording" width="560" height="315" border="10" /></a>', document)
 writeLines(document, 'README.md')
 
