@@ -143,7 +143,7 @@ Trends, Markets, Models of the
 [useR\!2021](https://user2021.r-project.org/) conference. The recording
 of the session, including the talk for this package, can be found in the
 video that follows. The presentation slides of the talk are also
-available [here](https://talks.pikappa.eu/useR!2021/slides.html).
+available [here](https://talks.pikappa.eu/useR!2021/).
 
 <a style="display:block;margin:auto" href="https://www.youtube.com/watch?v=Kkjkny94dgU" target="_blank"><img src="http://img.youtube.com/vi/Kkjkny94dgU/0.jpg"  alt="Session Recording" width="560" height="315" border="10" /></a>
 

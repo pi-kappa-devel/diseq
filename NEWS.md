@@ -1,3 +1,7 @@
+# diseq 0.3.1.9004
+
+* Fixed broken link in README.
+
 # diseq 0.3.1.9003
 
 * Updated README planned extensions section.
