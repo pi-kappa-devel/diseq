@@ -1,3 +1,7 @@
+# diseq 0.3.1.9005
+
+* Fixed equations (issue #24) in GitHub document.
+
 # diseq 0.3.1.9004
 
 * Fixed broken link in README.

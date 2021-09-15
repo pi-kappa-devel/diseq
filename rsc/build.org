@@ -24,12 +24,12 @@ document <- gsub("\\\\\\[\\n",
 		document)
 document <- gsub("\\n\\\\]", "'/>", document)
 matches <- gregexpr("\\\\begin\\{equation\\}.+?\\\\end\\{equation\\}", document)
-regmatches(document, matches) <- lapply(
-  regmatches(document, matches), 
+regmatches(document, matches) <- list(lapply(
+  regmatches(document, matches)[[1]], 
   function(x) { 
-    x <- gsub("\\\\begin\\{equation\\}[[:space:]](.+?)[[:space:]]\\\\end\\{equation\\}", "\\1", x)
-    URLencode(x, TRUE)
-  })
+    y <- gsub("\\\\begin\\{equation\\}[[:space:]](.+?)[[:space:]]\\\\end\\{equation\\}", "\\1", x)
+    URLencode(y, TRUE)
+  }))
 document <- gsub("<iframe.+?iframe>", '<a style="display:block;margin:auto" href="https://www.youtube.com/watch?v=Kkjkny94dgU" target="_blank"><img src="http://img.youtube.com/vi/Kkjkny94dgU/0.jpg"  alt="Session Recording" width="560" height="315" border="10" /></a>', document)
 writeLines(document, 'README.md')
 
