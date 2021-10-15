@@ -26,7 +26,11 @@ setClass(
 setMethod(
   "initialize", "equation_basic",
   function(.Object, quantity, price, specification, data, name, prefix) {
-    .Object <- callNextMethod(.Object, quantity, price, specification, data, name, prefix)
+    specification <- Formula(formula(paste0(
+      quantity, " ~ ", specification,
+      " | ", price
+    )))
+    .Object <- callNextMethod(.Object, specification, data, name, prefix)
     .Object
   }
 )

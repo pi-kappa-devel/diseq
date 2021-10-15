@@ -1,4 +1,6 @@
-#' @import methods
+#' @import Formula methods
+
+setOldClass(c("Formula"))
 
 #' @title Equation classes
 #'
@@ -7,14 +9,10 @@
 NULL
 
 #' @describeIn equation_classes Equation base class
-#' @slot prefixed_specification The equation formula using prefixed variables.
-#' @slot formula The equation formula.
-#' @slot linear_model The estimated equation using linear regression.
+#' @slot formula The equation formula using prefixed variables.
 #' @slot name The name of the equation.
 #' @slot variable_prefix A prefix string for the variables of the equation.
-#' @slot independent_variables A vector with the right hand side variable names.
-#' @slot price_variable The price variable name.
-#' @slot control_variables Independent variables without the price variable.
+#' @slot dependent_vector The vector of the response.
 #' @slot independent_matrix A model data matrix with columns corresponding to the set
 #' of independent variables.
 #' @slot price_vector The vector of prices.
@@ -28,21 +26,13 @@ NULL
 setClass(
   "equation_base",
   representation(
-    prefixed_specification = "character",
-    formula = "formula",
-    linear_model = "lm",
-
+    formula = "Formula",
     name = "character",
     variable_prefix = "character",
-    independent_variables = "vector",
-    price_variable = "character",
-    control_variables = "vector",
-    quantity_variable = "character",
-
+    dependent_vector = "matrix",
     independent_matrix = "matrix",
     price_vector = "matrix",
     control_matrix = "matrix",
-
     alpha_beta = "matrix",
     alpha = "numeric",
     beta = "matrix",
@@ -50,20 +40,13 @@ setClass(
     sigma = "numeric"
   ),
   prototype(
-    prefixed_specification = NULL,
     formula = NULL,
-    linear_model = NULL,
-
     name = NULL,
     variable_prefix = NULL,
-    independent_variables = NULL,
-    price_variable = NULL,
-    control_variables = NULL,
-
+    dependent_vector = NULL,
     independent_matrix = NULL,
     price_vector = NULL,
     control_matrix = NULL,
-
     alpha_beta = matrix(NA_real_),
     alpha = 0,
     beta = matrix(NA_real_),
@@ -74,59 +57,40 @@ setClass(
 
 setMethod(
   "initialize", "equation_base",
-  function(.Object, quantity, price, specification, data, name, prefix) {
-    tf <- formula(paste0(quantity, " ~ ", specification))
-    tnames <- all.vars(tf)
-    independent <- tnames[tnames != quantity]
-    controls <- independent[independent != price]
-    if (price %in% independent) {
-      independent <- c(price, controls)
-    }
+  function(.Object, specification, data, name, prefix) {
     names(data) <- paste0(prefix, names(data))
+    prefixed_specification <- deparse(specification)
+    for (x in all.vars(specification)) {
+      prefixed_specification <- gsub(
+        paste0("\\b", x, "\\b"),
+        paste0(prefix, x), prefixed_specification
+      )
+    }
 
-    prefixed_specification <- stringr::str_replace_all(
-      deparse(tf), stringr::str_c(paste0(tnames, collapse = "|")),
-      function(from) paste0(prefix, from)
+    .Object@formula <- Formula(formula(prefixed_specification, rhs = 1))
+    .Object@dependent_vector <- as.matrix(model.part(.Object@formula,
+      lhs = 1, data
+    ))
+    .Object@price_vector <- as.matrix(model.part(.Object@formula,
+      rhs = 2, data
+    ))
+    .Object@independent_matrix <- model.matrix(.Object@formula, data)
+    colnames(.Object@independent_matrix) <- gsub(
+      "\\(Intercept\\)",
+      paste0(prefix, "CONST"), colnames(.Object@independent_matrix)
     )
-
-    formula <- formula(prefixed_specification)
-    linear_model <- stats::lm(formula, data)
-    prefixed_variables <- names(linear_model$coefficients)
-    prefixed_variables[prefixed_variables == "(Intercept)"] <- paste0(prefix, "CONST")
-    names(linear_model$coefficients) <- prefixed_variables
-
-    model_matrix <- model.matrix(linear_model)
-    prefixed_variables <- colnames(model_matrix)
-    prefixed_variables[prefixed_variables == "(Intercept)"] <- paste0(prefix, "CONST")
-
-    .Object@prefixed_specification <- prefixed_specification
-    .Object@formula <- formula
-    .Object@linear_model <- linear_model
+    .Object@control_matrix <- .Object@independent_matrix[
+      , colnames(.Object@independent_matrix) != colnames(.Object@price_vector)
+    ]
+    if (colnames(.Object@price_vector) %in% colnames(.Object@independent_matrix)) {
+      .Object@independent_matrix <- cbind(
+        .Object@price_vector,
+        .Object@control_matrix
+      )
+    }
 
     .Object@name <- name
     .Object@variable_prefix <- prefix
-    .Object@independent_variables <- independent
-    .Object@price_variable <- price
-    .Object@control_variables <- controls
-    .Object@quantity_variable <- quantity
-
-    .Object@independent_matrix <- model_matrix
-    colnames(.Object@independent_matrix) <- prefixed_variables
-
-    price_selection <- paste0(prefix, price) == colnames(.Object@independent_matrix)
-    .Object@price_vector <- as.matrix(.Object@independent_matrix[, price_selection])
-    colnames(.Object@price_vector) <- colnames(
-      .Object@independent_matrix
-    )[price_selection]
-
-    .Object@control_matrix <- as.matrix(.Object@independent_matrix[, !price_selection])
-    colnames(.Object@control_matrix) <- colnames(
-      .Object@independent_matrix
-    )[!price_selection]
-    .Object@independent_matrix <- .Object@independent_matrix[
-      ,
-      c(colnames(.Object@price_vector), colnames(.Object@control_matrix))
-    ]
 
     .Object
   }
@@ -165,6 +129,10 @@ setGeneric("prefixed_independent_variables", function(object) {
   standardGeneric("prefixed_independent_variables")
 })
 
+setGeneric("independent_variables", function(object) {
+  standardGeneric("independent_variables")
+})
+
 #' @describeIn variable_names Price coefficient variable name.
 #' @description \code{prefixed_price_variable}: The price variable name is
 #' constructed by concatenating the equation prefix with the name of the price column.
@@ -180,6 +148,10 @@ setGeneric("prefixed_price_variable", function(object) {
 #' @export
 setGeneric("prefixed_control_variables", function(object) {
   standardGeneric("prefixed_control_variables")
+})
+
+setGeneric("control_variables", function(object) {
+  standardGeneric("control_variables")
 })
 
 #' @describeIn variable_names Variance variable name.
@@ -227,11 +199,22 @@ setMethod(
   }
 )
 
+setMethod(
+  "independent_variables", signature(object = "equation_base"),
+  function(object) {
+    gsub(object@variable_prefix, "", colnames(object@independent_matrix))
+  }
+)
+
 #' @rdname variable_names
 setMethod(
   "prefixed_price_variable", signature(object = "equation_base"),
   function(object) {
-    colnames(object@price_vector)
+    if (colnames(object@price_vector) %in% colnames(object@independent_matrix)) {
+      colnames(object@price_vector)
+    } else {
+      NULL
+    }
   }
 )
 
@@ -240,6 +223,13 @@ setMethod(
   "prefixed_control_variables", signature(object = "equation_base"),
   function(object) {
     colnames(object@control_matrix)
+  }
+)
+
+setMethod(
+  "control_variables", signature(object = "equation_base"),
+  function(object) {
+    gsub(object@variable_prefix, "", colnames(object@control_matrix))
   }
 )
 
@@ -255,7 +245,7 @@ setMethod(
 setMethod(
   "prefixed_quantity_variable", signature(object = "equation_base"),
   function(object) {
-    paste0(object@variable_prefix, object@quantity_variable)
+    colnames(object@dependent_vector)
   }
 )
 

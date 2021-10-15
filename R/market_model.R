@@ -142,8 +142,10 @@ setMethod(
         all.vars(formula(paste0(price_column, " ~ ", price_specification)))
       ))
     }
-    .Object@data_columns <- unique(c(quantity_column, price_column,
-                                     .Object@explanatory_columns))
+    .Object@data_columns <- unique(c(
+      quantity_column, price_column,
+      .Object@explanatory_columns
+    ))
     .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
 
     ## Data assignment
@@ -189,7 +191,7 @@ setMethod(
     )) {
       ## Generate lags
       key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns !=
-                                                  .Object@time_column])
+        .Object@time_column])
       price_sym <- rlang::sym(price_column)
       time_sym <- rlang::sym(.Object@time_column)
       lagged_price_column <- paste0("LAGGED_", price_column)
@@ -231,16 +233,17 @@ setMethod(
         demand_specification, supply_specification, price_specification,
         .Object@model_tibble, correlated_shocks
       )
-    }
-    else {
+    } else {
       .Object@system <- system_initializer(
         quantity_column, price_column, demand_specification, supply_specification,
         .Object@model_tibble, correlated_shocks
       )
     }
 
-    print_verbose(.Object@logger, "Using columns ",
-                  paste0(.Object@columns, collapse = ", "), ".")
+    print_verbose(
+      .Object@logger, "Using columns ",
+      paste0(.Object@columns, collapse = ", "), "."
+    )
 
     .Object
   }
@@ -762,7 +765,7 @@ setMethod(
       tibble::as_tibble(scores(object, est@coef))
     ) %>%
       dplyr::group_by(!!!cluster_var) %>%
-      dplyr::group_map(~t(as.matrix(.)) %*% (as.matrix(.)))
+      dplyr::group_map(~ t(as.matrix(.)) %*% (as.matrix(.)))
     est@details$number_of_clusters <- length(clustered_scores)
     adjustment <- MASS::ginv(Reduce("+", clustered_scores))
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
@@ -782,10 +785,12 @@ setMethod("model_name", signature(object = "market_model"), function(object) {
 })
 
 #' @rdname number_of_observations
-setMethod("number_of_observations", signature(object = "market_model"),
-          function(object) {
-  nrow(object@model_tibble)
-})
+setMethod(
+  "number_of_observations", signature(object = "market_model"),
+  function(object) {
+    nrow(object@model_tibble)
+  }
+)
 
 setMethod(
   "descriptives", signature(object = "market_model"),
@@ -828,79 +833,77 @@ setGeneric("calculate_initializing_values", function(object) {
   standardGeneric("calculate_initializing_values")
 })
 
-setMethod("calculate_initializing_values", signature(object = "market_model"),
-          function(object) {
-  dlm <- object@system@demand@linear_model
-
-  slm <- object@system@supply@linear_model
-
-  ## Set demand initializing values
-  varloc <-
-    !(prefixed_independent_variables(object@system@demand) %in% names(dlm$coefficients))
-  if (sum(varloc) > 0) {
-    print_error(
-      object@logger,
-      "Misspecified model matrix. ",
-      "The matrix should contain all the variables except the variance."
+setMethod(
+  "calculate_initializing_values", signature(object = "market_model"),
+  function(object) {
+    dlm <- stats::lm(
+      object@system@quantity_vector ~
+      object@system@demand@independent_matrix - 1
     )
-  }
-  if (any(is.na(dlm$coefficients))) {
-    print_warning(
-      object@logger,
-      "Setting demand side NA initial values to zero: ",
-      paste0(names(dlm$coefficients[is.na(dlm$coefficients)]), collapse = ", "), "."
+    names(dlm$coefficients) <- colnames(
+      object@system@demand@independent_matrix
     )
-    dlm$coefficients[is.na(dlm$coefficients)] <- 0
-  }
-  start_names <- c(
-    prefixed_price_variable(object@system@demand),
-    prefixed_control_variables(object@system@demand)
-  )
-  start <- c(dlm$coefficients[start_names])
 
-  ## Set supply initializing values
-  varloc <-
-    !(prefixed_independent_variables(object@system@supply) %in% names(slm$coefficients))
-  if (sum(varloc) > 0) {
-    print_error(
-      object@logger,
-      "Misspecified model matrix. ",
-      "The matrix should contain all the variables except the variance."
+    slm <- stats::lm(
+      object@system@quantity_vector ~
+      object@system@supply@independent_matrix - 1
     )
-  }
-  if (any(is.na(slm$coefficients))) {
-    print_warning(
-      object@logger,
-      "Setting supply side NA initial values to zero: ",
-      paste0(names(slm$coefficients[is.na(slm$coefficients)]), collapse = ", ")
+    names(slm$coefficients) <- colnames(
+      object@system@supply@independent_matrix
     )
-    slm$coefficients[is.na(slm$coefficients)] <- 0
+
+    ## Set demand initializing values
+    if (any(is.na(dlm$coefficients))) {
+      print_warning(
+        object@logger,
+        "Setting demand side NA initial values to zero: ",
+        paste0(names(dlm$coefficients[is.na(dlm$coefficients)]), collapse = ", "), "."
+      )
+      dlm$coefficients[is.na(dlm$coefficients)] <- 0
+    }
+    start_names <- c(
+      prefixed_price_variable(object@system@demand),
+      prefixed_control_variables(object@system@demand)
+    )
+    start <- c(dlm$coefficients[start_names])
+
+    ## Set supply initializing values
+    if (any(is.na(slm$coefficients))) {
+      print_warning(
+        object@logger,
+        "Setting supply side NA initial values to zero: ",
+        paste0(names(slm$coefficients[is.na(slm$coefficients)]), collapse = ", ")
+      )
+      slm$coefficients[is.na(slm$coefficients)] <- 0
+    }
+    start_names <- c(
+      prefixed_price_variable(object@system@supply),
+      prefixed_control_variables(object@system@supply)
+    )
+    start <- c(start, slm$coefficients[start_names])
+
+    if (object@model_type_string %in% c(
+      "Deterministic Adjustment",
+      "Stochastic Adjustment"
+    )) {
+      start <- c(start, gamma = 1)
+      names(start)[length(start)] <- price_differences_variable(object@system)
+    }
+
+    start <- c(start, 1, 1)
+    names(start)[(length(start) - 1):length(start)] <- c(
+      prefixed_variance_variable(object@system@demand),
+      prefixed_variance_variable(object@system@supply)
+    )
+
+    if (object@system@correlated_shocks) {
+      start <- c(start, rho = 0)
+      names(start)[length(start)] <- correlation_variable(object@system)
+    }
+
+    start
   }
-  start_names <- c(
-    prefixed_price_variable(object@system@supply),
-    prefixed_control_variables(object@system@supply)
-  )
-  start <- c(start, slm$coefficients[start_names])
-
-  if (object@model_type_string %in% c("Deterministic Adjustment",
-                                      "Stochastic Adjustment")) {
-    start <- c(start, gamma = 1)
-    names(start)[length(start)] <- price_differences_variable(object@system)
-  }
-
-  start <- c(start, 1, 1)
-  names(start)[(length(start) - 1):length(start)] <- c(
-    prefixed_variance_variable(object@system@demand),
-    prefixed_variance_variable(object@system@supply)
-  )
-
-  if (object@system@correlated_shocks) {
-    start <- c(start, rho = 0)
-    names(start)[length(start)] <- correlation_variable(object@system)
-  }
-
-  start
-})
+)
 
 setGeneric("prepare_initializing_values", function(object, initializing_vector) {
   standardGeneric("prepare_initializing_values")
@@ -916,8 +919,10 @@ setMethod(
     names(initializing_vector) <- likelihood_variables(object@system)
     print_debug(
       object@logger, "Using starting values: ",
-      paste(names(initializing_vector), initializing_vector, sep = " = ",
-            collapse = ", ")
+      paste(names(initializing_vector), initializing_vector,
+        sep = " = ",
+        collapse = ", "
+      )
     )
 
     initializing_vector
@@ -968,7 +973,8 @@ setMethod(
 #'     alpha_s = 0.2, beta_s0 = 4.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
 #'     # price equation coefficients
 #'     gamma = 0.9
-#'   ), seed = 1356
+#'   ),
+#'   seed = 1356
 #' )
 #'
 #' # estimate the model object
@@ -987,23 +993,25 @@ setGeneric("aggregate_equation", function(object, parameters, equation) {
   standardGeneric("aggregate_equation")
 })
 
-setMethod("aggregate_equation", signature(object = "market_model"),
-          function(object, parameters, equation) {
-  object@system <- set_parameters(object@system, parameters)
-  quantities <- quantities(slot(object@system, equation))
-  result <- NULL
-  if (!is.null(object@time_column)) {
-    time_symbol <- rlang::sym(object@time_column)
-    aggregate_symbol <- rlang::sym(colnames(quantities))
-    result <- object@model_tibble[, object@time_column] %>%
-      dplyr::mutate(!!aggregate_symbol := quantities) %>%
-      dplyr::group_by(!!time_symbol) %>%
-      dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
-  } else {
-    result <- sum(quantities)
+setMethod(
+  "aggregate_equation", signature(object = "market_model"),
+  function(object, parameters, equation) {
+    object@system <- set_parameters(object@system, parameters)
+    quantities <- quantities(slot(object@system, equation))
+    result <- NULL
+    if (!is.null(object@time_column)) {
+      time_symbol <- rlang::sym(object@time_column)
+      aggregate_symbol <- rlang::sym(colnames(quantities))
+      result <- object@model_tibble[, object@time_column] %>%
+        dplyr::mutate(!!aggregate_symbol := quantities) %>%
+        dplyr::group_by(!!time_symbol) %>%
+        dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
+    } else {
+      result <- sum(quantities)
+    }
+    result
   }
-  result
-})
+)
 
 
 #' @describeIn market_aggregation Demand aggregation.
@@ -1013,10 +1021,12 @@ setGeneric("aggregate_demand", function(object, parameters) {
 })
 
 #' @rdname market_aggregation
-setMethod("aggregate_demand", signature(object = "market_model"),
-          function(object, parameters) {
-  aggregate_equation(object, parameters, "demand")
-})
+setMethod(
+  "aggregate_demand", signature(object = "market_model"),
+  function(object, parameters) {
+    aggregate_equation(object, parameters, "demand")
+  }
+)
 
 #' @title Estimated market quantities.
 #'
@@ -1042,8 +1052,10 @@ setMethod("aggregate_demand", signature(object = "market_model"),
 #' est <- estimate(model)
 #'
 #' # get estimated demanded and supplied quantities
-#' head(cbind(demanded_quantities(model, est@coef),
-#'      supplied_quantities(model, est@coef)))
+#' head(cbind(
+#'   demanded_quantities(model, est@coef),
+#'   supplied_quantities(model, est@coef)
+#' ))
 #' }
 #' @name market_quantities
 NULL
@@ -1070,10 +1082,12 @@ setGeneric("aggregate_supply", function(object, parameters) {
 })
 
 #' @rdname market_aggregation
-setMethod("aggregate_supply", signature(object = "market_model"),
-          function(object, parameters) {
-  aggregate_equation(object, parameters, "supply")
-})
+setMethod(
+  "aggregate_supply", signature(object = "market_model"),
+  function(object, parameters) {
+    aggregate_equation(object, parameters, "supply")
+  }
+)
 
 #' @describeIn market_quantities Estimated supplied quantities.
 #' @export

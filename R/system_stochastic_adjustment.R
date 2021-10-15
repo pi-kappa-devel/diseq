@@ -155,11 +155,11 @@ setMethod(
     # The standard equation initialization correctly creates the control matrix
     # needed in the models' calculations. We only need to adjust the formula for the
     # `show` and `summary` functions.
-    .Object@price_equation@formula <- formula(paste0(
+    .Object@price_equation@formula <- Formula(formula(paste0(
       price_differences_variable(.Object), " ~ (",
       prefixed_quantity_variable(.Object@demand), " - ",
       prefixed_quantity_variable(.Object@supply), ") + ", price_specification
-    ))
+    )))
 
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
 

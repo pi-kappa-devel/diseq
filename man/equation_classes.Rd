@@ -34,21 +34,13 @@ class
 \section{Slots}{
 
 \describe{
-\item{\code{prefixed_specification}}{The equation formula using prefixed variables.}
-
-\item{\code{formula}}{The equation formula.}
-
-\item{\code{linear_model}}{The estimated equation using linear regression.}
+\item{\code{formula}}{The equation formula using prefixed variables.}
 
 \item{\code{name}}{The name of the equation.}
 
 \item{\code{variable_prefix}}{A prefix string for the variables of the equation.}
 
-\item{\code{independent_variables}}{A vector with the right hand side variable names.}
-
-\item{\code{price_variable}}{The price variable name.}
-
-\item{\code{control_variables}}{Independent variables without the price variable.}
+\item{\code{dependent_vector}}{The vector of the response.}
 
 \item{\code{independent_matrix}}{A model data matrix with columns corresponding to the set
 of independent variables.}

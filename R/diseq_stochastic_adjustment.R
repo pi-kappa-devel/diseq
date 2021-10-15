@@ -51,8 +51,7 @@ setClass(
 #' show(model)
 setMethod(
   "initialize", "diseq_stochastic_adjustment",
-  function(
-           .Object,
+  function(.Object,
            key_columns, time_column, quantity_column, price_column,
            demand_specification, supply_specification, price_specification,
            data,
@@ -87,11 +86,20 @@ setMethod(
   function(object) {
     start <- callNextMethod(object)
 
+    plm <- stats::lm(
+      object@system@price_equation@price_vector ~
+      object@system@price_equation@independent_matrix - 1
+    )
+    names(plm$coefficients) <- colnames(
+      object@system@price_equation@independent_matrix
+    )
+
     len <- length(start)
     pos <- len - ifelse(object@system@correlated_shocks, 3, 2)
     start <- c(
       start[1:pos],
-      object@system@price_equation@linear_model$coefficients, start[(pos + 1):len]
+      plm$coefficients,
+      start[(pos + 1):len]
     )
 
     len <- length(start)
@@ -101,8 +109,7 @@ setMethod(
         prefixed_variance_variable(object@system@price_equation),
         paste0(correlation_variable(object@system), c("_DS", "_DP", "_SP"))
       )
-    }
-    else {
+    } else {
       start <- c(start, price_variance = 1)
       names(start)[len + 1] <- prefixed_variance_variable(object@system@price_equation)
     }

@@ -65,8 +65,8 @@ setMethod(
 
     # Check for mis-specification
     if (
-      price_column %in% .Object@system@demand@independent_variables &&
-        price_column %in% .Object@system@supply@independent_variables
+      price_column %in% colnames(.Object@system@demand@independent_matrix) &&
+        price_column %in% colnames(.Object@system@supply@independent_matrix)
     ) {
       print_error(
         .Object@logger,

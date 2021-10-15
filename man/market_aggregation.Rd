@@ -74,7 +74,8 @@ model <- simulate_model(
     alpha_s = 0.2, beta_s0 = 4.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
     # price equation coefficients
     gamma = 0.9
-  ), seed = 1356
+  ),
+  seed = 1356
 )
 
 # estimate the model object

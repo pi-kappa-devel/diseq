@@ -153,7 +153,7 @@ setGeneric("calculate_system_scores", function(object) {
 
 #' @rdname variable_names
 setMethod("lagged_price_variable", signature(object = "system_base"), function(object) {
-  paste0("LAGGED_", object@demand@price_variable)
+  paste0("LAGGED_", object@price_variable)
 })
 
 #' @rdname variable_names

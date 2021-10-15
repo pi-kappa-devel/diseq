@@ -47,8 +47,7 @@ setClass(
 #' show(model)
 setMethod(
   "initialize", "equilibrium_model",
-  function(
-           .Object,
+  function(.Object,
            key_columns, quantity_column, price_column,
            demand_specification, supply_specification,
            data,
@@ -115,15 +114,18 @@ setMethod(
     }
 
     ## create fitted variable
-    fitted_column <- paste0(object@system@demand@price_variable, "_FITTED")
+    fitted_column <- paste0(object@system@price_variable, "_FITTED")
 
     ## estimate first stage
     first_stage_controls <- unique(c(
-      object@system@demand@control_variables,
-      object@system@supply@control_variables
+      control_variables(object@system@demand),
+      control_variables(object@system@supply)
     ))
+    first_stage_controls <- first_stage_controls[
+      first_stage_controls != "CONST"
+    ]
     first_stage_formula <- paste0(
-      object@system@demand@price_variable,
+      object@system@price_variable,
       " ~ ", paste0(first_stage_controls, collapse = " + ")
     )
 
@@ -131,14 +133,16 @@ setMethod(
     object@model_tibble[, fitted_column] <- first_stage_model$fitted.values
 
     ## create demand formula
-    independent <- object@system@demand@independent_variables
+    independent <- independent_variables(object@system@demand)
+    independent <- independent[independent != "CONST"]
     demand_formula <- formula(paste0(
       object@system@quantity_variable,
       " ~ ", paste0(independent, collapse = " + ")
     ))
 
     ## create supply formula
-    independent <- object@system@supply@independent_variables
+    independent <- independent_variables(object@system@supply)
+    independent <- independent[independent != "CONST"]
     supply_formula <- formula(paste0(
       object@system@quantity_variable,
       " ~ ", paste0(independent, collapse = " + ")
