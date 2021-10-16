@@ -58,11 +58,7 @@ setClass(
 
 setMethod(
   "initialize", "equation_deterministic_adjustment",
-  function(.Object, quantity, price, specification, data, name, prefix, separation_subset) {
-    specification <- Formula(formula(paste0(
-      quantity, " ~ ", specification,
-      " | ", price
-    )))
+  function(.Object, specification, data, name, prefix, separation_subset) {
     .Object <- callNextMethod(.Object, specification, data, name, prefix)
     .Object@separation_subset <- separation_subset
     .Object

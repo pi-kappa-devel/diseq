@@ -35,9 +35,8 @@ setClass(
 setMethod(
   "initialize", "system_deterministic_adjustment",
   function(
-           .Object, quantity, price,
-           demand_specification, supply_specification, data, correlated_shocks) {
-    price_diff <- paste0(price, "_DIFF")
+           .Object, specification, data, correlated_shocks) {
+    price_diff <- paste0(specification[[2]][[3]], "_DIFF")
 
     demand_initializer <- function(...) {
       excess_supply_subset <- data[, price_diff] < 0
@@ -49,8 +48,7 @@ setMethod(
     }
 
     .Object <- callNextMethod(
-      .Object, quantity, price,
-      demand_specification, supply_specification, data, correlated_shocks,
+      .Object, specification, data, correlated_shocks,
       demand_initializer, supply_initializer
     )
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])

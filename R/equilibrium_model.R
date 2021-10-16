@@ -114,7 +114,7 @@ setMethod(
     }
 
     ## create fitted variable
-    fitted_column <- paste0(object@system@price_variable, "_FITTED")
+    fitted_column <- paste0(colnames(object@system@price_vector), "_FITTED")
 
     ## estimate first stage
     first_stage_controls <- unique(c(
@@ -125,7 +125,7 @@ setMethod(
       first_stage_controls != "CONST"
     ]
     first_stage_formula <- paste0(
-      object@system@price_variable,
+      colnames(object@system@price_vector),
       " ~ ", paste0(first_stage_controls, collapse = " + ")
     )
 
@@ -136,7 +136,7 @@ setMethod(
     independent <- independent_variables(object@system@demand)
     independent <- independent[independent != "CONST"]
     demand_formula <- formula(paste0(
-      object@system@quantity_variable,
+      colnames(object@system@quantity_vector),
       " ~ ", paste0(independent, collapse = " + ")
     ))
 
@@ -144,7 +144,7 @@ setMethod(
     independent <- independent_variables(object@system@supply)
     independent <- independent[independent != "CONST"]
     supply_formula <- formula(paste0(
-      object@system@quantity_variable,
+      colnames(object@system@quantity_vector),
       " ~ ", paste0(independent, collapse = " + ")
     ))
 

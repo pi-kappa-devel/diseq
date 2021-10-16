@@ -17,12 +17,10 @@ setClass(
 
 setMethod(
   "initialize", "system_basic",
-  function(
-           .Object, quantity, price,
-           demand_specification, supply_specification, data, correlated_shocks,
+  function(.Object, specification, data, correlated_shocks,
            demand_initializer = NULL, supply_initializer = NULL) {
     .Object <- callNextMethod(
-      .Object, quantity, price, demand_specification, supply_specification, data, correlated_shocks,
+      .Object, specification, data, correlated_shocks,
       ifelse(is.null(demand_initializer),
         function(...) new("equation_basic", ...), demand_initializer
       ),

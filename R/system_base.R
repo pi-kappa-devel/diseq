@@ -13,8 +13,6 @@ NULL
 #' system are correlated.
 #' @slot sample_separation Boolean indicating whether the sample of the system is
 #' separated.
-#' @slot quantity_variable The name of the quantity variable of the system.
-#' @slot price_variable The name of the price variable of the system.
 #' @slot quantity_vector A vector with the system's observed quantities.
 #' @slot price_vector A vector with the system's observed prices.
 #' @slot rho Correlation coefficient of demand and supply shocks.
@@ -23,17 +21,13 @@ NULL
 setClass(
   "system_base",
   representation(
+    formula = "Formula",
     demand = "equation_base",
     supply = "equation_base",
     correlated_shocks = "logical",
     sample_separation = "logical",
-
-    quantity_variable = "character",
-    price_variable = "character",
-
     quantity_vector = "matrix",
     price_vector = "matrix",
-
     rho = "numeric",
     rho1 = "numeric",
     rho2 = "numeric"
@@ -41,13 +35,8 @@ setClass(
   prototype(
     demand = NULL,
     supply = NULL,
-
-    quantity_variable = NULL,
-    price_variable = NULL,
-
     quantity_vector = matrix(NA_real_),
     price_vector = matrix(NA_real_),
-
     rho = 0,
     rho1 = 1,
     rho2 = 0
@@ -56,26 +45,20 @@ setClass(
 
 setMethod(
   "initialize", "system_base",
-  function(
-           .Object, quantity, price,
-           demand_specification, supply_specification, data, correlated_shocks,
+  function(.Object, specification, data, correlated_shocks,
            demand_initializer, supply_initializer) {
+    .Object@formula <- specification
     .Object@demand <- demand_initializer(
-      quantity, price,
-      demand_specification, data, "Demand Equation", "D_"
+      formula(specification, rhs = 1), data, "Demand Equation", "D_"
     )
     .Object@supply <- supply_initializer(
-      quantity, price,
-      supply_specification, data, "Supply Equation", "S_"
+      formula(specification, rhs = 2), data, "Supply Equation", "S_"
     )
     .Object@correlated_shocks <- correlated_shocks
     .Object@sample_separation <- FALSE
 
-    .Object@quantity_variable <- quantity
-    .Object@price_variable <- price
-
-    .Object@quantity_vector <- as.matrix(data[, quantity])
-    .Object@price_vector <- as.matrix(data[, price])
+    .Object@quantity_vector <- as.matrix(model.part(specification, data, lhs = 1))
+    .Object@price_vector <- as.matrix(model.part(specification, data, lhs = 2))
 
     .Object
   }
@@ -98,13 +81,12 @@ setMethod("summary_implementation", signature(object = "system_base"), function(
       sum(object@system@demand@separation_subset),
       sum(object@system@supply@separation_subset)
     )
-  }
-  else {
+  } else {
     sample_separation_output <- "Not Separated"
   }
   cat(sprintf("  %-18s: %s\n", "Sample Separation", sample_separation_output))
-  cat(sprintf("  %-18s: %s\n", "Quantity Var", object@quantity_variable))
-  cat(sprintf("  %-18s: %s\n", "Price Var", object@price_variable))
+  cat(sprintf("  %-18s: %s\n", "Quantity Var", colnames(object@quantity_vector)))
+  cat(sprintf("  %-18s: %s\n", "Price Var", colnames(object@price_vector)))
 })
 
 #' @describeIn variable_names Lagged price variable name.
@@ -153,14 +135,14 @@ setGeneric("calculate_system_scores", function(object) {
 
 #' @rdname variable_names
 setMethod("lagged_price_variable", signature(object = "system_base"), function(object) {
-  paste0("LAGGED_", object@price_variable)
+  paste0("LAGGED_", colnames(object@price_vector))
 })
 
 #' @rdname variable_names
 setMethod(
   "price_differences_variable", signature(object = "system_base"),
   function(object) {
-    paste0(object@price_variable, "_DIFF")
+    paste0(colnames(object@price_vector), "_DIFF")
   }
 )
 

@@ -56,7 +56,6 @@ setClass(
   contains = "system_base",
   representation(
     price_equation = "equation_base",
-
     gamma = "numeric",
     delta = "numeric",
     zeta = "numeric",
@@ -66,76 +65,57 @@ setClass(
     zeta_SS = "numeric",
     zeta_SP = "numeric",
     zeta_PP = "numeric",
-
     mu_P = "matrix",
     var_P = "numeric",
     sigma_P = "numeric",
-
     mu_D = "matrix",
     var_D = "numeric",
     sigma_D = "numeric",
-
     mu_S = "matrix",
     var_S = "numeric",
     sigma_S = "numeric",
-
     sigma_DP = "numeric",
     sigma_DS = "numeric",
     sigma_SP = "numeric",
-
     rho_DS = "numeric",
     rho_DP = "numeric",
     rho_SP = "numeric",
-
     h_P = "matrix",
     h_D = "matrix",
     h_S = "matrix",
-
     z_DP = "matrix",
     z_PD = "matrix",
-
     z_SP = "matrix",
     z_PS = "matrix",
-
     omega_D = "matrix",
     omega_S = "matrix",
-
     w_D = "matrix",
     w_S = "matrix",
-
     psi_D = "matrix",
     psi_S = "matrix",
     Psi_D = "matrix",
     Psi_S = "matrix",
-
     g_D = "matrix",
     g_S = "matrix",
-
     rho_ds = "numeric",
     rho_dp = "numeric",
     rho_sp = "numeric",
-
     L_D = "matrix",
     L_S = "matrix",
-
     lagged_price_vector = "matrix"
   ),
   prototype(
     gamma = NA_real_,
-
     rho_ds = 0,
     rho_dp = 0,
     rho_sp = 0,
-
     lagged_price_vector = matrix(NA_real_)
   )
 )
 
 setMethod(
   "initialize", "system_stochastic_adjustment",
-  function(
-           .Object, quantity, price,
-           demand_specification, supply_specification, price_specification,
+  function(.Object, specification,
            data, correlated_shocks) {
     demand_initializer <- function(...) {
       new("equation_stochastic_adjustment", ...)
@@ -145,11 +125,11 @@ setMethod(
     }
 
     .Object <- callNextMethod(
-      .Object, quantity, price, demand_specification, supply_specification, data,
+      .Object, specification, data,
       correlated_shocks, demand_initializer, supply_initializer
     )
     .Object@price_equation <- new(
-      "equation_stochastic_adjustment", quantity, price, price_specification, data,
+      "equation_stochastic_adjustment", formula(specification, rhs = 3), data,
       "Price Equation", "P_"
     )
     # The standard equation initialization correctly creates the control matrix
@@ -158,7 +138,8 @@ setMethod(
     .Object@price_equation@formula <- Formula(formula(paste0(
       price_differences_variable(.Object), " ~ (",
       prefixed_quantity_variable(.Object@demand), " - ",
-      prefixed_quantity_variable(.Object@supply), ") + ", price_specification
+      prefixed_quantity_variable(.Object@supply), ") + ",
+      terms(specification, lhs = 0, rhs = 3)
     )))
 
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
@@ -196,8 +177,7 @@ setMethod(
         prefixed_variance_variable(object@price_equation),
         paste0(likelihood_variables[len], c("_DS", "_DP", "_SP"))
       )
-    }
-    else {
+    } else {
       likelihood_variables <- c(
         likelihood_variables,
         prefixed_variance_variable(object@price_equation)

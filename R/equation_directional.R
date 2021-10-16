@@ -17,8 +17,8 @@ setClass(
 
 setMethod(
   "initialize", "equation_directional",
-  function(.Object, quantity, price, specification, data, name, prefix, separation_subset) {
-    .Object <- callNextMethod(.Object, quantity, price, specification, data, name, prefix)
+  function(.Object, specification, data, name, prefix, separation_subset) {
+    .Object <- callNextMethod(.Object, specification, data, name, prefix)
     .Object@separation_subset <- separation_subset
     .Object
   }

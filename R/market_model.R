@@ -227,15 +227,22 @@ setMethod(
       }
     }
 
+    specification <- Formula(formula(paste0(
+      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
+      supply_specification
+    )))
     if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
+      specification <- update(
+        specification,
+        as.formula(paste0(". ~ . | . | ", price_specification))
+      )
       .Object@system <- system_initializer(
-        quantity_column, price_column,
-        demand_specification, supply_specification, price_specification,
+        specification,
         .Object@model_tibble, correlated_shocks
       )
     } else {
       .Object@system <- system_initializer(
-        quantity_column, price_column, demand_specification, supply_specification,
+        specification,
         .Object@model_tibble, correlated_shocks
       )
     }
@@ -821,12 +828,18 @@ setMethod(
 
 #' @rdname market_descriptives
 setMethod("demand_descriptives", signature(object = "market_model"), function(object) {
-  descriptives(object, object@system@demand@independent_variables)
+  descriptives(object, gsub(
+    object@system@demand@variable_prefix, "",
+    all.vars(object@system@demand@formula[[3]])
+  ))
 })
 
 #' @rdname market_descriptives
 setMethod("supply_descriptives", signature(object = "market_model"), function(object) {
-  descriptives(object, object@system@supply@independent_variables)
+  descriptives(object, gsub(
+    object@system@supply@variable_prefix, "",
+    all.vars(object@system@supply@formula[[3]])
+  ))
 })
 
 setGeneric("calculate_initializing_values", function(object) {

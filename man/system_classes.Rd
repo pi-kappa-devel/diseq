@@ -46,10 +46,6 @@ system are correlated.}
 \item{\code{sample_separation}}{Boolean indicating whether the sample of the system is
 separated.}
 
-\item{\code{quantity_variable}}{The name of the quantity variable of the system.}
-
-\item{\code{price_variable}}{The name of the price variable of the system.}
-
 \item{\code{quantity_vector}}{A vector with the system's observed quantities.}
 
 \item{\code{price_vector}}{A vector with the system's observed prices.}

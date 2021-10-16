@@ -67,12 +67,12 @@ setMethod(
       )
     }
 
-    .Object@formula <- Formula(formula(prefixed_specification, rhs = 1))
+    .Object@formula <- Formula(formula(prefixed_specification, lhs = 1))
     .Object@dependent_vector <- as.matrix(model.part(.Object@formula,
       lhs = 1, data
     ))
     .Object@price_vector <- as.matrix(model.part(.Object@formula,
-      rhs = 2, data
+      lhs = 2, data
     ))
     .Object@independent_matrix <- model.matrix(.Object@formula, data)
     colnames(.Object@independent_matrix) <- gsub(
