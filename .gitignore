@@ -5,6 +5,7 @@
 .RData
 
 # RStudio files
+*.Rproj
 .Rproj.user/
 
 # Temporary files

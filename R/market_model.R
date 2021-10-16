@@ -117,8 +117,7 @@ NULL
 setMethod(
   "initialize", "market_model",
   function(.Object, model_type_string, verbose,
-           key_columns, time_column, quantity_column, price_column,
-           demand_specification, supply_specification, price_specification,
+           key_columns, time_column, specification,
            correlated_shocks,
            data,
            system_initializer) {
@@ -132,20 +131,9 @@ setMethod(
     .Object@key_columns <- key_columns
     .Object@time_column <- time_column
 
-    .Object@explanatory_columns <- unique(c(
-      all.vars(formula(paste0(quantity_column, " ~ ", demand_specification))),
-      all.vars(formula(paste0(quantity_column, " ~ ", supply_specification)))
-    ))
-    if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
-      .Object@explanatory_columns <- unique(c(
-        .Object@explanatory_columns,
-        all.vars(formula(paste0(price_column, " ~ ", price_specification)))
-      ))
-    }
-    .Object@data_columns <- unique(c(
-      quantity_column, price_column,
-      .Object@explanatory_columns
-    ))
+    .Object@explanatory_columns <- all.vars(specification[[3]])
+
+    .Object@data_columns <- all.vars(specification)
     .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
 
     ## Data assignment
@@ -191,7 +179,8 @@ setMethod(
     )) {
       ## Generate lags
       key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns !=
-        .Object@time_column])
+                                                  .Object@time_column])
+      price_column <- all.vars(formula(specification, lhs = 2, rhs = 0))
       price_sym <- rlang::sym(price_column)
       time_sym <- rlang::sym(.Object@time_column)
       lagged_price_column <- paste0("LAGGED_", price_column)
@@ -227,15 +216,7 @@ setMethod(
       }
     }
 
-    specification <- Formula(formula(paste0(
-      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
-      supply_specification
-    )))
     if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
-      specification <- update(
-        specification,
-        as.formula(paste0(". ~ . | . | ", price_specification))
-      )
       .Object@system <- system_initializer(
         specification,
         .Object@model_tibble, correlated_shocks

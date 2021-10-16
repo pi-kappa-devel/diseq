@@ -52,11 +52,15 @@ setMethod(
            demand_specification, supply_specification,
            data,
            correlated_shocks = TRUE, verbose = 0) {
+    specification <- Formula(formula(paste0(
+      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
+      supply_specification
+    )))
     .Object <- callNextMethod(
       .Object,
       "Equilibrium", verbose,
       key_columns, NULL,
-      quantity_column, price_column, demand_specification, supply_specification, NULL,
+      specification, 
       correlated_shocks,
       data,
       function(...) new("system_equilibrium", ...)

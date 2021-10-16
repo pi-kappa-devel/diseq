@@ -10,8 +10,7 @@ setClass(
 
 setMethod(
   "initialize", "disequilibrium_model",
-  function(
-           .Object,
+  function(.Object,
            model_type_string, verbose,
            key_columns, time_column,
            quantity_column, price_column,
@@ -19,12 +18,17 @@ setMethod(
            correlated_shocks,
            data,
            system_initializer) {
+    specification <- Formula(formula(paste0(
+      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
+      supply_specification,
+      ifelse(is.null(price_specification), "",
+             paste0(" | ", price_specification))
+    )))
     .Object <- callNextMethod(
       .Object,
       model_type_string, verbose,
       key_columns, time_column,
-      quantity_column, price_column,
-      demand_specification, supply_specification, price_specification,
+      specification,
       correlated_shocks,
       data,
       system_initializer
@@ -204,10 +208,12 @@ setGeneric("shortage_marginal", function(object, parameters, variable) {
 #' quantity, \eqn{S} the supplied quantity, and \eqn{\phi} is the standard normal
 #' density.
 #' @export
-setGeneric("shortage_probability_marginal",
-           function(object, parameters, variable, aggregate = "mean") {
-  standardGeneric("shortage_probability_marginal")
-})
+setGeneric(
+  "shortage_probability_marginal",
+  function(object, parameters, variable, aggregate = "mean") {
+    standardGeneric("shortage_probability_marginal")
+  }
+)
 
 
 #' @rdname shortage_analysis
@@ -216,7 +222,7 @@ setMethod(
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     (object@system@demand@independent_matrix %*% object@system@demand@alpha_beta -
-     object@system@supply@independent_matrix %*% object@system@supply@alpha_beta)
+      object@system@supply@independent_matrix %*% object@system@supply@alpha_beta)
   }
 )
 
@@ -279,11 +285,9 @@ setMethod(
     if (in_demand && in_supply) {
       effect <- (dvar - svar) / var
       names(effect) <- paste0("B_", variable)
-    }
-    else if (in_demand) {
+    } else if (in_demand) {
       effect <- dvar / var
-    }
-    else {
+    } else {
       effect <- -svar / var
     }
     effect
@@ -303,7 +307,8 @@ setMethod(
       allowed_aggergate <- c("mean", "at_the_mean")
       print_error(object@logger, paste0(
         "Invalid `aggregate` option '", aggregate, "'. Valid options are ('",
-        paste0(allowed_aggergate, collapse = "', '"), "')."))
+        paste0(allowed_aggergate, collapse = "', '"), "')."
+      ))
     }
 
     marginal_scale <- marginal_scale_function(parameters)

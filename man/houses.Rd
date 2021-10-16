@@ -5,7 +5,9 @@
 \alias{houses}
 \alias{fair_houses}
 \title{Credit market data for US housing starts}
-\format{A data frame with 138 rows and 7 columns}
+\format{
+A data frame with 138 rows and 7 columns
+}
 \source{
 \itemize{
   \item \code{HS} \href{https://fraser.stlouisfed.org/title/economic-report-president-45?browse=1940s}{Economic Reports of the President}
