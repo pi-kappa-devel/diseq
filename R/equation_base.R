@@ -171,6 +171,10 @@ setGeneric("prefixed_quantity_variable", function(object) {
   standardGeneric("prefixed_quantity_variable")
 })
 
+setGeneric("quantity_variable", function(object) {
+  standardGeneric("quantity_variable")
+})
+
 setGeneric("set_parameters", function(object, parameters) {
   standardGeneric("set_parameters")
 })
@@ -246,6 +250,13 @@ setMethod(
   "prefixed_quantity_variable", signature(object = "equation_base"),
   function(object) {
     colnames(object@dependent_vector)
+  }
+)
+
+setMethod(
+  "quantity_variable", signature(object = "equation_base"),
+  function(object) {
+    gsub(object@variable_prefix, "", colnames(object@dependent_vector))
   }
 )
 

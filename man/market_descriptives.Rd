@@ -56,9 +56,9 @@ calculates and returns:
 # initialize the basic model using the houses dataset
 model <- new(
   "diseq_basic", # model type
-  c("ID", "TREND"), "HS", "RM", # keys, quantity, and price variables
-  "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
-  "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+  subject = ID, time = TREND, quantity = HS, price = RM,
+  demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
+  supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
   fair_houses(), # data
   correlated_shocks = FALSE # allow shocks to be correlated
 )

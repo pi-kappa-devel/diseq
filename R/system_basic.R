@@ -32,6 +32,20 @@ setMethod(
 )
 
 setMethod(
+  "show_implementation", signature(object = "system_basic"),
+  function(object) {
+    callNextMethod(object)
+    cat(sprintf(
+      "  %-18s: %s\n", "Short Side Rule", paste0(
+        quantity_variable(object@demand), " = min(",
+        prefixed_quantity_variable(object@demand), ", ",
+        prefixed_quantity_variable(object@supply), ")"
+      )
+    ))
+  }
+)
+
+setMethod(
   "set_parameters", signature(object = "system_basic"),
   function(object, parameters) {
     object <- callNextMethod(object, parameters)

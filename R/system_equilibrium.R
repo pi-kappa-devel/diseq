@@ -59,6 +59,20 @@ setMethod(
   }
 )
 
+setMethod(
+  "show_implementation", signature(object = "system_equilibrium"),
+  function(object) {
+    callNextMethod(object)
+    cat(sprintf(
+      "  %-18s: %s\n", "Market Clearing", paste0(
+        quantity_variable(object@demand), " = ",
+        prefixed_quantity_variable(object@demand), " = ",
+        prefixed_quantity_variable(object@supply)
+      )
+    ))
+  }
+)
+
 setMethod("set_parameters", signature(object = "system_equilibrium"),
           function(object, parameters) {
   object <- callNextMethod(object, parameters)

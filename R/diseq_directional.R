@@ -37,8 +37,8 @@ setClass(
 #' # in the directional model prices cannot be included in both demand and supply
 #' model <- new(
 #'   "diseq_directional", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, time point, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2", # equation specifications
+#'   subject = id, time = date, quantity = Q, price = P,
+#'   demand = P + Xd1 + Xd2 + X1 + X2, supply = Xs1 + X1 + X2,
 #'   simulated_data, # data
 #'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
@@ -47,23 +47,20 @@ setClass(
 #' }
 setMethod(
   "initialize", "diseq_directional",
-  function(
-           .Object,
-           key_columns, time_column, quantity_column, price_column,
-           demand_specification, supply_specification,
-           data,
-           correlated_shocks = TRUE, verbose = 0) {
+  function(.Object,
+           quantity, price, demand, supply, subject, time,
+           data, correlated_shocks = TRUE, verbose = 0) {
+    specification <- make_specification(
+      data, quantity, price, demand, supply, subject, time
+    )
     .Object <- callNextMethod(
-      .Object,
-      "Directional", verbose,
-      key_columns, time_column,
-      quantity_column, price_column, demand_specification, supply_specification, NULL,
-      correlated_shocks,
-      data,
+      .Object, "Directional", verbose,
+      specification, correlated_shocks, data,
       function(...) new("system_directional", ...)
     )
 
     # Check for mis-specification
+    price_column <- all.vars(formula(specification, lhs = 2, rhs = 0))
     if (
       price_column %in% colnames(.Object@system@demand@independent_matrix) &&
         price_column %in% colnames(.Object@system@supply@independent_matrix)

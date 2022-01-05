@@ -12,22 +12,13 @@ setMethod(
   "initialize", "disequilibrium_model",
   function(.Object,
            model_type_string, verbose,
-           key_columns, time_column,
-           quantity_column, price_column,
-           demand_specification, supply_specification, price_specification,
+           specification,
            correlated_shocks,
            data,
            system_initializer) {
-    specification <- Formula(formula(paste0(
-      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
-      supply_specification,
-      ifelse(is.null(price_specification), "",
-             paste0(" | ", price_specification))
-    )))
     .Object <- callNextMethod(
       .Object,
       model_type_string, verbose,
-      key_columns, time_column,
       specification,
       correlated_shocks,
       data,
@@ -51,9 +42,9 @@ setMethod(
 #' # initialize the model using the houses dataset
 #' model <- new(
 #'   "diseq_deterministic_adjustment", # model type
-#'   c("ID", "TREND"), "TREND", "HS", "RM", # keys, time, quantity, and price variables
-#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
-#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   subject = ID, time = TREND, quantity = HS, price = RM,
+#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
+#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
 #'   fair_houses(), # data
 #'   correlated_shocks = FALSE # allow shocks to be correlated
 #' )
@@ -163,9 +154,9 @@ setGeneric("shortage_standard_deviation", function(object, parameters) {
 #' # initialize the model using the houses dataset
 #' model <- new(
 #'   "diseq_deterministic_adjustment", # model type
-#'   c("ID", "TREND"), "TREND", "HS", "RM", # keys, time, quantity, and price variables
-#'   "RM + TREND + W + CSHS + L1RM + L2RM + MONTH", # demand specification
-#'   "RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH", # supply specification
+#'   subject = ID, time = TREND, quantity = HS, price = RM,
+#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
+#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
 #'   fair_houses(), # data
 #'   correlated_shocks = FALSE # allow shocks to be correlated
 #' )

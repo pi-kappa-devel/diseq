@@ -115,8 +115,7 @@ setClass(
 
 setMethod(
   "initialize", "system_stochastic_adjustment",
-  function(.Object, specification,
-           data, correlated_shocks) {
+  function(.Object, specification, data, correlated_shocks) {
     demand_initializer <- function(...) {
       new("equation_stochastic_adjustment", ...)
     }
@@ -139,7 +138,7 @@ setMethod(
       price_differences_variable(.Object), " ~ (",
       prefixed_quantity_variable(.Object@demand), " - ",
       prefixed_quantity_variable(.Object@supply), ") + ",
-      terms(specification, lhs = 0, rhs = 3)
+      terms(specification, lhs = 0, rhs = 3)[[2]]
     )))
 
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])
@@ -153,6 +152,13 @@ setMethod(
   function(object) {
     callNextMethod(object)
     show_implementation(object@price_equation)
+    cat(sprintf(
+      "  %-18s: %s\n", "Short Side Rule", paste0(
+        quantity_variable(object@demand), " = min(",
+        prefixed_quantity_variable(object@demand), ", ",
+        prefixed_quantity_variable(object@supply), ")"
+      )
+    ))
   }
 )
 

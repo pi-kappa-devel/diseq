@@ -23,7 +23,6 @@ setClass(
     sigma_d = "numeric",
     sigma_s = "numeric",
     rho_ds = "numeric",
-
     mu = "vector",
     sigma = "matrix",
 
@@ -165,8 +164,7 @@ setGeneric("simulate_column", function(object, coefficients, prefix, generator) 
 
 setMethod(
   "simulate_column", signature(object = "simulated_model"),
-  function(
-           object, coefficients, prefix, generator) {
+  function(object, coefficients, prefix, generator) {
     clen <- length(coefficients)
     if (clen > 0) {
       simn <- nrow(object@simulation_tbl)
@@ -187,8 +185,10 @@ setGeneric("simulate_shocks", function(object) {
 setMethod("simulate_shocks", signature(object = "simulated_model"), function(object) {
   sigma_ds <- object@sigma_d * object@sigma_s * object@rho_ds
   object@mu <- c(0, 0)
-  object@sigma <- matrix(c(object@sigma_d**2, sigma_ds, sigma_ds, object@sigma_s**2),
-                         2, 2)
+  object@sigma <- matrix(
+    c(object@sigma_d**2, sigma_ds, sigma_ds, object@sigma_s**2),
+    2, 2
+  )
 
   disturbances <- MASS::mvrnorm(n = nrow(object@simulation_tbl), object@mu, object@sigma)
   colnames(disturbances) <- c("u_d", "u_s")
@@ -201,8 +201,7 @@ setMethod("simulate_shocks", signature(object = "simulated_model"), function(obj
 
 setGeneric(
   "simulate_quantities_and_prices",
-  function(
-           object,
+  function(object,
            demanded_quantities = NA, supplied_quantities = NA,
            prices = NA, starting_prices = NA) {
     standardGeneric("simulate_quantities_and_prices")
@@ -211,8 +210,7 @@ setGeneric(
 
 setMethod(
   "simulate_quantities_and_prices", signature(object = "simulated_model"),
-  function(
-           object, demanded_quantities, supplied_quantities, prices, starting_prices) {
+  function(object, demanded_quantities, supplied_quantities, prices, starting_prices) {
     if (any(prices < 0)) {
       print_error(
         object@logger, "Simulation produced negative prices. ",
@@ -274,8 +272,10 @@ setMethod(
     demanded_quantities <- simulated_demanded_quantities(object, prices)
     supplied_quantities <- simulated_supplied_quantities(object, prices)
 
-    callNextMethod(object, demanded_quantities, supplied_quantities, prices,
-                   starting_prices)
+    callNextMethod(
+      object, demanded_quantities, supplied_quantities, prices,
+      starting_prices
+    )
   }
 )
 
@@ -292,8 +292,10 @@ setMethod(
     demanded_quantities <- simulated_demanded_quantities(object, prices)
     supplied_quantities <- simulated_supplied_quantities(object, prices)
 
-    callNextMethod(object, demanded_quantities, supplied_quantities, prices,
-                   starting_prices)
+    callNextMethod(
+      object, demanded_quantities, supplied_quantities, prices,
+      starting_prices
+    )
   }
 )
 
@@ -368,8 +370,10 @@ setMethod(
       }
     }
 
-    callNextMethod(object, demanded_quantities, supplied_quantities, prices,
-                   starting_prices)
+    callNextMethod(
+      object, demanded_quantities, supplied_quantities, prices,
+      starting_prices
+    )
   }
 )
 
@@ -393,7 +397,7 @@ setMethod(
     if (class(object) == "simulated_stochastic_adjustment_model") {
       dr <- dr + object@gamma * (
         object@beta_p0 + price_controls(object) %*% object@beta_p +
-        object@simulation_tbl$u_p
+          object@simulation_tbl$u_p
       )
     }
 
@@ -413,8 +417,10 @@ setMethod(
     demanded_quantities <- simulated_demanded_quantities(object, prices)
     supplied_quantities <- simulated_supplied_quantities(object, prices)
 
-    callNextMethod(object, demanded_quantities, supplied_quantities, prices,
-                   starting_prices)
+    callNextMethod(
+      object, demanded_quantities, supplied_quantities, prices,
+      starting_prices
+    )
   }
 )
 
@@ -530,12 +536,16 @@ setMethod(
     sigma_sp <- object@sigma_s * object@sigma_p * object@rho_sp
 
     object@mu <- c(0, 0, 0)
-    object@sigma <- matrix(c(object@sigma_d**2, sigma_ds, sigma_dp, sigma_ds,
-                             object@sigma_s**2, sigma_sp, sigma_dp, sigma_sp,
-                             object@sigma_p**2), 3, 3)
+    object@sigma <- matrix(c(
+      object@sigma_d**2, sigma_ds, sigma_dp, sigma_ds,
+      object@sigma_s**2, sigma_sp, sigma_dp, sigma_sp,
+      object@sigma_p**2
+    ), 3, 3)
 
-    disturbances <- MASS::mvrnorm(n = nrow(object@simulation_tbl),
-                                  object@mu, object@sigma)
+    disturbances <- MASS::mvrnorm(
+      n = nrow(object@simulation_tbl),
+      object@mu, object@sigma
+    )
     colnames(disturbances) <- c("u_d", "u_s", "u_p")
 
     object@simulation_tbl <- object@simulation_tbl %>%
@@ -619,12 +629,14 @@ setMethod(
            seed, price_generator, control_generator,
            verbose) {
     if (model_type_string == "equilibrium_model") {
-      sim_mdl <- new("simulated_equilibrium_model", verbose,
-                     nobs, tobs,
-                     alpha_d, beta_d0, beta_d, eta_d,
-                     alpha_s, beta_s0, beta_s, eta_s,
-                     sigma_d, sigma_s, rho_ds,
-                     seed, price_generator, control_generator)
+      sim_mdl <- new(
+        "simulated_equilibrium_model", verbose,
+        nobs, tobs,
+        alpha_d, beta_d0, beta_d, eta_d,
+        alpha_s, beta_s0, beta_s, eta_s,
+        sigma_d, sigma_s, rho_ds,
+        seed, price_generator, control_generator
+      )
       if (any(abs(sim_mdl@simulation_tbl$XD) > sqrt(.Machine$double.eps))) {
         print_error(
           sim_mdl@logger,
@@ -633,20 +645,23 @@ setMethod(
       }
     } else {
       if (model_type_string == "diseq_basic") {
-        sim_mdl <- new("simulated_basic_model", verbose,
-                       nobs, tobs,
-                       alpha_d, beta_d0, beta_d, eta_d,
-                       alpha_s, beta_s0, beta_s, eta_s,
-                       sigma_d, sigma_s, rho_ds,
-                       seed, price_generator, control_generator)
-      }
-      else if (model_type_string == "diseq_directional") {
-        sim_mdl <- new("simulated_directional_model", verbose,
-                       nobs, tobs,
-                       alpha_d, beta_d0, beta_d, eta_d,
-                       alpha_s, beta_s0, beta_s, eta_s,
-                       sigma_d, sigma_s, rho_ds,
-                       seed, price_generator, control_generator)
+        sim_mdl <- new(
+          "simulated_basic_model", verbose,
+          nobs, tobs,
+          alpha_d, beta_d0, beta_d, eta_d,
+          alpha_s, beta_s0, beta_s, eta_s,
+          sigma_d, sigma_s, rho_ds,
+          seed, price_generator, control_generator
+        )
+      } else if (model_type_string == "diseq_directional") {
+        sim_mdl <- new(
+          "simulated_directional_model", verbose,
+          nobs, tobs,
+          alpha_d, beta_d0, beta_d, eta_d,
+          alpha_s, beta_s0, beta_s, eta_s,
+          sigma_d, sigma_s, rho_ds,
+          seed, price_generator, control_generator
+        )
         if (any(sim_mdl@simulation_tbl$DP * sim_mdl@simulation_tbl$XD < 0)) {
           print_error(
             sim_mdl@logger,
@@ -654,35 +669,37 @@ setMethod(
             "separation rule."
           )
         }
-      }
-      else if (model_type_string == "diseq_deterministic_adjustment") {
-        sim_mdl <- new("simulated_deterministic_adjustment_model", verbose,
-                       nobs, tobs,
-                       alpha_d, beta_d0, beta_d, eta_d,
-                       alpha_s, beta_s0, beta_s, eta_s,
-                       gamma,
-                       sigma_d, sigma_s, rho_ds,
-                       seed, price_generator, control_generator)
+      } else if (model_type_string == "diseq_deterministic_adjustment") {
+        sim_mdl <- new(
+          "simulated_deterministic_adjustment_model", verbose,
+          nobs, tobs,
+          alpha_d, beta_d0, beta_d, eta_d,
+          alpha_s, beta_s0, beta_s, eta_s,
+          gamma,
+          sigma_d, sigma_s, rho_ds,
+          seed, price_generator, control_generator
+        )
         if (any(
           abs(sim_mdl@gamma * sim_mdl@simulation_tbl$DP -
-              sim_mdl@simulation_tbl$XD) > sqrt(.Machine$double.eps))) {
+            sim_mdl@simulation_tbl$XD) > sqrt(.Machine$double.eps)
+        )) {
           print_error(
             sim_mdl@logger,
             "Failed to simulate a compatible sample with the models' ",
             "separation rule."
           )
         }
-      }
-      else if (model_type_string == "diseq_stochastic_adjustment") {
-        sim_mdl <- new("simulated_stochastic_adjustment_model", verbose,
-                       nobs, tobs,
-                       alpha_d, beta_d0, beta_d, eta_d,
-                       alpha_s, beta_s0, beta_s, eta_s,
-                       gamma, beta_p0, beta_p,
-                       sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
-                       seed, price_generator, control_generator)
-      }
-      else {
+      } else if (model_type_string == "diseq_stochastic_adjustment") {
+        sim_mdl <- new(
+          "simulated_stochastic_adjustment_model", verbose,
+          nobs, tobs,
+          alpha_d, beta_d0, beta_d, eta_d,
+          alpha_s, beta_s0, beta_s, eta_s,
+          gamma, beta_p0, beta_p,
+          sigma_d, sigma_s, sigma_p, rho_ds, rho_dp, rho_sp,
+          seed, price_generator, control_generator
+        )
+      } else {
         logger <- new("model_logger", verbose)
         print_error(logger, "Unhandled model type. ")
       }
@@ -730,64 +747,70 @@ setGeneric(
 setMethod(
   "simulate_model", signature(),
   function(model_type_string, simulation_parameters, seed, verbose, ...) {
-    sdt <- do.call(simulate_data, c(model_type_string = model_type_string,
-                                    simulation_parameters, seed = seed,
-                                    verbose = verbose))
+    sdt <- do.call(simulate_data, c(
+      model_type_string = model_type_string,
+      simulation_parameters, seed = seed,
+      verbose = verbose
+    ))
 
-    key_columns <- c("id", "date")
-    time_column <- c("date")
-    quantity_column <- "Q"
-    price_column <- "P"
-    demand_specification <- paste(
-      price_column,
-      paste("Xd", seq_along(simulation_parameters$beta_d), sep = "", collapse = " + "),
-      paste("X", seq_along(simulation_parameters$eta_d), sep = "", collapse = " + "),
+    demand <- paste(
+      "P",
+      paste("Xd", seq_along(simulation_parameters$beta_d),
+        sep = "", collapse = " + "
+      ),
+      paste("X", seq_along(simulation_parameters$eta_d),
+        sep = "", collapse = " + "
+      ),
       sep = " + "
     )
-    supply_specification <- paste(
+    demand <- str2lang(demand)
+    supply <- paste(
       paste("Xs", seq_along(simulation_parameters$beta_s), sep = "", collapse = " + "),
       paste("X", seq_along(simulation_parameters$eta_s), sep = "", collapse = " + "),
       sep = " + "
     )
     if (model_type_string != "diseq_directional") {
-      supply_specification <- paste0(price_column, " + ", supply_specification)
+      supply <- paste0("P", " + ", supply)
     }
-    price_specification <- paste("Xp",
-                                 seq_along(simulation_parameters$beta_p),
-                                 sep = "", collapse = " + ")
+    supply <- str2lang(supply)
+    price_dynamics <- paste("Xp",
+      seq_along(simulation_parameters$beta_p),
+      sep = "", collapse = " + "
+    )
+    price_dynamics <- str2lang(price_dynamics)
 
     if (model_type_string %in% c("equilibrium_model", "diseq_basic")) {
       model <- new(
         model_type_string,
-        key_columns,
-        quantity_column, price_column, demand_specification, supply_specification,
-        sdt,
-        verbose = verbose, ...
+        subject = id, time = date,
+        quantity = Q, price = P,
+        demand = demand, supply = supply,
+        data = sdt, verbose = verbose, ...
       )
-    }
-    else if (model_type_string %in% c("diseq_directional",
-                                 "diseq_deterministic_adjustment")) {
+    } else if (model_type_string %in% c(
+      "diseq_directional",
+      "diseq_deterministic_adjustment"
+      )) {
       model <- new(
         model_type_string,
-        key_columns, time_column,
-        quantity_column, price_column, demand_specification, supply_specification,
-        sdt,
-        verbose = verbose, ...
+        subject = id, time = date,
+        quantity = Q, price = P,
+        demand = demand,
+        supply = supply,
+        data = sdt, verbose = verbose, ...
       )
-    }
-    else if (model_type_string %in% c("diseq_stochastic_adjustment")) {
+    } else if (model_type_string %in% c("diseq_stochastic_adjustment")) {
       model <- new(
         model_type_string,
-        key_columns, time_column,
-        quantity_column, price_column,
-        demand_specification, supply_specification, price_specification,
-        sdt,
-        verbose = verbose, ...
+        subject = id, time = date,
+        quantity = Q, price = P,
+        demand = demand, supply = supply,
+        price_dynamics = price_dynamics,
+        data = sdt, verbose = verbose, ...
       )
-    }
-    else {
-        logger <- new("model_logger", verbose)
-        print_error(logger, "Unhandled model type. ")
+    } else {
+      logger <- new("model_logger", verbose)
+      print_error(logger, "Unhandled model type. ")
     }
 
     model

@@ -62,13 +62,6 @@ eq_data <- simulate_data(
 Prepare the basic parameters for model initialization.
 
 ```{r model.parameters}
-key_columns <- c("id", "date")
-time_column <- c("date")
-quantity_column <- "Q"
-price_column <- "P"
-demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
-supply_specification <- "Xs1 + X1 + X2"
-price_specification <- "Xp1"
 verbose <- 2
 correlated_shocks <- TRUE
 ```
@@ -78,26 +71,29 @@ Using the above parameterization, construct the model objects. Here we construct
 ```{r model.constructor}
 eqmdl <- new(
   "equilibrium_model",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  eq_data[eq_data$date != 1, ],
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = eq_data[eq_data$date != 1, ],
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  eq_data[eq_data$date != 1, ],
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = eq_data[eq_data$date != 1, ],
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
-  key_columns, time_column,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  eq_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = eq_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```

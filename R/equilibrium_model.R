@@ -38,8 +38,8 @@ setClass(
 #' # initialize the model
 #' model <- new(
 #'   "equilibrium_model", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   subject = id, time = date, quantity = Q, price = P,
+#'   demand = P + Xd1 + Xd2 + X1 + X2, supply = P + Xs1 + X1 + X2,
 #'   simulated_data, # data
 #'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
@@ -48,19 +48,15 @@ setClass(
 setMethod(
   "initialize", "equilibrium_model",
   function(.Object,
-           key_columns, quantity_column, price_column,
-           demand_specification, supply_specification,
-           data,
-           correlated_shocks = TRUE, verbose = 0) {
-    specification <- Formula(formula(paste0(
-      quantity_column, " | ", price_column, " ~ ", demand_specification, " | ",
-      supply_specification
-    )))
+           quantity, price, demand, supply, subject, time,
+           data, correlated_shocks = TRUE, verbose = 0) {
+    specification <- make_specification(
+      data, quantity, price, demand, supply, subject, time
+    )
     .Object <- callNextMethod(
       .Object,
       "Equilibrium", verbose,
-      key_columns, NULL,
-      specification, 
+      specification,
       correlated_shocks,
       data,
       function(...) new("system_equilibrium", ...)

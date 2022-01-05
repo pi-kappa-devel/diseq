@@ -69,44 +69,15 @@ stochastic_adjustment_data <- simulate_data(
 
 The constructor sets the basic parameters for model initialization and constructs a model object. The needed arguments for a construction call are configured as follows:
 
- * Set the fields that uniquely identify data rows. For panel data this should be a vector of the entity identifier and  the time columns.
-
-```{r model.parameters.key}
-key_columns <- c("id", "date")
-```
+ * The fields that uniquely identify simulated data records are `id` (for subjects) and `date` (for time). These variable names are automatically set for the data that `simulate_data` generates.
  
- * Set time field. This is needed for the calculation of price's first differences. The `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment` models require calculating the first differences.
+ * The quantity variable is automatically named `Q` by the `simulate_data` function. The quantity variable is observable. For the equilibrium models, it is equal with both the demanded and supplied quantities. For the disequilibrium models, the observed quantity represents either a demanded or a supplied quantity. Each disequilibrium model resolves that state of the observation in a different way.
 
-```{r model.parameters.time}
-time_column <- c("date")
-```
+ * The price variable is set as `P` by the `simulate_data` call.
 
- * Set the quantity variable. The quantity variable is the observable. For the equilibrium models, it is equal with both the demanded and supplied quantities. For the disequilibrium models, the observed quantity represents either a demanded or a supplied quantity. Each disequilibrium model resolves that state of the observation in a different way.
+ * The right hand sides of the demand and supply equations. Simply include the factor variables here as in a usual `lm` formula. Indicator variables and interaction terms will be created automatically by the constructor. For the `diseq_directional` model, the price cannot go in both equations. For the rest of the models, the price can go in both equations if treated as exogenous. The `diseq_stochastic_adjustment` requires also the specification of price dynamics. The `simulate_data` call generates the demand specific variables `Xd1` and `Xd2`, the supply specific variable `Xs1`, the common (i.e. both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`.
 
-```{r model.parameters.quantity}
-quantity_column <- "Q"
-```
-
- * Set the price variable. 
-
-```{r model.parameters.price}
-price_column <- "P"
-```
-
- * Set the remaining demand and supply variables. Simply include the factor variables here as in a usual `lm` formula. Indicator variables and interaction terms will be created automatically by the constructor. For the `diseq_directional` model, the price cannot go in both equations. For the rest of the models, the price can go in both equations if treated as exogenous. The `diseq_stochastic_adjustment` requires also the specification of price dynamics.
-
-```{r model.parameters.specifications}
-demand_specification <- paste0(price_column, " + Xd1 + Xd2 + X1 + X2")
-supply_specification <- "Xs1 + X1 + X2"
-price_specification <- "Xp1"
-```
-
- * Set the verbosity level. This controls the level of messaging. The object displays
-     * error: always,
-     * warning: . $\ge$ 1, 
-     * info: . $\ge$ 2, 
-     * verbose: . $\ge$ 3 and
-     * debug :. $\ge$ 4.
+ * Set the verbosity level. This controls the level of messaging. The verbosity level here is set so  that the constructed objects display basic information in additional to errors and warnings.
 ```{r model.parameters.verbose}
 verbose <- 2
 ```
@@ -117,48 +88,53 @@ verbose <- 2
 correlated_shocks <- TRUE
 ```
 
-Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per entity. 
+Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per subject. 
 
 ```{r model.constructor}
 eqmdl <- new(
   "equilibrium_model",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  stochastic_adjustment_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 bsmdl <- new(
   "diseq_basic",
-  key_columns,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  stochastic_adjustment_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 drmdl <- new(
   "diseq_directional",
-  key_columns, time_column,
-  quantity_column, price_column,
-  demand_specification, supply_specification,
-  stochastic_adjustment_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 damdl <- new(
   "diseq_deterministic_adjustment",
-  key_columns, time_column,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  stochastic_adjustment_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 samdl <- new(
   "diseq_stochastic_adjustment",
-  key_columns, time_column,
-  quantity_column, price_column,
-  demand_specification, paste0(price_column, " + ", supply_specification),
-  price_specification,
-  stochastic_adjustment_data,
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  price_dynamics = Xp1,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
   correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
@@ -209,7 +185,7 @@ samdl_est <- estimate(samdl,
 Calculate marginal effects on the shortage probabilities. *Diseq* offers two marginal effect calls out of the box. The mean marginal effects and the marginal effects ate the mean. Marginal effects on the shortage probabilities are state-dependent. If the variable is only in the demand equation, the output name of the marginal effect is the variable name prefixed by `D_`. If the variable is only in the supply equation, the name of the marginal effect is the variable name prefixed by `S_`. If the variable is in both equations, then it is prefixed by `B_`.
 
 ```{r analysis.effects}
-variables <- c(price_column, "Xd1", "Xd2", "X1", "X2", "Xs1")
+variables <- c("P", "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
   function(v) shortage_probability_marginal(bsmdl, bsmdl_est@coef, v),
@@ -305,7 +281,11 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
     ggplot2::ggtitle(paste0(
       "Normalized shortages density (",
       model_name(bsmdl), ")"
-    ))
+    )) +
+    ggplot2::theme(
+      panel.background = ggplot2::element_rect(fill = "transparent"),
+      plot.background = ggplot2::element_rect(fill = "transparent", color = NA),
+    )
 }
 ```
 

@@ -41,8 +41,8 @@ setClass(
 #' # initialize the model
 #' model <- new(
 #'   "diseq_deterministic_adjustment", # model type
-#'   c("id", "date"), "date", "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   subject = id, time = date, quantity = Q, price = P,
+#'   demand = P + Xd1 + Xd2 + X1 + X2, supply = P + Xs1 + X1 + X2,
 #'   simulated_data, # data
 #'   correlated_shocks = TRUE # allow shocks to be correlated
 #' )
@@ -52,15 +52,16 @@ setMethod(
   "initialize", "diseq_deterministic_adjustment",
   function(
            .Object,
-           key_columns, time_column, quantity_column, price_column,
-           demand_specification, supply_specification,
+           quantity, price, demand, supply, subject, time,
            data,
            correlated_shocks = TRUE, verbose = 0) {
+    specification <- make_specification(
+      data, quantity, price, demand, supply, subject, time
+    )
     .Object <- callNextMethod(
       .Object,
       "Deterministic Adjustment", verbose,
-      key_columns, time_column,
-      quantity_column, price_column, demand_specification, supply_specification, NULL,
+      specification,
       correlated_shocks,
       data,
       function(...) new("system_deterministic_adjustment", ...)

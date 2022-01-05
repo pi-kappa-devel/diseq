@@ -32,8 +32,8 @@ setClass(
 #' # initialize the model
 #' model <- new(
 #'   "diseq_basic", # model type
-#'   c("id", "date"), "Q", "P", # keys, quantity, and price variables
-#'   "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", # equation specifications
+#'   subject = id, time = date, quantity = Q, price = P,
+#'   demand = P + Xd1 + Xd2 + X1 + X2, supply = P + Xs1 + X1 + X2,
 #'   simulated_data, # data
 #'   correlated_shocks = FALSE # use independent shocks
 #' )
@@ -42,15 +42,15 @@ setClass(
 setMethod(
   "initialize", "diseq_basic",
   function(.Object,
-           key_columns, quantity_column, price_column,
-           demand_specification, supply_specification,
-           data,
-           correlated_shocks = TRUE, verbose = 0) {
+           quantity, price, demand, supply, subject, time,
+           data, correlated_shocks = TRUE, verbose = 0) {
+    specification <- make_specification(
+      data, quantity, price, demand, supply, subject, time
+    )
     .Object <- callNextMethod(
       .Object,
       "Basic", verbose,
-      key_columns, NULL,
-      quantity_column, price_column, demand_specification, supply_specification, NULL,
+      specification,
       correlated_shocks,
       data,
       function(...) new("system_basic", ...)

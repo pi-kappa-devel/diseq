@@ -127,8 +127,7 @@ load_or_simulate_model <- function(model_string, parameters) {
 
   if (file.exists("devel-environment") & file.exists(stored_data_filename)) {
     load(stored_data_filename)
-  }
-  else {
+  } else {
     model_tibble <- do.call(simulate_data, c(model_string, parameters, seed = seed))
     if (file.exists("devel-environment")) {
       save(model_tibble, file = stored_data_filename)
@@ -138,40 +137,40 @@ load_or_simulate_model <- function(model_string, parameters) {
   if (model_string %in% c("equilibrium_model", "diseq_basic")) {
     mdl <- new(
       model_string,
-      c("id", "date"),
-      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
+      subject = id, time = date,
+      quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
+      supply = P + Xs1 + X1 + X2,
       model_tibble,
       correlated_shocks = TRUE, verbose = verbose
     )
-  }
-  else if (model_string %in% c("diseq_directional")) {
+  } else if (model_string %in% c("diseq_directional")) {
     mdl <- new(
       model_string,
-      c("id", "date"), "date",
-      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "Xs1 + X1 + X2",
+      subject = id, time = date,
+      quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
+      supply = Xs1 + X1 + X2,
       model_tibble,
       correlated_shocks = TRUE, verbose = verbose
     )
-  }
-  else if (model_string %in% c("diseq_deterministic_adjustment")) {
+  } else if (model_string %in% c("diseq_deterministic_adjustment")) {
     mdl <- new(
       model_string,
-      c("id", "date"), "date",
-      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2",
+      subject = id, time = date,
+      quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
+      supply = P + Xs1 + X1 + X2,
       model_tibble,
       correlated_shocks = TRUE, verbose = verbose
     )
-  }
-  else if (model_string %in% c("diseq_stochastic_adjustment")) {
+  } else if (model_string %in% c("diseq_stochastic_adjustment")) {
     mdl <- new(
       model_string,
-      c("id", "date"), "date",
-      "Q", "P", "P + Xd1 + Xd2 + X1 + X2", "P + Xs1 + X1 + X2", "Xp1",
+      subject = id, time = date,
+      quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
+      supply = P + Xs1 + X1 + X2, price_dynamics = Xp1,
       model_tibble,
       correlated_shocks = TRUE, verbose = verbose
     )
-  }
-  else {
+  } else {
     stop("Unhandled model type.")
   }
 
