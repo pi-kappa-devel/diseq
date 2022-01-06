@@ -189,7 +189,7 @@ The model is estimated with default options by a simple call. See the documentat
 details and options.
 ```{r model.estimation}
 est <- estimate(mdl)
-bbmle::summary(est)
+summary(est)
 ```
 # Design and functionality
 

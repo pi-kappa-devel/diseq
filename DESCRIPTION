@@ -71,7 +71,6 @@ Collate:
     'equation_directional.R'
     'equation_stochastic_adjustment.R'
     'equilibrium_model.R'
-    'fitted_model.R'
     'system_basic.R'
     'gradient_basic.R'
     'system_deterministic_adjustment.R'
@@ -89,6 +88,7 @@ Collate:
     'likelihood_directional.R'
     'likelihood_equilibrium.R'
     'likelihood_stochastic_adjustment.R'
+    'market_fit.R'
     'model_simulation.R'
 LinkingTo: 
     Rcpp,

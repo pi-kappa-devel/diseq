@@ -188,24 +188,24 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c("P", "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(bsmdl, bsmdl_est@coef, v),
+  function(v) shortage_probability_marginal(bsmdl, coef(bsmdl_est), v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(drmdl, drmdl_est@coef, v),
+  function(v) shortage_probability_marginal(drmdl, coef(drmdl_est), v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(damdl, damdl_est@coef, v),
+  function(v) shortage_probability_marginal(damdl, coef(damdl_est), v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(samdl, samdl_est@coef, v),
+  function(v) shortage_probability_marginal(samdl, coef(samdl_est), v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(bsmdl, bsmdl_est@coef, v,
+    shortage_probability_marginal(bsmdl, coef(bsmdl_est), v,
       aggregate = "at_the_mean"
     )
   },
@@ -213,7 +213,7 @@ bsmdl_mem <- sapply(variables,
 )
 drmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(drmdl, drmdl_est@coef, v,
+    shortage_probability_marginal(drmdl, coef(drmdl_est), v,
       aggregate = "at_the_mean"
     )
   },
@@ -221,7 +221,7 @@ drmdl_mem <- sapply(variables,
 )
 damdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(damdl, damdl_est@coef, v,
+    shortage_probability_marginal(damdl, coef(damdl_est), v,
       aggregate = "at_the_mean"
     )
   },
@@ -229,7 +229,7 @@ damdl_mem <- sapply(variables,
 )
 samdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(samdl, samdl_est@coef, v,
+    shortage_probability_marginal(samdl, coef(samdl_est), v,
       aggregate = "at_the_mean"
     )
   },
@@ -255,9 +255,9 @@ Copy the disequilibrium model `tibble` and augment it with post-estimation data.
 ```{r analysis.estimates}
 mdt <- tibble::add_column(
   bsmdl@model_tibble,
-  normalized_shortages = c(normalized_shortages(bsmdl, bsmdl_est@coef)),
-  shortage_probabilities = c(shortage_probabilities(bsmdl, bsmdl_est@coef)),
-  relative_shortages = c(relative_shortages(bsmdl, bsmdl_est@coef))
+  normalized_shortages = c(normalized_shortages(bsmdl, coef(bsmdl_est))),
+  shortage_probabilities = c(shortage_probabilities(bsmdl, coef(bsmdl_est))),
+  relative_shortages = c(relative_shortages(bsmdl, coef(bsmdl_est)))
 )
 ```
 
@@ -265,9 +265,9 @@ How is the sample separated post-estimation? The indices of the observations for
 
 ```{r analysis.shortages}
 abs_estsep <- c(
-  nobs = length(shortage_indicators(bsmdl, bsmdl_est@coef)),
-  nshortages = sum(shortage_indicators(bsmdl, bsmdl_est@coef)),
-  nsurpluses = sum(!shortage_indicators(bsmdl, bsmdl_est@coef))
+  nobs = length(shortage_indicators(bsmdl, coef(bsmdl_est))),
+  nshortages = sum(shortage_indicators(bsmdl, coef(bsmdl_est))),
+  nsurpluses = sum(!shortage_indicators(bsmdl, coef(bsmdl_est)))
 )
 print(abs_estsep)
 
@@ -291,22 +291,22 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 
 ### Summaries
 
-All the model estimates support the `summary` function. The `eq_2sls` provides also the first stage estimation. The `summary` output comes from `systemfit`. The remaining models are estimated using maximum likelihood and the `summary` functionality is based on `bbmle`. 
+All the model estimates support the `summary` function. The `eq_2sls` provides also the first stage estimation, but it is not included in the summary and has to be explicitly asked. 
 
 ```{r analysis.summaries}
-summary(eqmdl_reg$first_stage_model)
-summary(eqmdl_reg$system_model)
-bbmle::summary(eqmdl_est)
-bbmle::summary(bsmdl_est)
-bbmle::summary(damdl_est)
-bbmle::summary(samdl_est)
+summary(eqmdl_reg@fit[[1]]$first_stage_model)
+summary(eqmdl_reg)
+summary(eqmdl_est)
+summary(bsmdl_est)
+summary(damdl_est)
+summary(samdl_est)
 ```
 The estimated demanded and supplied quantities can be calculated per observation. 
 
 ```{r analysis.market_forces}
 market <- cbind(
-  demand = demanded_quantities(bsmdl, bsmdl_est@coef)[, 1],
-  supply = supplied_quantities(bsmdl, bsmdl_est@coef)[, 1]
+  demand = demanded_quantities(bsmdl, coef(bsmdl_est))[, 1],
+  supply = supplied_quantities(bsmdl, coef(bsmdl_est))[, 1]
 )
 summary(market)
 ```
@@ -315,8 +315,8 @@ The package offers also basic aggregation functionality.
 
 ```{r analysis.aggregation}
 aggregates <- c(
-  demand = aggregate_demand(bsmdl, bsmdl_est@coef),
-  supply = aggregate_supply(bsmdl, bsmdl_est@coef)
+  demand = aggregate_demand(bsmdl, coef(bsmdl_est)),
+  supply = aggregate_supply(bsmdl, coef(bsmdl_est))
 )
 aggregates
 ```

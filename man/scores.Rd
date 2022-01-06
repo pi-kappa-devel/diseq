@@ -56,6 +56,6 @@ model <- simulate_model(
 est <- estimate(model)
 
 # Calculate the score matrix
-head(scores(model, est@coef))
+head(scores(model, coef(est)))
 }
 }

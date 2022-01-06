@@ -1,6 +1,6 @@
 #' @include model_logger.R
 #' @include system_base.R
-#' @importFrom bbmle parnames mle2
+#' @importFrom bbmle mle2 parnames summary
 #' @importFrom grid grid.raster
 #' @importFrom png readPNG
 #' @importFrom rlang :=
@@ -388,7 +388,8 @@ NULL
 #' the \code{\link{show}} method, \code{summary} prints
 #' \itemize{
 #' \item the number of observations,
-#' \item the number of observations in each equation for models with sample separation, and
+#' \item the number of observations in each equation for models with sample
+#' separation, and
 #' \item various categories of variables.
 #' }
 #' @export
@@ -522,122 +523,6 @@ validate_standard_error_option <- function(object, option) {
   }
 }
 
-#' Model estimation.
-#'
-#' All models are estimated using full information maximum likelihood. The
-#' \code{\linkS4class{equilibrium_model}} can also be estimated using two-stage
-#' least squares. The maximum likelihood estimation is based on
-#' \code{\link[bbmle]{mle2}}. If no starting values are provided, the function uses
-#' linear regression estimates as initializing values. The default optimization method is
-#' BFGS. For other alternatives see \code{\link[bbmle]{mle2}}. The implementation of
-#' the two-stage least square estimation of the \code{\linkS4class{equilibrium_model}}
-#' is based on \code{\link[systemfit]{systemfit}}.
-#' @param object A model object.
-#' @param ... Named parameter used in the model's estimation. These are passed further
-#' down to the estimation call. For the \code{\linkS4class{equilibrium_model}} model, the
-#' parameters are passed to \code{\link[systemfit]{systemfit}}, if the method is set to
-#' \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of
-#' the models, the parameters are passed to \code{\link[bbmle]{mle2}}.
-#' @return The object that holds the estimation result.
-#' @rdname estimate
-#' @examples
-#' \donttest{
-#' # initialize the model using the houses dataset
-#' model <- new(
-#'   "diseq_deterministic_adjustment", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model object (BFGS is used by default)
-#' est <- estimate(model)
-#'
-#' # estimate the model by specifying the optimization details passed to the optimizer.
-#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
-#'
-#' # summarize results
-#' bbmle::summary(est)
-#' }
-#' @export
-setGeneric("estimate", function(object, ...) {
-  standardGeneric("estimate")
-})
-
-#' @describeIn estimate Full information maximum likelihood estimation.
-#' @param gradient One of two potential options: `numerical` and `calculated`. By
-#' default, all the models are estimated using the analytic expressions of their
-#' likelihoods' gradients.
-#' @param hessian One of three potential options: `skip`, `numerical`, and `calculated`.
-#' The default is to use the `calculated` Hessian for the model that expressions are
-#' available and the `numerical` Hessian in other cases. Calculated Hessian expressions
-#' are available for the basic and directional models.
-#' @param standard_errors One of three potential options: `homoscedastic`,
-#' `heteroscedastic`, or a vector with variables names for which standard error
-#' clusters are to be created. The default value is `homoscedastic`. If the option
-#' `heteroscedastic` is passed, the variance-covariance matrix is calculated using
-#' heteroscedasticity adjusted (Huber-White) standard errors. If the vector is
-#' supplied, the variance-covariance matrix is calculated by grouping the score matrix
-#' based on the passed variables.
-setMethod(
-  "estimate", signature(object = "market_model"),
-  function(object, gradient = "calculated", hessian = "calculated",
-           standard_errors = "homoscedastic", ...) {
-    validate_gradient_option(object, gradient)
-    validate_hessian_option(object, hessian)
-    validate_standard_error_option(object, standard_errors)
-
-    va_args <- list(...)
-
-    if (hessian == "skip" ||
-      ((object@model_type_string %in% c("Basic", "Directional")) &&
-        hessian == "calculated")) {
-      va_args$skip.hessian <- TRUE
-    } else {
-      hessian <- "numerical"
-    }
-
-    va_args$start <- prepare_initializing_values(object, va_args$start)
-
-    if (is.null(va_args$method)) {
-      va_args$method <- "BFGS"
-    }
-
-    va_args$minuslogl <- function(...) minus_log_likelihood(object, ...)
-    bbmle::parnames(va_args$minuslogl) <- likelihood_variables(object@system)
-    if (gradient == "calculated") {
-      va_args$gr <- function(...) gradient(object, ...)
-      bbmle::parnames(va_args$gr) <- likelihood_variables(object@system)
-    }
-
-    est <- do.call(bbmle::mle2, va_args)
-    est@call.orig <- call("bbmle::mle2", va_args)
-
-    if (hessian == "calculated") {
-      print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
-      est@details$hessian <- hessian(object, est@coef)
-      tryCatch(
-        est@vcov <- MASS::ginv(est@details$hessian),
-        error = function(e) print_warning(object@logger, e$message)
-      )
-    }
-
-    if (length(standard_errors) == 1) {
-      if (standard_errors == "heteroscedastic") {
-        est <- set_heteroscedasticity_consistent_errors(object, est)
-      } else if (standard_errors != "homoscedastic") {
-        est <- set_clustered_errors(object, est, standard_errors)
-      }
-    } else {
-      est <- set_clustered_errors(object, est, standard_errors)
-    }
-
-    est
-  }
-)
-
 
 #' Maximize the log-likelihood.
 #'
@@ -717,7 +602,7 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 #' est <- estimate(model)
 #'
 #' # Calculate the score matrix
-#' head(scores(model, est@coef))
+#' head(scores(model, coef(est)))
 #' }
 #' @export
 setGeneric("scores", function(object, parameters) {
@@ -750,11 +635,9 @@ setGeneric("model_name", function(object) {
 #' that was passed to the model's initialization.
 #' @param object A model object.
 #' @return The number of used observations.
-#' @rdname number_of_observations
+#' @rdname nobs
 #' @export
-setGeneric("number_of_observations", function(object) {
-  standardGeneric("number_of_observations")
-})
+setGeneric("nobs")
 
 #' @title Market side descriptive statistics
 #' @details Calculates and returns basic descriptive statistics for the model's demand
@@ -816,7 +699,7 @@ setMethod(
   "set_heteroscedasticity_consistent_errors", signature(object = "market_model"),
   function(object, est) {
     est@details$original_hessian <- est@details$hessian
-    scores <- scores(object, est@coef)
+    scores <- scores(object, coef(est))
     adjustment <- MASS::ginv(t(scores) %*% scores)
     est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
     est@vcov <- MASS::ginv(est@details$hessian)
@@ -836,7 +719,7 @@ setMethod(
     cluster_var <- rlang::syms(cluster_errors_by)
     clustered_scores <- tibble::tibble(
       object@model_tibble %>% dplyr::select(!!!cluster_var),
-      tibble::as_tibble(scores(object, est@coef))
+      tibble::as_tibble(scores(object, coef(est)))
     ) %>%
       dplyr::group_by(!!!cluster_var) %>%
       dplyr::group_map(~ t(as.matrix(.)) %*% (as.matrix(.)))
@@ -858,9 +741,9 @@ setMethod("model_name", signature(object = "market_model"), function(object) {
   )
 })
 
-#' @rdname number_of_observations
+#' @rdname nobs
 setMethod(
-  "number_of_observations", signature(object = "market_model"),
+  "nobs", signature(object = "market_model"),
   function(object) {
     nrow(object@model_tibble)
   }
@@ -1040,7 +923,7 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' aggregate_demand(model, est@coef)
+#' aggregate_demand(model, coef(est))
 #'
 #' # simulate the deterministic adjustment model
 #' model <- simulate_model(
@@ -1061,10 +944,10 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' aggregate_demand(model, est@coef)
+#' aggregate_demand(model, coef(est))
 #'
 #' # get estimated aggregate demand
-#' aggregate_supply(model, est@coef)
+#' aggregate_supply(model, coef(est))
 #' }
 #' @seealso demanded_quantities, supplied_quantities
 NULL
@@ -1133,8 +1016,8 @@ setMethod(
 #'
 #' # get estimated demanded and supplied quantities
 #' head(cbind(
-#'   demanded_quantities(model, est@coef),
-#'   supplied_quantities(model, est@coef)
+#'   demanded_quantities(model, coef(est)),
+#'   supplied_quantities(model, coef(est))
 #' ))
 #' }
 #' @name market_quantities

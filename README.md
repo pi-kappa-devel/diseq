@@ -237,40 +237,49 @@ documentation of `estimate` for more details and options.
 
 ``` r
 est <- estimate(mdl)
-bbmle::summary(est)
+summary(est)
 ```
 
+    ## 
+    ## Basic Model for Markets in Disequilibrium
+    ##   Demand RHS        : D_P + D_Xd1 + D_Xd2 + D_X1 + D_X2
+    ##   Supply RHS        : S_P + S_Xs1 + S_X1 + S_X2
+    ##   Short Side Rule   : Q = min(D_Q, S_Q)
+    ##   Shocks            : Correlated
+    ##   Nobs              : 50000
+    ##   Sample Separation : Not Separated
+    ##   Quantity Var      : Q
+    ##   Price Var         : P
+    ##   Key Var(s)        : id, date
+    ##   Time Var          : date
+    ## 
     ## Maximum likelihood estimation
+    ##   Method              : BFGS
+    ##   Convergence Status  : success
+    ##   Starting Values     :
+    ##        D_P    D_CONST      D_Xd1      D_Xd2       D_X1       D_X2        S_P 
+    ##    2.20197   11.23889    0.27090   -0.08668    1.44062    4.46769    2.19995 
+    ##    S_CONST      S_Xs1       S_X1       S_X2 D_VARIANCE S_VARIANCE        RHO 
+    ##   10.22189    0.59623    1.43858    4.46673    1.00000    1.00000    0.00000 
     ## 
-    ## Call:
-    ## `bbmle::mle2`(list(skip.hessian = TRUE, start = c(D_P = 2.20196877751704, 
-    ## D_CONST = 11.2388922841303, D_Xd1 = 0.270903396323927, D_Xd2 = -0.0866785170449153, 
-    ## D_X1 = 1.44062383641357, D_X2 = 4.46769000498201, S_P = 2.19994905762299, 
-    ## S_CONST = 10.2218850028636, S_Xs1 = 0.596227038228165, S_X1 = 1.43857649730768, 
-    ## S_X2 = 4.46672975897316, D_VARIANCE = 1, S_VARIANCE = 1, RHO = 0
-    ## ), method = "BFGS", minuslogl = function(...) minus_log_likelihood(object, ...), 
-    ##     gr = function(...) gradient(object, ...)))
+    ## Coefficients
+    ##            Estimate Std. Error  z value      Pr(z)
+    ## D_P        -1.92778   0.064387 -29.9405 5.849e-197
+    ## D_CONST    12.71875   0.166572  76.3557  0.000e+00
+    ## D_Xd1       2.10418   0.038621  54.4831  0.000e+00
+    ## D_Xd2      -0.63963   0.029376 -21.7742 4.076e-105
+    ## D_X1        3.49023   0.039875  87.5300  0.000e+00
+    ## D_X2        6.29355   0.038586 163.1028  0.000e+00
+    ## S_P         2.80653   0.012009 233.7023  0.000e+00
+    ## S_CONST    10.16444   0.049438 205.5993  0.000e+00
+    ## S_Xs1       0.67821   0.009762  69.4737  0.000e+00
+    ## S_X1        1.12951   0.010447 108.1137  0.000e+00
+    ## S_X2        4.19819   0.010354 405.4635  0.000e+00
+    ## D_VARIANCE  1.01778   0.030312  33.5767 3.669e-247
+    ## S_VARIANCE  1.00263   0.007420 135.1273  0.000e+00
+    ## RHO        -0.02388   0.037672  -0.6338  5.262e-01
     ## 
-    ## Coefficients:
-    ##              Estimate Std. Error  z value  Pr(z)    
-    ## D_P        -1.9277826  0.0643871 -29.9405 <2e-16 ***
-    ## D_CONST    12.7187450  0.1665723  76.3557 <2e-16 ***
-    ## D_Xd1       2.1041794  0.0386208  54.4831 <2e-16 ***
-    ## D_Xd2      -0.6396308  0.0293756 -21.7742 <2e-16 ***
-    ## D_X1        3.4902260  0.0398746  87.5300 <2e-16 ***
-    ## D_X2        6.2935478  0.0385864 163.1028 <2e-16 ***
-    ## S_P         2.8065335  0.0120090 233.7023 <2e-16 ***
-    ## S_CONST    10.1644425  0.0494381 205.5993 <2e-16 ***
-    ## S_Xs1       0.6782140  0.0097622  69.4737 <2e-16 ***
-    ## S_X1        1.1295126  0.0104475 108.1137 <2e-16 ***
-    ## S_X2        4.1981877  0.0103540 405.4635 <2e-16 ***
-    ## D_VARIANCE  1.0177756  0.0303119  33.5767 <2e-16 ***
-    ## S_VARIANCE  1.0026251  0.0074199 135.1273 <2e-16 ***
-    ## RHO        -0.0238756  0.0376718  -0.6338 0.5262    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## -2 log L: 138110.5
+    ## -2 log L: 138110
 
 # Design and functionality
 

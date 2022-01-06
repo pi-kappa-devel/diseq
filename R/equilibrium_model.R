@@ -97,68 +97,6 @@ setMethod(
   }
 )
 
-#' @describeIn estimate Equilibrium model estimation.
-#' @param method A string specifying the estimation method. When the passed value is
-#' among \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},
-#' and \code{Brent}, the model is estimated using
-#' full information maximum likelihood based on \code{\link[bbmle]{mle2}} functionality.
-#' When \code{2SLS} is supplied, the model is estimated using two-stage least squares
-#' based on \code{\link[systemfit]{systemfit}}. In this case, the function returns a
-#' list containing the first and second stage estimates. The default value is
-#' \code{BFGS}.
-setMethod(
-  "estimate", signature(object = "equilibrium_model"),
-  function(object, method = "BFGS", ...) {
-    if (method != "2SLS") {
-      return(callNextMethod(object, method = method, ...))
-    }
-
-    ## create fitted variable
-    fitted_column <- paste0(colnames(object@system@price_vector), "_FITTED")
-
-    ## estimate first stage
-    first_stage_controls <- unique(c(
-      control_variables(object@system@demand),
-      control_variables(object@system@supply)
-    ))
-    first_stage_controls <- first_stage_controls[
-      first_stage_controls != "CONST"
-    ]
-    first_stage_formula <- paste0(
-      colnames(object@system@price_vector),
-      " ~ ", paste0(first_stage_controls, collapse = " + ")
-    )
-
-    first_stage_model <- lm(first_stage_formula, object@model_tibble)
-    object@model_tibble[, fitted_column] <- first_stage_model$fitted.values
-
-    ## create demand formula
-    independent <- independent_variables(object@system@demand)
-    independent <- independent[independent != "CONST"]
-    demand_formula <- formula(paste0(
-      colnames(object@system@quantity_vector),
-      " ~ ", paste0(independent, collapse = " + ")
-    ))
-
-    ## create supply formula
-    independent <- independent_variables(object@system@supply)
-    independent <- independent[independent != "CONST"]
-    supply_formula <- formula(paste0(
-      colnames(object@system@quantity_vector),
-      " ~ ", paste0(independent, collapse = " + ")
-    ))
-
-    inst <- formula(paste0(" ~ ", paste0(first_stage_controls, collapse = " + ")))
-    system_model <- systemfit::systemfit(
-      list(demand = demand_formula, supply = supply_formula),
-      method = "2SLS", inst = inst, data = object@model_tibble,
-      ...
-    )
-
-    list(first_stage_model = first_stage_model, system_model = system_model)
-  }
-)
-
 #' @rdname maximize_log_likelihood
 setMethod(
   "maximize_log_likelihood", signature(object = "equilibrium_model"),

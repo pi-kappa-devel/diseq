@@ -120,21 +120,21 @@ model <- new(
 est <- estimate(model, control = list(maxit = 1e+5))
 
 # get estimated normalized shortages
-head(normalized_shortages(model, est@coef))
+head(normalized_shortages(model, coef(est)))
 
 # get estimated relative shortages
-head(relative_shortages(model, est@coef))
+head(relative_shortages(model, coef(est)))
 
 # get the estimated shortage probabilities
-head(shortage_probabilities(model, est@coef))
+head(shortage_probabilities(model, coef(est)))
 
 # get the estimated shortage indicators
-head(shortage_indicators(model, est@coef))
+head(shortage_indicators(model, coef(est)))
 
 # get the estimated shortages
-head(shortages(model, est@coef))
+head(shortages(model, coef(est)))
 
 # get the estimated shortage variance
-shortage_standard_deviation(model, est@coef)
+shortage_standard_deviation(model, coef(est))
 }
 }

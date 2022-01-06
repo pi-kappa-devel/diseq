@@ -70,12 +70,12 @@ model <- new(
 est <- estimate(model, control = list(maxit = 1e+5))
 
 # get the mean marginal effect of variable "RM" on the shortage probabilities
-shortage_probability_marginal(model, est@coef, "RM")
+shortage_probability_marginal(model, coef(est), "RM")
 
 # get the marginal effect at the mean of variable "RM" on the shortage probabilities
-shortage_probability_marginal(model, est@coef, "CSHS", aggregate = "at_the_mean")
+shortage_probability_marginal(model, coef(est), "CSHS", aggregate = "at_the_mean")
 
 # get the marginal effect of variable "RM" on the system
-shortage_marginal(model, est@coef, "RM")
+shortage_marginal(model, coef(est), "RM")
 }
 }

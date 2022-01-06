@@ -26,11 +26,11 @@ test_that(paste0("Model can be simulated"), {
 est <- NULL
 test_that(paste0(model_name(mdl), " can be estimated"), {
   est <<- estimate(mdl, control = optimization_control, method = optimization_method)
-  expect_is(est, "mle2")
+  expect_is(est@fit[[1]], "mle2")
 })
 
 test_that(paste0("Estimates of '", model_name(mdl), "' are accurate"), {
-  test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)
+  test_estimation_accuracy(coef(est), unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
 test_that(paste0(model_name(mdl), "' converges"), {
@@ -47,22 +47,22 @@ test_that(paste0("Mean marginal effect can be calculated"), {
 })
 
 test_that(paste0("Aggregation can be calculated"), {
-  test_aggregation(aggregate_demand, mdl, est@coef)
-  test_aggregation(aggregate_supply, mdl, est@coef)
+  test_aggregation(aggregate_demand, mdl, coef(est))
+  test_aggregation(aggregate_supply, mdl, coef(est))
 })
 
 test_that(paste0("Shortages can be calculated"), {
-  test_shortages(relative_shortages, mdl, est@coef)
-  test_shortages(shortage_probabilities, mdl, est@coef)
+  test_shortages(relative_shortages, mdl, coef(est))
+  test_shortages(shortage_probabilities, mdl, coef(est))
 })
 
 test_that(paste0("Scores can be calculated"), {
-  test_scores(mdl, est@coef)
+  test_scores(mdl, coef(est))
 })
 
 test_that(paste0(
   "Calculated gradient of '",
   model_name(mdl), "' matches the numerical approximation"
 ), {
-  test_calculated_gradient(mdl, est@coef, 1e-04)
+  test_calculated_gradient(mdl, coef(est), 1e-04)
 })

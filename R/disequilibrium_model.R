@@ -53,22 +53,22 @@ setMethod(
 #' est <- estimate(model, control = list(maxit = 1e+5))
 #'
 #' # get estimated normalized shortages
-#' head(normalized_shortages(model, est@coef))
+#' head(normalized_shortages(model, coef(est)))
 #'
 #' # get estimated relative shortages
-#' head(relative_shortages(model, est@coef))
+#' head(relative_shortages(model, coef(est)))
 #'
 #' # get the estimated shortage probabilities
-#' head(shortage_probabilities(model, est@coef))
+#' head(shortage_probabilities(model, coef(est)))
 #'
 #' # get the estimated shortage indicators
-#' head(shortage_indicators(model, est@coef))
+#' head(shortage_indicators(model, coef(est)))
 #'
 #' # get the estimated shortages
-#' head(shortages(model, est@coef))
+#' head(shortages(model, coef(est)))
 #'
 #' # get the estimated shortage variance
-#' shortage_standard_deviation(model, est@coef)
+#' shortage_standard_deviation(model, coef(est))
 #' }
 #' @name shortage_analysis
 NULL
@@ -165,13 +165,13 @@ setGeneric("shortage_standard_deviation", function(object, parameters) {
 #' est <- estimate(model, control = list(maxit = 1e+5))
 #'
 #' # get the mean marginal effect of variable "RM" on the shortage probabilities
-#' shortage_probability_marginal(model, est@coef, "RM")
+#' shortage_probability_marginal(model, coef(est), "RM")
 #'
 #' # get the marginal effect at the mean of variable "RM" on the shortage probabilities
-#' shortage_probability_marginal(model, est@coef, "CSHS", aggregate = "at_the_mean")
+#' shortage_probability_marginal(model, coef(est), "CSHS", aggregate = "at_the_mean")
 #'
 #' # get the marginal effect of variable "RM" on the system
-#' shortage_marginal(model, est@coef, "RM")
+#' shortage_marginal(model, coef(est), "RM")
 #' }
 #' @name marginal_effects
 NULL

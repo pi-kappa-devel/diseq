@@ -61,7 +61,7 @@ model <- new(
 est <- estimate(model)
 
 # get estimated aggregate demand
-aggregate_demand(model, est@coef)
+aggregate_demand(model, coef(est))
 
 # simulate the deterministic adjustment model
 model <- simulate_model(
@@ -82,10 +82,10 @@ model <- simulate_model(
 est <- estimate(model)
 
 # get estimated aggregate demand
-aggregate_demand(model, est@coef)
+aggregate_demand(model, coef(est))
 
 # get estimated aggregate demand
-aggregate_supply(model, est@coef)
+aggregate_supply(model, coef(est))
 }
 }
 \seealso{

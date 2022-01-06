@@ -23,34 +23,34 @@ test_that(paste0("Model can be simulated"), {
 est <- NULL
 test_that(paste0(model_name(mdl), " can be estimated"), {
   est <<- estimate(mdl, control = optimization_control, method = optimization_method)
-  expect_is(est, "mle2")
+  expect_is(est@fit[[1]], "mle2")
 })
 
 test_that(paste0(
   "Maximum likelihood estimates of '", model_name(mdl),
   "' are accurate"
 ), {
-  test_estimation_accuracy(est@coef, unlist(parameters[-c(1, 2)]), 1e-0)
+  test_estimation_accuracy(coef(est), unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
 
 test_that(paste0("Aggregation can be calculated"), {
-  test_aggregation(aggregate_demand, mdl, est@coef)
-  test_aggregation(aggregate_supply, mdl, est@coef)
+  test_aggregation(aggregate_demand, mdl, coef(est))
+  test_aggregation(aggregate_supply, mdl, coef(est))
 })
 
 test_that(paste0("Scores can be calculated"), {
-  test_scores(mdl, est@coef)
+  test_scores(mdl, coef(est))
 })
 
 reg <- NULL
 test_that(paste0("First stage of '", model_name(mdl), "' can be estimated"), {
   reg <<- estimate(mdl, method = "2SLS")
-  expect_is(reg$first_stage_model, "lm")
+  expect_is(reg@fit[[1]]$first_stage_model, "lm")
 })
 
 test_that(paste0("Second stage of '", model_name(mdl), "' can be estimated"), {
-  expect_is(reg$system_model, "systemfit")
+  expect_is(reg@fit[[1]]$system_model, "systemfit")
 })
 
 test_that(paste0(
@@ -62,7 +62,7 @@ test_that(paste0(
     "beta_s0", "alpha_s", "beta_s", "eta_s"
   )
   test_estimation_accuracy(
-    reg$system_model$coefficients, unlist(parameters[order]), 1e-0
+    coef(reg), unlist(parameters[order]), 1e-0
   )
 })
 
@@ -79,5 +79,5 @@ test_that(paste0(
   "Calculated gradient of '", model_name(mdl),
   "' matches the numerical approximation"
 ), {
-  test_calculated_gradient(mdl, est@coef, 1e-4)
+  test_calculated_gradient(mdl, coef(est), 1e-4)
 })

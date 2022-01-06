@@ -56,8 +56,8 @@ est <- estimate(model)
 
 # get estimated demanded and supplied quantities
 head(cbind(
-  demanded_quantities(model, est@coef),
-  supplied_quantities(model, est@coef)
+  demanded_quantities(model, coef(est)),
+  supplied_quantities(model, coef(est))
 ))
 }
 }

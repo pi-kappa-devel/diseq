@@ -31,7 +31,10 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
 }
 
 test_convergence <- function(est) {
-  testthat::expect(est@details$convergence == 0, sprintf("Failed to converge"))
+  testthat::expect(
+    est@fit[[1]]@details$convergence == 0,
+    sprintf("Failed to converge")
+  )
 }
 
 test_calculated_hessian <- function(mdl, params, tolerance) {
@@ -69,7 +72,7 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
 
 test_marginal_effect <- function(effect, mdl, est, column, aggregate) {
   testthat::expect(
-    !is.na(effect(mdl, est@coef, column, aggregate)),
+    !is.na(effect(mdl, coef(est), column, aggregate)),
     sprintf("Failed to calculate marginal effect of %s", column)
   )
 }
@@ -95,7 +98,7 @@ test_shortages <- function(shortage_function, mdl, params) {
 
 test_scores <- function(mdl, params) {
   scores <- scores(mdl, params)
-  n <- diseq::number_of_observations(mdl)
+  n <- diseq::nobs(mdl)
   k <- length(diseq:::likelihood_variables(mdl@system))
   testthat::expect(any(dim(scores) == c(n, k)), sprintf("Score has wrong dimensions"))
   testthat::expect(
