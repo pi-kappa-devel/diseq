@@ -49,10 +49,10 @@ setMethod(
            demand_initializer, supply_initializer) {
     .Object@formula <- specification
     .Object@demand <- demand_initializer(
-      formula(specification, rhs = 1), data, "Demand Equation", "D_"
+      formula(specification, rhs = 1), data, "Demand", "D_"
     )
     .Object@supply <- supply_initializer(
-      formula(specification, rhs = 2), data, "Supply Equation", "S_"
+      formula(specification, rhs = 2), data, "Supply", "S_"
     )
     .Object@correlated_shocks <- correlated_shocks
     .Object@sample_separation <- FALSE
@@ -78,8 +78,8 @@ setMethod("summary_implementation", signature(object = "system_base"), function(
   if (object@sample_separation) {
     sample_separation_output <- sprintf(
       "Demand Obs = %d, Supply Obs = %d",
-      sum(object@system@demand@separation_subset),
-      sum(object@system@supply@separation_subset)
+      sum(object@demand@separation_subset),
+      sum(object@supply@separation_subset)
     )
   } else {
     sample_separation_output <- "Not Separated"

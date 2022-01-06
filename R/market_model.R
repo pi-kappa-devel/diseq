@@ -357,14 +357,10 @@ setMethod("show", signature(object = "market_model"), function(object) {
   ))
 })
 
-#' Summarizes the model.
-#'
-#' Prints basic information about the passed model object. In addition to the output of
-#' the \code{\link{show}} method, \code{summary} prints
-#' - the number of observations,
-#' - the number of observations in each equation for models with sample separation, and
-#' - various categories of variables.
-#' @param object A model object.
+#' @title Model and fit summaries
+#' @description Methods that summarize models and their estimates.
+#' @param object An object to be summarized.
+#' @name summaries
 #' @examples
 #' \donttest{
 #' model <- simulate_model(
@@ -384,7 +380,17 @@ setMethod("show", signature(object = "market_model"), function(object) {
 #' # print model summary
 #' summary(model)
 #' }
-#' @rdname summary
+NULL
+
+#' @describeIn summaries Summarizes the model.
+#' @description \code{market_model}: Prints basic information about the
+#' passed model object. In addition to the output of
+#' the \code{\link{show}} method, \code{summary} prints
+#' \itemize{
+#' \item the number of observations,
+#' \item the number of observations in each equation for models with sample separation, and
+#' \item various categories of variables.
+#' }
 #' @export
 setMethod("summary", signature(object = "market_model"), function(object) {
   show(object)

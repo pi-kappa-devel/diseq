@@ -129,7 +129,7 @@ setMethod(
     )
     .Object@price_equation <- new(
       "equation_stochastic_adjustment", formula(specification, rhs = 3), data,
-      "Price Equation", "P_"
+      "Price Dynamics", "P_"
     )
     # The standard equation initialization correctly creates the control matrix
     # needed in the models' calculations. We only need to adjust the formula for the
