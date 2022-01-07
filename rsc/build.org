@@ -9,6 +9,12 @@ rm configure && autoreconf && Rscript -e "devtools::clean_dll(); devtools::docum
 tools::compactPDF("./vignettes/diseq_package.pdf", gs_quality = "ebook")
 #+end_src
 
+** Tests
+#+begin_src R :dir .. :results output :async
+devtools::test()
+devtools::run_examples(run_dontrun = TRUE, run_donttest = TRUE)
+#+end_src
+
 ** Make documentation
 
 #+begin_src R :dir .. :results output :async

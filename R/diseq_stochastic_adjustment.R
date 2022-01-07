@@ -70,11 +70,13 @@ setMethod(
 
 #' @rdname shortage_analysis
 setMethod(
-  "shortage_standard_deviation", signature(object = "diseq_stochastic_adjustment"),
-  function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    sqrt(object@system@demand@var + object@system@supply@var -
-      2 * object@system@demand@sigma * object@system@supply@sigma * object@system@rho_ds)
+  "shortage_standard_deviation", signature(
+    model = "diseq_stochastic_adjustment", fit = "missing"
+  ),
+  function(model, parameters) {
+    model@system <- set_parameters(model@system, parameters)
+    sqrt(model@system@demand@var + model@system@supply@var -
+      2 * model@system@demand@sigma * model@system@supply@sigma * model@system@rho_ds)
   }
 )
 

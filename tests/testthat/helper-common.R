@@ -70,16 +70,16 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
 }
 
 
-test_marginal_effect <- function(effect, mdl, est, column, aggregate) {
+test_marginal_effect <- function(effect, est, column, aggregate) {
   testthat::expect(
-    !is.na(effect(mdl, coef(est), column, aggregate)),
+    !is.na(effect(est, column, aggregate)),
     sprintf("Failed to calculate marginal effect of %s", column)
   )
 }
 
 
-test_aggregation <- function(aggregation, mdl, params) {
-  result <- aggregation(mdl, params)
+test_aggregation <- function(aggregation, est) {
+  result <- aggregation(est, coef(est))
   testthat::expect(
     (is.null(dim(result)) && !is.na(result)) ||
       (!is.null(dim(result)) && !all(is.na(result[[2]]))),
@@ -88,25 +88,47 @@ test_aggregation <- function(aggregation, mdl, params) {
 }
 
 
-test_shortages <- function(shortage_function, mdl, params) {
+test_shortages <- function(shortage_function, est) {
   testthat::expect(
-    !any(is.na(shortage_function(mdl, params))),
+    !any(is.na(shortage_function(est))),
     sprintf("Failed to calculate shortages")
   )
 }
 
 
-test_scores <- function(mdl, params) {
-  scores <- scores(mdl, params)
-  n <- diseq::nobs(mdl)
-  k <- length(diseq:::likelihood_variables(mdl@system))
+test_scores <- function(est) {
+  scores <- scores(fit = est)
+  n <- diseq::nobs(est)
+  k <- length(diseq:::likelihood_variables(est@system))
   testthat::expect(any(dim(scores) == c(n, k)), sprintf("Score has wrong dimensions"))
   testthat::expect(
-    !any(is.na(scores(mdl, params))),
+    !any(is.na(scores)),
     sprintf("Failed to calculate scores")
   )
 }
 
+test_coef <- function(est) {
+  testthat::expect(
+    class(coef(est)) == "numeric" &&
+      length(coef(est)) == length(likelihood_variables(est@system)),
+    sprintf("Failed to access coefficients via coef")
+  )
+}
+
+test_vcov <- function(est) {
+  testthat::expect(
+    class(vcov(est)) == "matrix" &&
+      length(vcov(est)) == length(likelihood_variables(est@system))**2,
+    sprintf("Failed to access variance-covariance matrix via vcov")
+  )
+}
+
+test_logLik <- function(est) {
+  testthat::expect(
+    class(logLik(est)) == "logLik",
+    sprintf("Failed to access log-likelihood object via logLik")
+  )
+}
 
 test_estimation_accuracy <- function(estimation, parameters, tolerance) {
   errors <- abs(estimation - parameters)

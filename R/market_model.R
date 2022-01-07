@@ -605,7 +605,7 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 #' head(scores(model, coef(est)))
 #' }
 #' @export
-setGeneric("scores", function(object, parameters) {
+setGeneric("scores", function(object, parameters, fit = missing()) {
   standardGeneric("scores")
 })
 

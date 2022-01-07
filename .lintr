@@ -1,2 +1,2 @@
 linters: with_defaults(line_length_linter(89))
-exclude: ".Object|skip.hessian"
+exclude: "logLik|.Object|skip.hessian|test_logLik"

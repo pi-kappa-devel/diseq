@@ -34,25 +34,37 @@ test_that(paste0("Estimates of '", model_name(mdl), "' are accurate"), {
   test_estimation_accuracy(coef(est), unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
-test_that(paste0("Marginal effect can be calculated"), {
-  test_marginal_effect(shortage_probability_marginal, mdl, est, "P", "mean")
-  test_marginal_effect(shortage_probability_marginal, mdl, est, "Xs1", "mean")
-  test_marginal_effect(shortage_probability_marginal, mdl, est, "P", "at_the_mean")
-  test_marginal_effect(shortage_probability_marginal, mdl, est, "Xs1", "at_the_mean")
+test_that(paste0("Marginal effects can be calculated"), {
+  test_marginal_effect(shortage_probability_marginal, est, "P", "mean")
+  test_marginal_effect(shortage_probability_marginal, est, "Xs1", "mean")
+  test_marginal_effect(shortage_probability_marginal, est, "P", "at_the_mean")
+  test_marginal_effect(shortage_probability_marginal, est, "Xs1", "at_the_mean")
 })
 
 test_that(paste0("Aggregation can be calculated"), {
-  test_aggregation(aggregate_demand, mdl, coef(est))
-  test_aggregation(aggregate_supply, mdl, coef(est))
+  test_aggregation(aggregate_demand, est)
+  test_aggregation(aggregate_supply, est)
 })
 
 test_that(paste0("Shortages can be calculated"), {
-  test_shortages(relative_shortages, mdl, coef(est))
-  test_shortages(shortage_probabilities, mdl, coef(est))
+  test_shortages(relative_shortages, est)
+  test_shortages(shortage_probabilities, est)
 })
 
 test_that(paste0("Scores can be calculated"), {
-  test_scores(mdl, coef(est))
+  test_scores(est)
+})
+
+test_that(paste0("Coefficients can be accessed"), {
+  test_coef(est)
+})
+
+test_that(paste0("Variance-covariance matrix can be accessed"), {
+  test_vcov(est)
+})
+
+test_that(paste0("Log=likelihood object can be accessed"), {
+  test_logLik(est)
 })
 
 test_that(paste0(

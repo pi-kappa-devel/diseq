@@ -35,12 +35,12 @@ test_that(paste0(
 
 
 test_that(paste0("Aggregation can be calculated"), {
-  test_aggregation(aggregate_demand, mdl, coef(est))
-  test_aggregation(aggregate_supply, mdl, coef(est))
+  test_aggregation(aggregate_demand, est)
+  test_aggregation(aggregate_supply, est)
 })
 
 test_that(paste0("Scores can be calculated"), {
-  test_scores(mdl, coef(est))
+  test_scores(est)
 })
 
 reg <- NULL

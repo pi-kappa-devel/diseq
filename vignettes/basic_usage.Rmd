@@ -188,50 +188,42 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c("P", "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(bsmdl, coef(bsmdl_est), v),
+  function(v) shortage_probability_marginal(bsmdl_est, v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(drmdl, coef(drmdl_est), v),
+  function(v) shortage_probability_marginal(drmdl_est, v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(damdl, coef(damdl_est), v),
+  function(v) shortage_probability_marginal(damdl_est, v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(samdl, coef(samdl_est), v),
+  function(v) shortage_probability_marginal(samdl_est, v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(bsmdl, coef(bsmdl_est), v,
-      aggregate = "at_the_mean"
-    )
+    shortage_probability_marginal(bsmdl_est, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 drmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(drmdl, coef(drmdl_est), v,
-      aggregate = "at_the_mean"
-    )
+    shortage_probability_marginal(drmdl_est, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 damdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(damdl, coef(damdl_est), v,
-      aggregate = "at_the_mean"
-    )
+    shortage_probability_marginal(damdl_est, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 samdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(samdl, coef(samdl_est), v,
-      aggregate = "at_the_mean"
-    )
+    shortage_probability_marginal(samdl_est, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
@@ -255,9 +247,9 @@ Copy the disequilibrium model `tibble` and augment it with post-estimation data.
 ```{r analysis.estimates}
 mdt <- tibble::add_column(
   bsmdl@model_tibble,
-  normalized_shortages = c(normalized_shortages(bsmdl, coef(bsmdl_est))),
-  shortage_probabilities = c(shortage_probabilities(bsmdl, coef(bsmdl_est))),
-  relative_shortages = c(relative_shortages(bsmdl, coef(bsmdl_est)))
+  normalized_shortages = c(normalized_shortages(bsmdl_est)),
+  shortage_probabilities = c(shortage_probabilities(bsmdl_est)),
+  relative_shortages = c(relative_shortages(bsmdl_est))
 )
 ```
 
@@ -265,9 +257,9 @@ How is the sample separated post-estimation? The indices of the observations for
 
 ```{r analysis.shortages}
 abs_estsep <- c(
-  nobs = length(shortage_indicators(bsmdl, coef(bsmdl_est))),
-  nshortages = sum(shortage_indicators(bsmdl, coef(bsmdl_est))),
-  nsurpluses = sum(!shortage_indicators(bsmdl, coef(bsmdl_est)))
+  nobs = length(shortage_indicators(bsmdl_est)),
+  nshortages = sum(shortage_indicators(bsmdl_est)),
+  nsurpluses = sum(!shortage_indicators(bsmdl_est))
 )
 print(abs_estsep)
 

@@ -1,4 +1,8 @@
-#' @include market_model.R
+#' @include equilibrium_model.R
+#' @include diseq_basic.R
+#' @include diseq_directional.R
+#' @include diseq_deterministic_adjustment.R
+#' @include diseq_stochastic_adjustment.R
 
 setClass(
   "market_fit",
@@ -252,7 +256,7 @@ setMethod(
 )
 
 
-#' Estimated coefficients.
+#' Estimated coefficients of a fitted market model.
 #'
 #' Returns the coefficients of the fitted model.
 #' @param object A fitted model object.
@@ -273,7 +277,7 @@ setMethod(
 #' # estimate the model.
 #' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
 #'
-#' # summarize results
+#' # access the estimated coefficients
 #' coef(est)
 #' }
 #' @export
@@ -288,7 +292,48 @@ setMethod(
   }
 )
 
-#' Estimated coefficients.
+#' Variance-covariance matrix for a fitted market model.
+#'
+#' Returns the variance-covariance matrix of the estimated coefficients for
+#' the fitted model. Specializes the \code{\link[stats]{vcov}} function for
+#' fitted market models.
+#' @param object A fitted model object.
+#' @return A matrix of covariances for the estimated model coefficients.
+#' @rdname vcov
+#' @examples
+#' \donttest{
+#' # initialize the model using the houses dataset
+#' model <- new(
+#'   "diseq_deterministic_adjustment", # model type
+#'   subject = ID, time = TREND, quantity = HS, price = RM,
+#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
+#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(), # data
+#'   correlated_shocks = FALSE # allow shocks to be correlated
+#' )
+#'
+#' # estimate the model.
+#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+#'
+#' # access the variance-covariance matrix
+#' head(vcov(est))
+#' }
+#' @export
+setMethod(
+  "vcov", signature(object = "market_fit"),
+  function(object) {
+    if (class(object@fit[[1]]) == "mle2") {
+      colnames(object@fit[[1]]@vcov) <- names(coef(object))
+      rownames(object@fit[[1]]@vcov) <- names(coef(object))
+      object@fit[[1]]@vcov
+    } else {
+      object@fit[[1]]$system_model$coefCov
+    }
+  }
+)
+
+
+#' Log likelihood of a fitted market model.
 #'
 #' Specializes the \code{\link[stats]{logLik}} function for the market models
 #' of the package estimated with full information maimumum likelihood. It
@@ -312,7 +357,7 @@ setMethod(
 #' # estimate the model.
 #' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
 #'
-#' # summarize results
+#' # get the log likelihood object
 #' logLik(est)
 #' }
 #' @export
@@ -327,4 +372,138 @@ setMethod(
     }
     ll
   }
+)
+
+try_coerce_market_fit <- function(object) {
+  to_class <- class(object)[[1]]
+  if (object@model_type_string == "Equilibrium") {
+    to_class <- "equilibrium_model"
+  } else if (object@model_type_string == "Basic") {
+    to_class <- "diseq_basic"
+  } else if (object@model_type_string == "Directional") {
+    to_class <- "diseq_directional"
+  } else if (object@model_type_string == "Deterministic Adjustment") {
+    to_class <- "diseq_deterministic_adjustment"
+  } else if (object@model_type_string == "Stochastic Adjustment") {
+    to_class <- "diseq_stochastic_adjustment"
+  }
+  class(object)[[1]] <- to_class
+  object
+}
+
+#' @rdname shortage_analysis
+setMethod(
+  "shortages", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    shortages(model = try_coerce_market_fit(fit), parameters = coef(fit))
+  }
+)
+
+#' @rdname shortage_analysis
+setMethod(
+  "normalized_shortages", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    normalized_shortages(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname shortage_analysis
+setMethod(
+  "relative_shortages", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    relative_shortages(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname shortage_analysis
+setMethod(
+  "shortage_probabilities", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    shortage_probabilities(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname shortage_analysis
+setMethod(
+  "shortage_indicators", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    shortage_indicators(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname shortage_analysis
+setMethod(
+  "shortage_standard_deviation", signature(
+    model = "missing", parameters = "missing",
+    fit = "market_fit"
+  ),
+  function(fit) {
+    shortage_standard_deviation(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname marginal_effects
+setMethod(
+  "shortage_marginal", signature(
+    fit = "market_fit",
+    model = "missing", parameters = "missing"
+  ),
+  function(fit, variable) {
+    shortage_marginal(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit), variable = variable
+    )
+  }
+)
+
+#' @rdname marginal_effects
+setMethod(
+  "shortage_probability_marginal", signature(
+    fit = "market_fit",
+    model = "missing", parameters = "missing"
+  ),
+  function(fit, variable, aggregate) {
+    shortage_probability_marginal(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit), variable = variable,
+      aggregate = aggregate
+    )
+  }
+)
+
+#' @rdname scores
+setMethod(
+  "scores",
+  signature(object = "missing", parameters = "missing", fit = "market_fit"),
+  function(fit) scores(try_coerce_market_fit(fit), coef(fit))
 )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/market_fit.R
 \name{coef,market_fit-method}
 \alias{coef,market_fit-method}
-\title{Estimated coefficients.}
+\title{Estimated coefficients of a fitted market model.}
 \usage{
 \S4method{coef}{market_fit}(object)
 }
@@ -30,7 +30,7 @@ model <- new(
 # estimate the model.
 est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
 
-# summarize results
+# access the estimated coefficients
 coef(est)
 }
 }
