@@ -342,9 +342,6 @@ setMethod(
 #' }
 #' @rdname show
 #' @export
-setGeneric("show")
-
-#' @rdname show
 setMethod("show", signature(object = "market_model"), function(object) {
   cat(sprintf(
     "\n%s Model for Markets in %s\n",
@@ -575,13 +572,16 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 
 #' Likelihood scores.
 #'
-#' It calculates the gradient of the likelihood at the given parameter point for each
-#' observation in the sample. It, therefore, returns an n x k matrix, where n denotes
-#' the number of observations in the sample and k the number of estimated parameters.
-#' There order of the parameters is the same as the one that is used in the summary
-#' of the results.
+#' It calculates the gradient of the likelihood at the given parameter point
+#' for each observation in the sample. It, therefore, returns an n x k matrix,
+#' where n denotes the number of observations in the sample and k the number
+#' of estimated parameters. The ordering of the parameters is the same as
+#' the one that is used in the summary of the results. The method can be
+#' called either using directly a fitted model object, or by separately
+#' providing a model object and a parameter vector.
 #' @param object A model object.
 #' @param parameters A vector with model parameters.
+#' @param fit A fitted model object.
 #' @return The score matrix.
 #' @rdname scores
 #' @examples
@@ -627,17 +627,6 @@ setGeneric("set_clustered_errors", function(object, ...) {
 setGeneric("model_name", function(object) {
   standardGeneric("model_name")
 })
-
-#' Number of observations.
-#'
-#' Returns the number of observations that are used by an initialized model. The number
-#' of used observations may differ from the numbers of observations of the data set
-#' that was passed to the model's initialization.
-#' @param object A model object.
-#' @return The number of used observations.
-#' @rdname nobs
-#' @export
-setGeneric("nobs")
 
 #' @title Market side descriptive statistics
 #' @details Calculates and returns basic descriptive statistics for the model's demand
@@ -741,7 +730,15 @@ setMethod("model_name", signature(object = "market_model"), function(object) {
   )
 })
 
+#' Number of observations.
+#'
+#' Returns the number of observations that are used by an initialized model. The number
+#' of used observations may differ from the numbers of observations of the data set
+#' that was passed to the model's initialization.
+#' @param object A model object.
+#' @return The number of used observations.
 #' @rdname nobs
+#' @export
 setMethod(
   "nobs", signature(object = "market_model"),
   function(object) {

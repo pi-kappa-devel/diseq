@@ -30,16 +30,20 @@ scores(object, parameters, fit = missing())
 \item{object}{A model object.}
 
 \item{parameters}{A vector with model parameters.}
+
+\item{fit}{A fitted model object.}
 }
 \value{
 The score matrix.
 }
 \description{
-It calculates the gradient of the likelihood at the given parameter point for each
-observation in the sample. It, therefore, returns an n x k matrix, where n denotes
-the number of observations in the sample and k the number of estimated parameters.
-There order of the parameters is the same as the one that is used in the summary
-of the results.
+It calculates the gradient of the likelihood at the given parameter point
+for each observation in the sample. It, therefore, returns an n x k matrix,
+where n denotes the number of observations in the sample and k the number
+of estimated parameters. The ordering of the parameters is the same as
+the one that is used in the summary of the results. The method can be
+called either using directly a fitted model object, or by separately
+providing a model object and a parameter vector.
 }
 \examples{
 \donttest{

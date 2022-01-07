@@ -59,7 +59,7 @@ jobs:
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install -y texlive
+          sudo apt-get install -y texlive libcurl4-openssl-dev
           while read -r cmd
           do
             eval sudo $cmd

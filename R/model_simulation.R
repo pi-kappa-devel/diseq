@@ -753,8 +753,10 @@ setMethod(
       verbose = verbose
     ))
 
+    quantity <- "Q"
+    price <- "P"
     demand <- paste(
-      "P",
+      price,
       paste("Xd", seq_along(simulation_parameters$beta_d),
         sep = "", collapse = " + "
       ),
@@ -770,20 +772,25 @@ setMethod(
       sep = " + "
     )
     if (model_type_string != "diseq_directional") {
-      supply <- paste0("P", " + ", supply)
+      supply <- paste0(price, " + ", supply)
     }
     supply <- str2lang(supply)
     price_dynamics <- paste("Xp",
       seq_along(simulation_parameters$beta_p),
       sep = "", collapse = " + "
-    )
+      )
+    # Use this avoid cran-check complains about undefined global variables
     price_dynamics <- str2lang(price_dynamics)
+    quantity <- str2lang(quantity)
+    price <- str2lang(price)
+    subject <- str2lang("id")
+    time <- str2lang("date")
 
     if (model_type_string %in% c("equilibrium_model", "diseq_basic")) {
       model <- new(
         model_type_string,
-        subject = id, time = date,
-        quantity = Q, price = P,
+        subject = subject, time = time,
+        quantity = quantity, price = price,
         demand = demand, supply = supply,
         data = sdt, verbose = verbose, ...
       )
@@ -793,8 +800,8 @@ setMethod(
       )) {
       model <- new(
         model_type_string,
-        subject = id, time = date,
-        quantity = Q, price = P,
+        subject = subject, time = time,
+        quantity = quantity, price = price,
         demand = demand,
         supply = supply,
         data = sdt, verbose = verbose, ...
@@ -802,8 +809,8 @@ setMethod(
     } else if (model_type_string %in% c("diseq_stochastic_adjustment")) {
       model <- new(
         model_type_string,
-        subject = id, time = date,
-        quantity = Q, price = P,
+        subject = subject, time = time,
+        quantity = quantity, price = price,
         demand = demand, supply = supply,
         price_dynamics = price_dynamics,
         data = sdt, verbose = verbose, ...

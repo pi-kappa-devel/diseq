@@ -109,16 +109,17 @@ test_scores <- function(est) {
 
 test_coef <- function(est) {
   testthat::expect(
-    class(coef(est)) == "numeric" &&
+    class(coef(est)) == "numeric" &
       length(coef(est)) == length(likelihood_variables(est@system)),
     sprintf("Failed to access coefficients via coef")
   )
 }
 
 test_vcov <- function(est) {
+  vc <- vcov(est)
   testthat::expect(
-    class(vcov(est)) == "matrix" &&
-      length(vcov(est)) == length(likelihood_variables(est@system))**2,
+    class(vc) == "matrix" &
+      all(dim(vc) == rep(length(likelihood_variables(est@system)), 2)),
     sprintf("Failed to access variance-covariance matrix via vcov")
   )
 }

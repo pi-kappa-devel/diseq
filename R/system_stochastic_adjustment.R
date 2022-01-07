@@ -1,5 +1,6 @@
 #' @include equation_stochastic_adjustment.R
 #' @include system_base.R
+#' @importFrom stats terms
 
 #' @describeIn system_classes Stochastic adjustment model's system class
 #' @slot price_equation Price equation.

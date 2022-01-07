@@ -14,7 +14,7 @@ A \code{\link[stats]{logLik}} object.
 }
 \description{
 Specializes the \code{\link[stats]{logLik}} function for the market models
-of the package estimated with full information maimumum likelihood. It
+of the package estimated with full information minimum likelihood. It
 returns `NULL` for the equilibrium model estimated with
 \code{\link[systemfit]{systemfit}}.
 }
