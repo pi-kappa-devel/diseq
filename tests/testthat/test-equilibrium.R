@@ -31,6 +31,10 @@ test_that(paste0(model_name(mdl), " can be estimated"), {
   expect_is(est@fit[[1]], "mle2")
 })
 
+test_that(paste0(model_name(mdl), " fit can be summarized"), {
+  test_summary(est, 41)
+})
+
 test_that(paste0(
   "Maximum likelihood estimates of '", model_name(mdl),
   "' are accurate"
@@ -56,6 +60,10 @@ test_that(paste0("First stage of '", model_name(mdl), "' can be estimated"), {
 
 test_that(paste0("Second stage of '", model_name(mdl), "' can be estimated"), {
   expect_is(reg@fit[[1]]$system_model, "systemfit")
+})
+
+test_that(paste0(model_name(mdl), " regressions can be summarized"), {
+  test_summary(reg, 75)
 })
 
 test_that(paste0(

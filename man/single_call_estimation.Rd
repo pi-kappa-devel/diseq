@@ -12,6 +12,7 @@
 \alias{diseq_directional,formula-method}
 \alias{diseq_stochastic_adjustment}
 \alias{diseq_stochastic_adjustment,formula-method}
+\alias{equilibrium_model}
 \alias{equilibrium_model,formula-method}
 \title{Single call estimation}
 \usage{
@@ -79,6 +80,14 @@ diseq_stochastic_adjustment(
   estimation_options = list()
 )
 
+equilibrium_model(
+  specification,
+  data,
+  correlated_shocks = TRUE,
+  verbose = 0,
+  estimation_options = list()
+)
+
 \S4method{equilibrium_model}{formula}(
   specification,
   data,
@@ -132,6 +141,6 @@ price adjustments.
 \item \code{diseq_stochastic_adjustment}: Disequilibrium model with stochastic
 price adjustments.
 
-\item \code{equilibrium_model,formula-method}: Equilibrium model
+\item \code{equilibrium_model}: Equilibrium model
 }}
 

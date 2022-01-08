@@ -131,6 +131,14 @@ test_logLik <- function(est) {
   )
 }
 
+test_summary <- function(est, expected_no_lines) {
+  no_lines <- length(capture.output(summary(est)))
+  testthat::expect(expected_no_lines == no_lines, sprintf(
+    "Expected %d output lines and got %d",
+    expected_no_lines, no_lines
+  ))
+}
+
 test_estimation_accuracy <- function(estimation, parameters, tolerance) {
   errors <- abs(estimation - parameters)
 

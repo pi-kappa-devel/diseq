@@ -67,6 +67,7 @@ setMethod(
   }
 )
 
+#' @describeIn single_call_estimation Equilibrium model
 #' @export
 setGeneric(
   "equilibrium_model",
@@ -77,7 +78,7 @@ setGeneric(
   }
 )
 
-#' @describeIn single_call_estimation Equilibrium model
+#' @rdname single_call_estimation
 setMethod(
   "equilibrium_model", signature(specification = "formula"),
   function(specification, data, correlated_shocks, verbose,

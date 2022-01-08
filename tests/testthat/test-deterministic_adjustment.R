@@ -34,6 +34,11 @@ test_that(paste0(model_name(mdl), " can be estimated"), {
   expect_is(est@fit[[1]], "mle2")
 })
 
+
+test_that(paste0(model_name(mdl), " fit can be summarized"), {
+  test_summary(est, 45)
+})
+
 test_that(paste0("Estimates of '", model_name(mdl), "' are accurate"), {
   test_estimation_accuracy(coef(est), unlist(parameters[-c(1, 2)]), 1e-0)
 })
