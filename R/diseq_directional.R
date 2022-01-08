@@ -84,17 +84,18 @@ setMethod(
   }
 )
 
+#' @describeIn single_call_estimation Directional disequilibrium model.
 #' @export
 setGeneric(
   "diseq_directional",
   function(specification, data,
            correlated_shocks = TRUE, verbose = 0,
-           estimation_options = missing()) {
+           estimation_options = list()) {
     standardGeneric("diseq_directional")
   }
 )
 
-#' @describeIn single_call_estimation Directional disequilibrium model.
+#' @rdname single_call_estimation
 setMethod(
   "diseq_directional", signature(specification = "formula"),
   function(specification, data, correlated_shocks, verbose,

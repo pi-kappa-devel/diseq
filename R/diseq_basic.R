@@ -61,17 +61,18 @@ setMethod(
   }
 )
 
+#' @describeIn single_call_estimation Basic disequilibrium model.
 #' @export
 setGeneric(
   "diseq_basic",
   function(specification, data,
            correlated_shocks = TRUE, verbose = 0,
-           estimation_options = missing()) {
+           estimation_options = list()) {
     standardGeneric("diseq_basic")
   }
 )
 
-#' @describeIn single_call_estimation Basic disequilibrium model.
+#' @rdname single_call_estimation
 setMethod(
   "diseq_basic", signature(specification = "formula"),
   function(specification, data, correlated_shocks, verbose,

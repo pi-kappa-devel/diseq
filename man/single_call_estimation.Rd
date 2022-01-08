@@ -4,19 +4,39 @@
 %   R/diseq_stochastic_adjustment.R, R/equilibrium_model.R
 \name{single_call_estimation}
 \alias{single_call_estimation}
+\alias{diseq_basic}
 \alias{diseq_basic,formula-method}
+\alias{diseq_deterministic_adjustment}
 \alias{diseq_deterministic_adjustment,formula-method}
+\alias{diseq_directional}
 \alias{diseq_directional,formula-method}
+\alias{diseq_stochastic_adjustment}
 \alias{diseq_stochastic_adjustment,formula-method}
 \alias{equilibrium_model,formula-method}
 \title{Single call estimation}
 \usage{
+diseq_basic(
+  specification,
+  data,
+  correlated_shocks = TRUE,
+  verbose = 0,
+  estimation_options = list()
+)
+
 \S4method{diseq_basic}{formula}(
   specification,
   data,
   correlated_shocks = TRUE,
   verbose = 0,
-  estimation_options = missing()
+  estimation_options = list()
+)
+
+diseq_deterministic_adjustment(
+  specification,
+  data,
+  correlated_shocks = TRUE,
+  verbose = 0,
+  estimation_options = list()
 )
 
 \S4method{diseq_deterministic_adjustment}{formula}(
@@ -24,7 +44,15 @@
   data,
   correlated_shocks = TRUE,
   verbose = 0,
-  estimation_options = missing()
+  estimation_options = list()
+)
+
+diseq_directional(
+  specification,
+  data,
+  correlated_shocks = TRUE,
+  verbose = 0,
+  estimation_options = list()
 )
 
 \S4method{diseq_directional}{formula}(
@@ -32,7 +60,15 @@
   data,
   correlated_shocks = TRUE,
   verbose = 0,
-  estimation_options = missing()
+  estimation_options = list()
+)
+
+diseq_stochastic_adjustment(
+  specification,
+  data,
+  correlated_shocks = TRUE,
+  verbose = 0,
+  estimation_options = list()
 )
 
 \S4method{diseq_stochastic_adjustment}{formula}(
@@ -48,7 +84,7 @@
   data,
   correlated_shocks = TRUE,
   verbose = 0,
-  estimation_options = missing()
+  estimation_options = list()
 )
 }
 \arguments{
@@ -86,14 +122,14 @@ the estimation options and returns fitted model.
 }
 \section{Functions}{
 \itemize{
-\item \code{diseq_basic,formula-method}: Basic disequilibrium model.
+\item \code{diseq_basic}: Basic disequilibrium model.
 
-\item \code{diseq_deterministic_adjustment,formula-method}: Disequilibrium model with deterministic
+\item \code{diseq_deterministic_adjustment}: Disequilibrium model with deterministic
 price adjustments.
 
-\item \code{diseq_directional,formula-method}: Directional disequilibrium model.
+\item \code{diseq_directional}: Directional disequilibrium model.
 
-\item \code{diseq_stochastic_adjustment,formula-method}: Disequilibrium model with stochastic
+\item \code{diseq_stochastic_adjustment}: Disequilibrium model with stochastic
 price adjustments.
 
 \item \code{equilibrium_model,formula-method}: Equilibrium model

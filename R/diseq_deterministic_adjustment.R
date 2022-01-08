@@ -78,18 +78,19 @@ setMethod(
   }
 )
 
+#' @describeIn single_call_estimation Disequilibrium model with deterministic
+#' price adjustments.
 #' @export
 setGeneric(
   "diseq_deterministic_adjustment",
   function(specification, data,
            correlated_shocks = TRUE, verbose = 0,
-           estimation_options = missing()) {
+           estimation_options = list()) {
     standardGeneric("diseq_deterministic_adjustment")
   }
 )
 
-#' @describeIn single_call_estimation Disequilibrium model with deterministic
-#' price adjustments.
+#' @rdname single_call_estimation
 setMethod(
   "diseq_deterministic_adjustment", signature(specification = "formula"),
   function(specification, data, correlated_shocks, verbose,

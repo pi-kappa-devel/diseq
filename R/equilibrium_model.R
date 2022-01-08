@@ -72,7 +72,7 @@ setGeneric(
   "equilibrium_model",
   function(specification, data,
            correlated_shocks = TRUE, verbose = 0,
-           estimation_options = missing()) {
+           estimation_options = list()) {
     standardGeneric("equilibrium_model")
   }
 )

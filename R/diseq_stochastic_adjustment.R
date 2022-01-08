@@ -68,6 +68,8 @@ setMethod(
   }
 )
 
+#' @describeIn single_call_estimation Disequilibrium model with stochastic
+#' price adjustments.
 #' @export
 setGeneric(
   "diseq_stochastic_adjustment",
@@ -78,8 +80,7 @@ setGeneric(
   }
 )
 
-#' @describeIn single_call_estimation Disequilibrium model with stochastic
-#' price adjustments.
+#' @rdname single_call_estimation
 setMethod(
   "diseq_stochastic_adjustment", signature(specification = "formula"),
   function(specification, data, correlated_shocks, verbose,
