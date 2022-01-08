@@ -119,20 +119,22 @@ setGeneric("estimate", function(object, ...) {
 })
 
 #' @describeIn estimate Full information maximum likelihood estimation.
-#' @param gradient One of two potential options: `numerical` and `calculated`. By
-#' default, all the models are estimated using the analytic expressions of their
-#' likelihoods' gradients.
-#' @param hessian One of three potential options: `skip`, `numerical`, and `calculated`.
-#' The default is to use the `calculated` Hessian for the model that expressions are
-#' available and the `numerical` Hessian in other cases. Calculated Hessian expressions
-#' are available for the basic and directional models.
-#' @param standard_errors One of three potential options: `homoscedastic`,
-#' `heteroscedastic`, or a vector with variables names for which standard error
-#' clusters are to be created. The default value is `homoscedastic`. If the option
-#' `heteroscedastic` is passed, the variance-covariance matrix is calculated using
-#' heteroscedasticity adjusted (Huber-White) standard errors. If the vector is
-#' supplied, the variance-covariance matrix is calculated by grouping the score matrix
-#' based on the passed variables.
+#' @param gradient One of two potential options: \code{"numerical"} and
+#' \code{"calculated"}. By default, all the models are estimated using the
+#' analytic expressions of their likelihoods' gradients.
+#' @param hessian One of three potential options: \code{"skip"},
+#' \code{"numerical"}, and \code{"calculated"}. The default is to use the
+#' \code{"calculated"} Hessian for the model that expressions are
+#' available and the \code{"numerical"} Hessian in other cases. Calculated
+#' Hessian expressions are available for the basic and directional models.
+#' @param standard_errors One of three potential options:
+#' \code{"homoscedastic"}, \code{"heteroscedastic"}, or a vector with
+#' variables names for which standard error clusters are to be created. The
+#' default value is \code{"homoscedastic"}. If the option
+#' \code{"heteroscedastic"} is passed, the variance-covariance matrix is
+#' calculated using heteroscedasticity adjusted (Huber-White) standard errors.
+#' If the vector is supplied, the variance-covariance matrix is calculated by
+#' grouping the score matrix based on the passed variables.
 setMethod(
   "estimate", signature(object = "market_model"),
   function(object, gradient = "calculated", hessian = "calculated",
@@ -337,7 +339,7 @@ setMethod(
 #'
 #' Specializes the \code{\link[stats]{logLik}} function for the market models
 #' of the package estimated with full information minimum likelihood. It
-#' returns `NULL` for the equilibrium model estimated with
+#' returns \code{NULL} for the equilibrium model estimated with
 #' \code{\link[systemfit]{systemfit}}.
 #' @param object A fitted model object.
 #' @return A \code{\link[stats]{logLik}} object.
@@ -506,4 +508,52 @@ setMethod(
   "scores",
   signature(object = "missing", parameters = "missing", fit = "market_fit"),
   function(fit) scores(try_coerce_market_fit(fit), coef(fit))
+)
+
+#' @rdname market_aggregation
+setMethod(
+  "aggregate_demand",
+  signature(model = "missing", parameters = "missing", fit = "market_fit"),
+  function(fit) {
+    aggregate_demand(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname market_aggregation
+setMethod(
+  "aggregate_supply",
+  signature(model = "missing", parameters = "missing", fit = "market_fit"),
+  function(fit) {
+    aggregate_supply(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname market_quantities
+setMethod(
+  "demanded_quantities",
+  signature(model = "missing", parameters = "missing", fit = "market_fit"),
+  function(fit) {
+    demanded_quantities(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
+)
+
+#' @rdname market_quantities
+setMethod(
+  "supplied_quantities",
+  signature(model = "missing", parameters = "missing", fit = "market_fit"),
+  function(fit) {
+    supplied_quantities(
+      model = try_coerce_market_fit(fit),
+      parameters = coef(fit)
+    )
+  }
 )

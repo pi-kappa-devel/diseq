@@ -6,10 +6,11 @@
 #' \subsection{diseq_directional}{
 #' The directional disequilibrium model consists of three equations and a
 #' separation rule. The market is described by a linear demand, a linear supply
-#' equation and the short side rule. The separation rule splits the sample into regimes
-#' of excess supply and excess demand. If a price change is positive at the time point
-#' of the observation, then the observation is classified as being in an excess demand
-#' regime. Otherwise, it is assumed that it represents an excess supply state. The
+#' equation and the short side rule. The separation rule splits the sample
+#' into states of excess supply and excess demand. If a price change is
+#' positive at the time point of the observation, then the observation is
+#' classified as being in an excess demand state. Otherwise, it is assumed
+#' that it represents an excess supply state. The
 #' model is estimated using full information maximum likelihood.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
@@ -62,8 +63,8 @@ setMethod(
     # Check for mis-specification
     price_column <- all.vars(formula(specification, lhs = 2, rhs = 0))
     if (
-      price_column %in% colnames(.Object@system@demand@independent_matrix) &&
-        price_column %in% colnames(.Object@system@supply@independent_matrix)
+      price_column %in% independent_variables(.Object@system@demand) &&
+        price_column %in% independent_variables(.Object@system@supply)
     ) {
       print_error(
         .Object@logger,
@@ -76,10 +77,32 @@ setMethod(
       .Object@logger,
       "Sample separated with ", sum(.Object@system@demand@separation_subset),
       " rows in excess supply and ",
-      sum(.Object@system@supply@separation_subset), " in excess demand regime."
+      sum(.Object@system@supply@separation_subset), " in excess demand state."
     )
 
     .Object
+  }
+)
+
+#' @export
+setGeneric(
+  "diseq_directional",
+  function(specification, data,
+           correlated_shocks = TRUE, verbose = 0,
+           estimation_options = missing()) {
+    standardGeneric("diseq_directional")
+  }
+)
+
+#' @describeIn single_call_estimation Directional disequilibrium model.
+setMethod(
+  "diseq_directional", signature(specification = "formula"),
+  function(specification, data, correlated_shocks, verbose,
+           estimation_options) {
+    initialize_from_formula(
+      "diseq_directional", specification, data, correlated_shocks, verbose,
+      estimation_options
+    )
   }
 )
 

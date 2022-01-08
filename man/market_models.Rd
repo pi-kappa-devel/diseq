@@ -16,9 +16,9 @@
 \description{
 \subsection{diseq_basic}{
 The basic disequilibrium model consists of three equations. Two of them
-are the demand and supply equations. In addition, the model replaces the market
-clearing condition with the short side rule. The model is estimated using full
-information maximum likelihood.
+are the demand and supply equations. In addition, the model replaces the
+market clearing condition with the short side rule. The model is estimated
+using full information maximum likelihood.
 
 \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
 \deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
@@ -28,10 +28,10 @@ information maximum likelihood.
 \subsection{diseq_deterministic_adjustment}{
 The disequilibrium model with deterministic price adjustment consists
 of four equations. The two market equations, the short side rule and price
-evolution equation. The first two equations are stochastic. The price equation is
-deterministic. The sample is separated based on the sign of the price changes as in
-the \code{\linkS4class{diseq_directional}} model. The model is estimated using full
-information maximum likelihood.
+evolution equation. The first two equations are stochastic. The price
+equation is deterministic. The sample is separated based on the sign of
+the price changes as in the \code{\linkS4class{diseq_directional}} model.
+The model is estimated using full information maximum likelihood.
 
 \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
 \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
@@ -42,10 +42,11 @@ information maximum likelihood.
 \subsection{diseq_directional}{
 The directional disequilibrium model consists of three equations and a
 separation rule. The market is described by a linear demand, a linear supply
-equation and the short side rule. The separation rule splits the sample into regimes
-of excess supply and excess demand. If a price change is positive at the time point
-of the observation, then the observation is classified as being in an excess demand
-regime. Otherwise, it is assumed that it represents an excess supply state. The
+equation and the short side rule. The separation rule splits the sample
+into states of excess supply and excess demand. If a price change is
+positive at the time point of the observation, then the observation is
+classified as being in an excess demand state. Otherwise, it is assumed
+that it represents an excess supply state. The
 model is estimated using full information maximum likelihood.
 
 \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
@@ -92,7 +93,8 @@ estimated using the fitted prices instead of the observed.
 
 \item \code{disequilibrium_model-class}: Base class for disequilibrium models
 
-\item \code{diseq_basic-class}: Basic disequilibrium model with unknown sample separation.
+\item \code{diseq_basic-class}: Basic disequilibrium model with unknown sample
+separation.
 
 \item \code{diseq_deterministic_adjustment-class}: Disequilibrium model with deterministic price dynamics.
 

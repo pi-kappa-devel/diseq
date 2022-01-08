@@ -1,0 +1,186 @@
+---
+title: "Model initialization and estimation details"
+output:
+  rmarkdown::html_vignette:
+    toc: false
+vignette: >
+  %\VignetteIndexEntry{Model initialization and estimation details}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+This tutorial examines model initialization and estimation in some detail. Model can be initialized and estimated with a single function call (see [basic_usage](basic_usage.html)), which is the recommended approach for most usage cases. However, on some occasions it is convenient to separate model estimation and initialization. This is particularly relevant when one wants to estimate the same model using different estimation methods and/or options without re-initializing.
+
+The operations of this vignette cover the many but not all use initialization cases. More usage details can be found in the documentation of the package.
+
+```{r, include = FALSE}
+if (requireNamespace("knitr", quietly = TRUE)) {
+  knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+}
+```
+
+## Setup the environment
+
+Load the required libraries.
+
+```{r setup.libraries}
+library(diseq)
+```
+
+Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
+
+```{r setup.data}
+nobs <- 2000
+tobs <- 5
+
+alpha_d <- -0.3
+beta_d0 <- 6.8
+beta_d <- c(0.3, -0.02)
+eta_d <- c(0.6, -0.1)
+
+alpha_s <- 0.6
+beta_s0 <- 2.1
+beta_s <- c(0.9)
+eta_s <- c(-0.5, 0.2)
+
+gamma <- 1.2
+beta_p0 <- 0.9
+beta_p <- c(-0.1)
+
+sigma_d <- 1
+sigma_s <- 1
+sigma_p <- 1
+rho_ds <- 0.0
+rho_dp <- 0.0
+rho_sp <- 0.0
+
+seed <- 443
+
+stochastic_adjustment_data <- simulate_data(
+  "diseq_stochastic_adjustment", nobs, tobs,
+  alpha_d, beta_d0, beta_d, eta_d,
+  alpha_s, beta_s0, beta_s, eta_s,
+  gamma, beta_p0, beta_p,
+  sigma_d = sigma_d, sigma_s = sigma_s, sigma_p = sigma_p,
+  rho_ds = rho_ds, rho_dp = rho_dp, rho_sp = rho_sp,
+  seed = seed
+)
+```
+
+## Initialize the model
+
+The constructor sets the basic parameters for model initialization and constructs a model object. The needed arguments for a construction call are configured as follows:
+
+ * The fields that uniquely identify simulated data records are `id` (for subjects) and `date` (for time). These variable names are automatically set for the data that `simulate_data` generates.
+ 
+ * The quantity variable is automatically named `Q` by the `simulate_data` function. The quantity variable is observable. For the equilibrium models, it is equal with both the demanded and supplied quantities. For the disequilibrium models, the observed quantity represents either a demanded or a supplied quantity. Each disequilibrium model resolves that state of the observation in a different way.
+
+ * The price variable is set as `P` by the `simulate_data` call.
+
+ * The right hand sides of the demand and supply equations. Simply include the factor variables here as in a usual `lm` formula. Indicator variables and interaction terms will be created automatically by the constructor. For the `diseq_directional` model, the price cannot go in both equations. For the rest of the models, the price can go in both equations if treated as exogenous. The `diseq_stochastic_adjustment` requires also the specification of price dynamics. The `simulate_data` call generates the demand specific variables `Xd1` and `Xd2`, the supply specific variable `Xs1`, the common (i.e. both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`.
+
+ * Set the verbosity level. This controls the level of messaging. The verbosity level here is set so  that the constructed objects display basic information in additional to errors and warnings.
+```{r model.parameters.verbose}
+verbose <- 2
+```
+
+ * Should the estimation allow for correlated demand and supply shocks?
+
+```{r model.parameters.correlated_shocks}
+correlated_shocks <- TRUE
+```
+
+Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per subject. 
+
+```{r model.constructor}
+eqmdl <- new(
+  "equilibrium_model",
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
+)
+bsmdl <- new(
+  "diseq_basic",
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
+)
+drmdl <- new(
+  "diseq_directional",
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
+)
+damdl <- new(
+  "diseq_deterministic_adjustment",
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
+)
+samdl <- new(
+  "diseq_stochastic_adjustment",
+  quantity = Q, price = P,
+  demand = P + Xd1 + Xd2 + X1 + X2,
+  supply = P + Xs1 + X1 + X2,
+  price_dynamics = Xp1,
+  subject = id, time = date,
+  data = stochastic_adjustment_data,
+  correlated_shocks = correlated_shocks, verbose = verbose
+)
+```
+
+## Estimation 
+
+First, we need to set the estimation parameters and choose and estimation method. The only model that can be estimated by least squares is the `equilibrium_model`. To estimate the model with this methodology call `diseq::estimate` with `method = 2SLS` set. The `equilibrium_model` can also be estimated using full information maximum likelihood, as it is the case for all the disequilibrium models. One may choose an optimization method and the corresponding optimization controls. The available methods are:
+
+ * `"Nelder-Mead"`: Does not require the gradient of the likelihood to be known.
+
+ * `"BFGS"`: Uses the analytically calculated gradients. By default the *diseq* package uses this method. 
+
+ * `"L-BFGS-B"`: Constrained optimization.
+
+```{r estimation.parameters.method}
+optimization_method <- "BFGS"
+optimization_options <- list(REPORT = 10, maxit = 10000, reltol = 1e-6)
+```
+
+Then, estimate the models. The `eqmdl` is estimation with two different methods; namely two stage least squares and full information maximum likelihood. Moreover, the `bsmdl` is estimated using two different optimization options; these are the gradient-based `"BFGS"` method and the simplex-based `"Nelder-Mead"` methods. Lastly, the models estimated with maximal likelihood use different estimation options regarding  the calculation of standard errors. See the documentation for more options.
+
+```{r estimation.execution}
+estimate(eqmdl, method = "2SLS")
+estimate(eqmdl,
+  control = optimization_options, method = optimization_method,
+  standard_errors = c("id")
+)
+estimate(bsmdl,
+  control = optimization_options, method = optimization_method,
+  standard_errors = "heteroscedastic"
+)
+estimate(bsmdl,
+  control = optimization_options, method = "Nelder-Mead",
+  standard_errors = "heteroscedastic"
+)
+estimate(drmdl,
+  control = optimization_options, method = optimization_method,
+  standard_errors = "heteroscedastic"
+)
+estimate(damdl,
+  control = optimization_options, method = optimization_method,
+  standard_errors = c("id")
+)
+estimate(samdl,
+  control = optimization_options, method = optimization_method
+)
+```
+

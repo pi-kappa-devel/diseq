@@ -96,15 +96,15 @@ Returns the shortages normalized by the supplied quantity at a given point.
 
 \subsection{shortage_probabilities}{
 Returns the shortage probabilities, i.e. the probabilities of an
-observation coming from an excess demand regime, at the given point.
+observation coming from an excess demand state, at the given point.
 }
 
 \subsection{shortage_indicators}{
-Returns a vector of indicators (Boolean values) for each observation. An element of
-the vector is TRUE for observations at which the estimated shortages are
-non-negative, i.e. the market at in an excess demand state. The remaining elements
-are FALSE. The evaluation of the shortages is performed using the passed parameter
-vector.
+Returns a vector of indicators (Boolean values) for each observation. An
+element of the vector is TRUE for observations at which the estimated
+shortages are non-negative, i.e. the market at in an excess demand state.
+The remaining elements are FALSE. The evaluation of the shortages is
+performed using the passed parameter vector.
 }
 
 \subsection{shortage_standard_deviation}{

@@ -133,8 +133,8 @@ setMethod(
       "Price Dynamics", "P_"
     )
     # The standard equation initialization correctly creates the control matrix
-    # needed in the models' calculations. We only need to adjust the formula for the
-    # `show` and `summary` functions.
+    # needed in the models' calculations. We only need to adjust the formula
+    # for the `show` and `summary` functions.
     .Object@price_equation@formula <- Formula(formula(paste0(
       price_differences_variable(.Object), " ~ (",
       prefixed_quantity_variable(.Object@demand), " - ",

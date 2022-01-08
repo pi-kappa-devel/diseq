@@ -113,11 +113,12 @@ The following two subsections describe the common initialization steps of all ma
 model classes.
 
 \subsection{Variable construction}{
-The constructor prepares the model's variables using the passed specifications. The
-specification variables are expected to be of type `language`. The right hand side
-specifications of the system are expected to follow the syntax of
-\code{\link[stats]{formula}}. The construction of the model's data uses the variables
-that are extracted by these specification. The demand variables are extracted by a
+The constructor prepares the model's variables using the passed
+specifications. The specification variables are expected to be of type
+\code{language}. The right hand side specifications of the system are
+expected to follow the syntax of \code{\link[stats]{formula}}. The
+construction of the model's data uses the variables extracted by these
+specification. The demand variables are extracted by a
 formula that uses the \code{quantity} on the left hand side and the
 \code{demand} on the right hand side of the formula. The supply
 variables are constructed by the \code{quantity} and the
@@ -156,7 +157,8 @@ differences is created.
 }
 \section{Functions}{
 \itemize{
-\item \code{initialize,diseq_basic-method}: Basic disequilibrium model base constructor
+\item \code{initialize,diseq_basic-method}: Basic disequilibrium model base
+constructor
 
 \item \code{initialize,diseq_deterministic_adjustment-method}: Disequilibrium model with deterministic price
 adjustment constructor

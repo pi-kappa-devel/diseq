@@ -27,22 +27,24 @@ parameters are passed to \code{\link[systemfit]{systemfit}}, if the method is se
 \code{2SLS}, or to \code{\link[bbmle]{mle2}} for any other method. For the rest of
 the models, the parameters are passed to \code{\link[bbmle]{mle2}}.}
 
-\item{gradient}{One of two potential options: `numerical` and `calculated`. By
-default, all the models are estimated using the analytic expressions of their
-likelihoods' gradients.}
+\item{gradient}{One of two potential options: \code{"numerical"} and
+\code{"calculated"}. By default, all the models are estimated using the
+analytic expressions of their likelihoods' gradients.}
 
-\item{hessian}{One of three potential options: `skip`, `numerical`, and `calculated`.
-The default is to use the `calculated` Hessian for the model that expressions are
-available and the `numerical` Hessian in other cases. Calculated Hessian expressions
-are available for the basic and directional models.}
+\item{hessian}{One of three potential options: \code{"skip"},
+\code{"numerical"}, and \code{"calculated"}. The default is to use the
+\code{"calculated"} Hessian for the model that expressions are
+available and the \code{"numerical"} Hessian in other cases. Calculated
+Hessian expressions are available for the basic and directional models.}
 
-\item{standard_errors}{One of three potential options: `homoscedastic`,
-`heteroscedastic`, or a vector with variables names for which standard error
-clusters are to be created. The default value is `homoscedastic`. If the option
-`heteroscedastic` is passed, the variance-covariance matrix is calculated using
-heteroscedasticity adjusted (Huber-White) standard errors. If the vector is
-supplied, the variance-covariance matrix is calculated by grouping the score matrix
-based on the passed variables.}
+\item{standard_errors}{One of three potential options:
+\code{"homoscedastic"}, \code{"heteroscedastic"}, or a vector with
+variables names for which standard error clusters are to be created. The
+default value is \code{"homoscedastic"}. If the option
+\code{"heteroscedastic"} is passed, the variance-covariance matrix is
+calculated using heteroscedasticity adjusted (Huber-White) standard errors.
+If the vector is supplied, the variance-covariance matrix is calculated by
+grouping the score matrix based on the passed variables.}
 
 \item{method}{A string specifying the estimation method. When the passed value is
 among \code{Nelder-Mead}, \code{BFGS}, \code{CG}, \code{L-BFGS-B}, \code{SANN},

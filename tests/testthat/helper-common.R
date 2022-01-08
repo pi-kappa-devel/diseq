@@ -79,7 +79,7 @@ test_marginal_effect <- function(effect, est, column, aggregate) {
 
 
 test_aggregation <- function(aggregation, est) {
-  result <- aggregation(est, coef(est))
+  result <- aggregation(est)
   testthat::expect(
     (is.null(dim(result)) && !is.na(result)) ||
       (!is.null(dim(result)) && !all(is.na(result[[2]]))),
@@ -147,18 +147,27 @@ test_estimation_accuracy <- function(estimation, parameters, tolerance) {
 ## Simulation settings
 seed <- 42
 verbose <- 0
+simulated_data <- NULL
 
-load_or_simulate_model <- function(model_string, parameters) {
+load_or_simulate_data <- function(model_string, parameters) {
   stored_data_filename <- paste0(model_string, "_", seed, ".rda")
 
   if (file.exists("devel-environment") & file.exists(stored_data_filename)) {
     load(stored_data_filename)
   } else {
-    model_tibble <- do.call(simulate_data, c(model_string, parameters, seed = seed))
+    model_tibble <- do.call(
+      diseq::simulate_data,
+      c(model_string, parameters, seed = seed)
+    )
     if (file.exists("devel-environment")) {
       save(model_tibble, file = stored_data_filename)
     }
   }
+  model_tibble
+}
+
+load_or_simulate_model <- function(model_string, parameters) {
+  simulated_data <<- load_or_simulate_data(model_string, parameters)
 
   if (model_string %in% c("equilibrium_model", "diseq_basic")) {
     mdl <- new(
@@ -166,7 +175,7 @@ load_or_simulate_model <- function(model_string, parameters) {
       subject = id, time = date,
       quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
       supply = P + Xs1 + X1 + X2,
-      model_tibble,
+      simulated_data,
       correlated_shocks = TRUE, verbose = verbose
     )
   } else if (model_string %in% c("diseq_directional")) {
@@ -175,7 +184,7 @@ load_or_simulate_model <- function(model_string, parameters) {
       subject = id, time = date,
       quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
       supply = Xs1 + X1 + X2,
-      model_tibble,
+      simulated_data,
       correlated_shocks = TRUE, verbose = verbose
     )
   } else if (model_string %in% c("diseq_deterministic_adjustment")) {
@@ -184,7 +193,7 @@ load_or_simulate_model <- function(model_string, parameters) {
       subject = id, time = date,
       quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
       supply = P + Xs1 + X1 + X2,
-      model_tibble,
+      simulated_data,
       correlated_shocks = TRUE, verbose = verbose
     )
   } else if (model_string %in% c("diseq_stochastic_adjustment")) {
@@ -193,7 +202,7 @@ load_or_simulate_model <- function(model_string, parameters) {
       subject = id, time = date,
       quantity = Q, price = P, demand = P + Xd1 + Xd2 + X1 + X2,
       supply = P + Xs1 + X1 + X2, price_dynamics = Xp1,
-      model_tibble,
+      simulated_data,
       correlated_shocks = TRUE, verbose = verbose
     )
   } else {

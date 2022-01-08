@@ -14,7 +14,7 @@ parameters <- list(
 # Optimization setup
 reltol <- 1e-4
 optimization_method <- "BFGS"
-optimization_control <- list(REPORT = 10, maxit = 50000, reltol = reltol)
+optimization_options <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 
 # Tests
 mdl <- NULL
@@ -25,7 +25,12 @@ test_that(paste0("Model can be simulated"), {
 
 est <- NULL
 test_that(paste0(model_name(mdl), " can be estimated"), {
-  est <<- estimate(mdl, control = optimization_control, method = optimization_method)
+  est <<- diseq_stochastic_adjustment(
+    formula(mdl), simulated_data,
+    estimation_options = list(
+      control = optimization_options, method = optimization_method
+    )
+  )
   expect_is(est@fit[[1]], "mle2")
 })
 

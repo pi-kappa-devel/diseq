@@ -68,6 +68,29 @@ setMethod(
   }
 )
 
+#' @export
+setGeneric(
+  "diseq_stochastic_adjustment",
+  function(specification, data,
+           correlated_shocks = TRUE, verbose = 0,
+           estimation_options = list()) {
+    standardGeneric("diseq_stochastic_adjustment")
+  }
+)
+
+#' @describeIn single_call_estimation Disequilibrium model with stochastic
+#' price adjustments.
+setMethod(
+  "diseq_stochastic_adjustment", signature(specification = "formula"),
+  function(specification, data, correlated_shocks, verbose,
+           estimation_options) {
+    initialize_from_formula(
+      "diseq_stochastic_adjustment", specification, data,
+      correlated_shocks, verbose, estimation_options
+    )
+  }
+)
+
 #' @rdname shortage_analysis
 setMethod(
   "shortage_standard_deviation", signature(

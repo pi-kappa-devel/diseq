@@ -67,6 +67,28 @@ setMethod(
   }
 )
 
+#' @export
+setGeneric(
+  "equilibrium_model",
+  function(specification, data,
+           correlated_shocks = TRUE, verbose = 0,
+           estimation_options = missing()) {
+    standardGeneric("equilibrium_model")
+  }
+)
+
+#' @describeIn single_call_estimation Equilibrium model
+setMethod(
+  "equilibrium_model", signature(specification = "formula"),
+  function(specification, data, correlated_shocks, verbose,
+           estimation_options) {
+    initialize_from_formula(
+      "equilibrium_model", specification, data, correlated_shocks, verbose,
+      estimation_options
+    )
+  }
+)
+
 #' @rdname minus_log_likelihood
 setMethod(
   "minus_log_likelihood", signature(object = "equilibrium_model"),

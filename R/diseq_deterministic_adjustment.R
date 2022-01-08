@@ -6,10 +6,10 @@
 #' \subsection{diseq_deterministic_adjustment}{
 #' The disequilibrium model with deterministic price adjustment consists
 #' of four equations. The two market equations, the short side rule and price
-#' evolution equation. The first two equations are stochastic. The price equation is
-#' deterministic. The sample is separated based on the sign of the price changes as in
-#' the \code{\linkS4class{diseq_directional}} model. The model is estimated using full
-#' information maximum likelihood.
+#' evolution equation. The first two equations are stochastic. The price
+#' equation is deterministic. The sample is separated based on the sign of
+#' the price changes as in the \code{\linkS4class{diseq_directional}} model.
+#' The model is estimated using full information maximum likelihood.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + P_{nt}\alpha_{d} + u_{d,nt},}
 #' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + P_{nt}\alpha_{s} + u_{s,nt},}
@@ -71,10 +71,33 @@ setMethod(
       .Object@logger,
       "Sample separated with ", sum(.Object@system@demand@separation_subset),
       " rows in excess supply and ",
-      sum(.Object@system@supply@separation_subset), " in excess demand regime."
+      sum(.Object@system@supply@separation_subset), " in excess demand state."
     )
 
     .Object
+  }
+)
+
+#' @export
+setGeneric(
+  "diseq_deterministic_adjustment",
+  function(specification, data,
+           correlated_shocks = TRUE, verbose = 0,
+           estimation_options = missing()) {
+    standardGeneric("diseq_deterministic_adjustment")
+  }
+)
+
+#' @describeIn single_call_estimation Disequilibrium model with deterministic
+#' price adjustments.
+setMethod(
+  "diseq_deterministic_adjustment", signature(specification = "formula"),
+  function(specification, data, correlated_shocks, verbose,
+           estimation_options) {
+    initialize_from_formula(
+      "diseq_deterministic_adjustment", specification, data,
+      correlated_shocks, verbose, estimation_options
+    )
   }
 )
 

@@ -1,13 +1,14 @@
 #' @include disequilibrium_model.R
 
-#' @describeIn market_models Basic disequilibrium model with unknown sample separation.
+#' @describeIn market_models Basic disequilibrium model with unknown sample
+#' separation.
 #'
 #' @description
 #' \subsection{diseq_basic}{
 #' The basic disequilibrium model consists of three equations. Two of them
-#' are the demand and supply equations. In addition, the model replaces the market
-#' clearing condition with the short side rule. The model is estimated using full
-#' information maximum likelihood.
+#' are the demand and supply equations. In addition, the model replaces the
+#' market clearing condition with the short side rule. The model is estimated
+#' using full information maximum likelihood.
 #'
 #' \deqn{D_{nt} = X_{d,nt}'\beta_{d} + u_{d,nt},}
 #' \deqn{S_{nt} = X_{s,nt}'\beta_{s} + u_{s,nt},}
@@ -21,7 +22,8 @@ setClass(
   prototype()
 )
 
-#' @describeIn initialize_market_model Basic disequilibrium model base constructor
+#' @describeIn initialize_market_model Basic disequilibrium model base
+#' constructor
 #' @examples
 #' simulated_data <- simulate_data(
 #'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
@@ -55,17 +57,40 @@ setMethod(
       data,
       function(...) new("system_basic", ...)
     )
-
     .Object
   }
 )
 
+#' @export
+setGeneric(
+  "diseq_basic",
+  function(specification, data,
+           correlated_shocks = TRUE, verbose = 0,
+           estimation_options = missing()) {
+    standardGeneric("diseq_basic")
+  }
+)
+
+#' @describeIn single_call_estimation Basic disequilibrium model.
+setMethod(
+  "diseq_basic", signature(specification = "formula"),
+  function(specification, data, correlated_shocks, verbose,
+           estimation_options) {
+    initialize_from_formula(
+      "diseq_basic", specification, data, correlated_shocks, verbose,
+      estimation_options
+    )
+  }
+)
+
 #' @rdname minus_log_likelihood
-setMethod("minus_log_likelihood", signature(object = "diseq_basic"),
-          function(object, parameters) {
-  object@system <- set_parameters(object@system, parameters)
-  -sum(log(object@system@lh))
-})
+setMethod(
+  "minus_log_likelihood", signature(object = "diseq_basic"),
+  function(object, parameters) {
+    object@system <- set_parameters(object@system, parameters)
+    -sum(log(object@system@lh))
+  }
+)
 
 #' @rdname gradient
 setMethod("gradient", signature(object = "diseq_basic"), function(object, parameters) {

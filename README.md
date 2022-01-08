@@ -240,7 +240,6 @@ est <- estimate(mdl)
 summary(est)
 ```
 
-    ## 
     ## Basic Model for Markets in Disequilibrium
     ##   Demand RHS        : D_P + D_Xd1 + D_Xd2 + D_X1 + D_X2
     ##   Supply RHS        : S_P + S_Xs1 + S_X1 + S_X2

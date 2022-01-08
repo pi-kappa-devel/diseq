@@ -22,7 +22,7 @@ Load the required libraries.
 
 ```{r setup.libraries}
 library(diseq)
-library(magrittr)
+library(Formula)
 ```
 
 Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
@@ -65,119 +65,56 @@ stochastic_adjustment_data <- simulate_data(
 )
 ```
 
-## Initialize the model
+## Estimate the models
 
-The constructor sets the basic parameters for model initialization and constructs a model object. The needed arguments for a construction call are configured as follows:
 
- * The fields that uniquely identify simulated data records are `id` (for subjects) and `date` (for time). These variable names are automatically set for the data that `simulate_data` generates.
- 
- * The quantity variable is automatically named `Q` by the `simulate_data` function. The quantity variable is observable. For the equilibrium models, it is equal with both the demanded and supplied quantities. For the disequilibrium models, the observed quantity represents either a demanded or a supplied quantity. Each disequilibrium model resolves that state of the observation in a different way.
+Prepare the basic parameters for model initialization. The `simulate_data` call uses `Q` for the simulated traded quantity, `P` for the simulated prices, `id` for subject identification, and `date` for time identification. It automatically creates the demand specific variables `Xd1` and `Xd2`, the supply specific variable `Xs1`, the common (i.e. both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`. 
 
- * The price variable is set as `P` by the `simulate_data` call.
-
- * The right hand sides of the demand and supply equations. Simply include the factor variables here as in a usual `lm` formula. Indicator variables and interaction terms will be created automatically by the constructor. For the `diseq_directional` model, the price cannot go in both equations. For the rest of the models, the price can go in both equations if treated as exogenous. The `diseq_stochastic_adjustment` requires also the specification of price dynamics. The `simulate_data` call generates the demand specific variables `Xd1` and `Xd2`, the supply specific variable `Xs1`, the common (i.e. both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`.
-
- * Set the verbosity level. This controls the level of messaging. The verbosity level here is set so  that the constructed objects display basic information in additional to errors and warnings.
-```{r model.parameters.verbose}
-verbose <- 2
+```{r model.parameters}
+market_spec <-   Q | P | id | date ~ P + Xd1 + Xd2 + X1 + X2 | P + Xs1 + X1 + X2
 ```
 
- * Should the estimation allow for correlated demand and supply shocks?
+The market specification has two be modified in two cases. For the `diseq_directional`, the price variable is removed from the supply equation because the separation rule of the model can only be used for markets with exclusively either inelastic demand or supply. For the `diseq_stochastic_adjustment`, the right hand side of the price dynamics equation is appended in the market specification.
 
-```{r model.parameters.correlated_shocks}
-correlated_shocks <- TRUE
-```
+By default the models are estimated by allowing the demand, supply, and price equations to have correlated error shocks. The default verbosity behavior is to display  errors and warnings that might occur when estimating the models. 
 
-Using the above parameterization, construct the model objects. Here, we construct an equilibrium model and four disequilibrium models, using in all cases the same data simulated by the process based on the stochastic price adjustment model. Of course, this is only done to simplify the exposition of the functionality. The constructors of the models that use price dynamics information in the estimation, i.e. `diseq_directional`, `diseq_deterministic_adjustment`, and `diseq_stochastic_adjustment`, will automatically generate lagged prices and drop one observation per subject. 
+By default all models are estimated using full information maximum likelihood based on the `"BFGS"` optimization algorithm. The first `equilibrium_model` call modifies the estimation behavior and estimates the model using two stage least squares. The `diseq_basic` call modifies the default optimization behavior and estimates the model using the `"Nelder-Mead"` optimization methods. 
+
+Standard errors are by default assumed to be homoscedastic. The second `equilibrium_model` and `diseq_deterministic_adjustment` calls modify this behavior by calculating clustered standard errors based on the subject identifier, while the `diseq_basic` and `diseq_directional` calls modify it by calculating heteroscedastic standard errors via the sandwich estimator.
+
 
 ```{r model.constructor}
-eqmdl <- new(
-  "equilibrium_model",
-  quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2,
-  supply = P + Xs1 + X1 + X2,
-  subject = id, time = date,
-  data = stochastic_adjustment_data,
-  correlated_shocks = correlated_shocks, verbose = verbose
+eqmdl_reg <- equilibrium_model(
+  market_spec, stochastic_adjustment_data,
+  estimation_options = list(method = "2SLS")
 )
-bsmdl <- new(
-  "diseq_basic",
-  quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2,
-  supply = P + Xs1 + X1 + X2,
-  subject = id, time = date,
-  data = stochastic_adjustment_data,
-  correlated_shocks = correlated_shocks, verbose = verbose
+eqmdl_fit <- equilibrium_model(
+    market_spec, stochastic_adjustment_data,
+    estimation_options = list(standard_errors = c("id"))
 )
-drmdl <- new(
-  "diseq_directional",
-  quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2,
-  supply = Xs1 + X1 + X2,
-  subject = id, time = date,
-  data = stochastic_adjustment_data,
-  correlated_shocks = correlated_shocks, verbose = verbose
+bsmdl_fit <- diseq_basic(
+    market_spec, stochastic_adjustment_data,
+    estimation_options = list(
+        method = "Nelder-Mead", control = list(maxit = 1e+5),
+        standard_errors = "heteroscedastic"
+    )
 )
-damdl <- new(
-  "diseq_deterministic_adjustment",
-  quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2,
-  supply = P + Xs1 + X1 + X2,
-  subject = id, time = date,
-  data = stochastic_adjustment_data,
-  correlated_shocks = correlated_shocks, verbose = verbose
+drmdl_fit <- diseq_directional(
+    formula(update(Formula(market_spec), . ~ . | . - P)),
+    stochastic_adjustment_data,
+    estimation_options = list(standard_errors = "heteroscedastic")
 )
-samdl <- new(
-  "diseq_stochastic_adjustment",
-  quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2,
-  supply = P + Xs1 + X1 + X2,
-  price_dynamics = Xp1,
-  subject = id, time = date,
-  data = stochastic_adjustment_data,
-  correlated_shocks = correlated_shocks, verbose = verbose
+damdl_fit <- diseq_deterministic_adjustment(
+    market_spec, stochastic_adjustment_data,
+    estimation_options = list(standard_errors = c("id"))
+)
+samdl_fit <- diseq_stochastic_adjustment(
+    formula(update(Formula(market_spec), . ~ . | . | Xp1)),
+    stochastic_adjustment_data
 )
 ```
 
-## Estimation 
 
-First, we need to set the estimation parameters and choose and estimation method. The only model that can be estimated by least squares is the `equilibrium_model`. To estimate the model with this methodology call `diseq::estimate` with `method = 2SLS` set. The `equilibrium_model` can also be estimated using full information maximum likelihood, as it is the case for all the disequilibrium models. One may choose an optimization method and the corresponding optimization controls. The available methods are:
-
- * `Nelder-Mead`: Does not require the gradient of the likelihood to be known.
-
- * `BFGS`: Uses the analytically calculated gradients. By default the *diseq* package uses this method. 
-
- * `L-BFGS-B`: Constrained optimization.
-
-```{r estimation.parameters.method}
-optimization_method <- "BFGS"
-optimization_controls <- list(REPORT = 10, maxit = 10000, reltol = 1e-6)
-```
-
-Then, estimate the models. See the documentation for more options.
-
-```{r estimation.execution}
-eqmdl_reg <- estimate(eqmdl, method = "2SLS")
-eqmdl_est <- estimate(eqmdl,
-  control = optimization_controls, method = optimization_method,
-  standard_errors = c("id")
-)
-bsmdl_est <- estimate(bsmdl,
-  control = optimization_controls, method = optimization_method,
-  standard_errors = "heteroscedastic"
-)
-drmdl_est <- estimate(drmdl,
-  control = optimization_controls, method = optimization_method,
-  standard_errors = "heteroscedastic"
-)
-damdl_est <- estimate(damdl,
-  control = optimization_controls, method = optimization_method,
-  standard_errors = c("id")
-)
-samdl_est <- estimate(samdl,
-  control = optimization_controls, method = optimization_method
-)
-```
 ## Post estimation analysis 
 
 ### Marginal effects
@@ -188,42 +125,42 @@ Calculate marginal effects on the shortage probabilities. *Diseq* offers two mar
 variables <- c("P", "Xd1", "Xd2", "X1", "X2", "Xs1")
 
 bsmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(bsmdl_est, v),
+  function(v) shortage_probability_marginal(bsmdl_fit, v),
   USE.NAMES = FALSE
 )
 drmdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(drmdl_est, v),
+  function(v) shortage_probability_marginal(drmdl_fit, v),
   USE.NAMES = FALSE
 )
 damdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(damdl_est, v),
+  function(v) shortage_probability_marginal(damdl_fit, v),
   USE.NAMES = FALSE
 )
 samdl_mme <- sapply(variables,
-  function(v) shortage_probability_marginal(samdl_est, v),
+  function(v) shortage_probability_marginal(samdl_fit, v),
   USE.NAMES = FALSE
 )
 bsmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(bsmdl_est, v, aggregate = "at_the_mean")
+    shortage_probability_marginal(bsmdl_fit, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 drmdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(drmdl_est, v, aggregate = "at_the_mean")
+    shortage_probability_marginal(drmdl_fit, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 damdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(damdl_est, v, aggregate = "at_the_mean")
+    shortage_probability_marginal(damdl_fit, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
 samdl_mem <- sapply(variables,
   function(v) {
-    shortage_probability_marginal(samdl_est, v, aggregate = "at_the_mean")
+    shortage_probability_marginal(samdl_fit, v, aggregate = "at_the_mean")
   },
   USE.NAMES = FALSE
 )
@@ -246,33 +183,33 @@ Copy the disequilibrium model `tibble` and augment it with post-estimation data.
 
 ```{r analysis.estimates}
 mdt <- tibble::add_column(
-  bsmdl@model_tibble,
-  normalized_shortages = c(normalized_shortages(bsmdl_est)),
-  shortage_probabilities = c(shortage_probabilities(bsmdl_est)),
-  relative_shortages = c(relative_shortages(bsmdl_est))
+  bsmdl_fit@model_tibble,
+  normalized_shortages = c(normalized_shortages(bsmdl_fit)),
+  shortage_probabilities = c(shortage_probabilities(bsmdl_fit)),
+  relative_shortages = c(relative_shortages(bsmdl_fit))
 )
 ```
 
 How is the sample separated post-estimation? The indices of the observations for which the estimated demand is greater than the estimated supply are easily obtained.
 
 ```{r analysis.shortages}
-abs_estsep <- c(
-  nobs = length(shortage_indicators(bsmdl_est)),
-  nshortages = sum(shortage_indicators(bsmdl_est)),
-  nsurpluses = sum(!shortage_indicators(bsmdl_est))
+abs_fitsep <- c(
+  nobs = length(shortage_indicators(bsmdl_fit)),
+  nshortages = sum(shortage_indicators(bsmdl_fit)),
+  nsurpluses = sum(!shortage_indicators(bsmdl_fit))
 )
-print(abs_estsep)
+print(abs_fitsep)
 
-rel_estsep <- abs_estsep / abs_estsep["nobs"]
-names(rel_estsep) <- c("total", "shortages_share", "surpluses_share")
-print(rel_estsep)
+rel_fitsep <- abs_fitsep / abs_fitsep["nobs"]
+names(rel_fitsep) <- c("total", "shortages_share", "surpluses_share")
+print(rel_fitsep)
 
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   ggplot2::ggplot(mdt, ggplot2::aes(normalized_shortages)) +
     ggplot2::geom_density() +
     ggplot2::ggtitle(paste0(
       "Normalized shortages density (",
-      model_name(bsmdl), ")"
+      model_name(bsmdl_fit), ")"
     )) +
     ggplot2::theme(
       panel.background = ggplot2::element_rect(fill = "transparent"),
@@ -288,17 +225,17 @@ All the model estimates support the `summary` function. The `eq_2sls` provides a
 ```{r analysis.summaries}
 summary(eqmdl_reg@fit[[1]]$first_stage_model)
 summary(eqmdl_reg)
-summary(eqmdl_est)
-summary(bsmdl_est)
-summary(damdl_est)
-summary(samdl_est)
+summary(eqmdl_fit)
+summary(bsmdl_fit)
+summary(damdl_fit)
+summary(samdl_fit)
 ```
 The estimated demanded and supplied quantities can be calculated per observation. 
 
 ```{r analysis.market_forces}
 market <- cbind(
-  demand = demanded_quantities(bsmdl, coef(bsmdl_est))[, 1],
-  supply = supplied_quantities(bsmdl, coef(bsmdl_est))[, 1]
+  demand = demanded_quantities(bsmdl_fit)[, 1],
+  supply = supplied_quantities(bsmdl_fit)[, 1]
 )
 summary(market)
 ```
@@ -307,8 +244,8 @@ The package offers also basic aggregation functionality.
 
 ```{r analysis.aggregation}
 aggregates <- c(
-  demand = aggregate_demand(bsmdl, coef(bsmdl_est)),
-  supply = aggregate_supply(bsmdl, coef(bsmdl_est))
+  demand = aggregate_demand(bsmdl_fit),
+  supply = aggregate_supply(bsmdl_fit)
 )
 aggregates
 ```

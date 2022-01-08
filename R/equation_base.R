@@ -101,7 +101,10 @@ setGeneric("show_implementation", function(object) {
 })
 
 setMethod("show_implementation", signature(object = "equation_base"), function(object) {
-  cat(sprintf("  %-18s: %s\n", paste0(object@name, " RHS"), deparse(object@formula[[3]])))
+  cat(sprintf(
+    "  %-18s: %s\n", paste0(object@name, " RHS"),
+    deparse(object@formula[[3]])
+  ))
 })
 
 #' @title Variable name access

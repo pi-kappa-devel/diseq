@@ -58,11 +58,12 @@ setClass(
 #' model classes.
 #'
 #' \subsection{Variable construction}{
-#' The constructor prepares the model's variables using the passed specifications. The
-#' specification variables are expected to be of type `language`. The right hand side
-#' specifications of the system are expected to follow the syntax of
-#' \code{\link[stats]{formula}}. The construction of the model's data uses the variables
-#' that are extracted by these specification. The demand variables are extracted by a
+#' The constructor prepares the model's variables using the passed
+#' specifications. The specification variables are expected to be of type
+#' \code{language}. The right hand side specifications of the system are
+#' expected to follow the syntax of \code{\link[stats]{formula}}. The
+#' construction of the model's data uses the variables extracted by these
+#' specification. The demand variables are extracted by a
 #' formula that uses the \code{quantity} on the left hand side and the
 #' \code{demand} on the right hand side of the formula. The supply
 #' variables are constructed by the \code{quantity} and the
@@ -118,8 +119,6 @@ NULL
 
 make_specification <- function(data, quantity, price, demand, supply,
                                subject, time, price_dynamics) {
-  env <- parent.frame()
-
   no_parts <- 7
   if (missing(price_dynamics)) {
     no_parts <- 6
@@ -186,10 +185,9 @@ make_specification <- function(data, quantity, price, demand, supply,
       ))
       break
     }
-    cat("\n")
     n <- n - 1
   }
-  specification <- Formula(eval(fm))
+  specification <- Formula::Formula(eval(fm))
 
   specification
 }
@@ -317,6 +315,119 @@ setMethod(
   }
 )
 
+initialize_from_formula <- function(model_type, specification, data,
+                                    correlated_shocks, verbose,
+                                    estimation_options) {
+  specification <- Formula::Formula(specification)
+  quantity <- terms(specification, lhs = 1, rhs = 0)[[2]]
+  price <- terms(specification, lhs = 2, rhs = 0)[[2]]
+  demand <- terms(specification, lhs = 0, rhs = 1)[[2]]
+  supply <- terms(specification, lhs = 0, rhs = 2)[[2]]
+  subject <- terms(specification, lhs = 3, rhs = 0)[[2]]
+  time <- terms(specification, lhs = 4, rhs = 0)[[2]]
+  args <- list(
+    model_type,
+    quantity = quantity, price = price,
+    demand = demand, supply = supply,
+    subject = subject, time = time,
+    data = data, correlated_shocks = correlated_shocks, verbose = verbose
+  )
+  if (length(specification)[2] > 2) {
+    price_dynamics <- terms(specification, lhs = 0, rhs = 3)[[2]]
+    args <- append(args, price_dynamics)
+  }
+  model <- do.call(new, args)
+  if (length(estimation_options)) {
+    do.call(diseq::estimate, c(list(model), estimation_options))
+  } else {
+    diseq::estimate(model)
+  }
+}
+
+#' @title Single call estimation
+#'
+#' @details
+#' The functions of this section combine model initialization and estimation
+#' into a single call. They also provide a less verbose interface to the
+#' functionality of the package. The functions expect a formula following the
+#' specification described in \link[=market_model_formula]{formula}, a
+#' dataset, and optionally further initialization (see
+#' \link[=initialize_market_model]{model initialization}) and
+#' estimation (see \link[=estimate]{model estimation}) options.
+#'
+#' Each of these functions parses the passed formula, initializes the model
+#' specified by the function's name, fit the model to the passed data using
+#' the estimation options and returns fitted model.
+#'
+#' @param specification The model's formula.
+#' @param data The data to be used with the model.
+#' @param correlated_shocks Should the model's system entail correlated shocks?
+#' By default the argument is set to \code{TRUE}.
+#' @param verbose The verbosity with which operations on the model print
+#' messages. By default the value is set to \code{0}, which prints only errors.
+#' @param estimation_options A list with options to be used in the estimation
+#' call. See \code{\link[diseq]{estimate}} for the available options.
+#' @return The fitted model.
+#' @name single_call_estimation
+NULL
+
+
+#' @title Market model formula.
+#' @details Market model formulas adhere to the following specification:
+#'
+#' \code{quantity | price | subject | time ~ demand | supply}
+#'
+#' where
+#' \itemize{
+#' \item{quantity} The model's traded (observed) quantity variable.
+#' \item{price} The model's price variable.
+#' \item{quantity} The model's subject (e.g. firm) identification variable.
+#' \item{quantity} The model's time identification variable.
+#' \item{demand} The right hand side of the model's demand equation.
+#' \item{supply} The right hand side of the model's supply equation.
+#' }
+#'
+#' The \code{\linkS4class{diseq_stochastic_adjustment}} additionally specify
+#' price dynamics by appending the right hand side of the equation at the end
+#' of the formula, i.e.
+#'
+#' \code{quantity | price | subject | time ~ demand | supply | price_dynamics}
+#'
+#' The left hand side part of the model formula specifies the elements that
+#' are needed for initializing the model. The market models of the package
+#' prepare the data based on these four variables using their respective
+#' identification assumptions. See \link[=market_models]{market model classes}
+#' for more details.
+#'
+#' The function provides access to the formula used in model initialization.
+#' @param x A market model object.
+#' @return The model's formula
+#' @examples
+#' \donttest{
+#' model <- simulate_model(
+#'   "diseq_stochastic_adjustment", list(
+#'     # observed entities, observed time points
+#'     nobs = 500, tobs = 3,
+#'     # demand coefficients
+#'     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
+#'     # supply coefficients
+#'     alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     # price equation coefficients
+#'     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
+#'   ),
+#'   seed = 31
+#' )
+#'
+#' # access the model's formula
+#' formula(model)
+#' }
+#' @aliases market_model_formula
+#' @export
+setMethod(
+  "formula", signature(x = "market_model"),
+  function(x) formula(x@system@formula)
+)
+
 #' Prints a short description of the model.
 #'
 #' Sends basic information about the model to standard output.
@@ -344,7 +455,7 @@ setMethod(
 #' @export
 setMethod("show", signature(object = "market_model"), function(object) {
   cat(sprintf(
-    "\n%s Model for Markets in %s\n",
+    "%s Model for Markets in %s\n",
     object@model_type_string, object@market_type_string
   ))
   show_implementation(object@system)
@@ -899,7 +1010,8 @@ setMethod(
 #' \code{\link{supplied_quantities}} functions. If the model has a dynamic component,
 #' such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
 #' and supplied quantities are automatically aggregated for each time point.
-#' @param object A model object.
+#' @param fit A fitted market model object.
+#' @param model A model object.
 #' @param parameters A vector of model's parameters.
 #' @return The sum of the estimated demanded or supplied quantities evaluated at the
 #' given parameters.
@@ -920,8 +1032,11 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' aggregate_demand(model, coef(est))
+#' aggregate_demand(model = model, parameters = coef(est))
 #'
+#' # or simpler
+#' aggregate_demand(est)
+#' 
 #' # simulate the deterministic adjustment model
 #' model <- simulate_model(
 #'   "diseq_deterministic_adjustment", list(
@@ -941,50 +1056,43 @@ setMethod(
 #' est <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' aggregate_demand(model, coef(est))
+#' aggregate_demand(est)
 #'
 #' # get estimated aggregate demand
-#' aggregate_supply(model, coef(est))
+#' aggregate_supply(est)
 #' }
 #' @seealso demanded_quantities, supplied_quantities
 NULL
 
-setGeneric("aggregate_equation", function(object, parameters, equation) {
-  standardGeneric("aggregate_equation")
-})
-
-setMethod(
-  "aggregate_equation", signature(object = "market_model"),
-  function(object, parameters, equation) {
-    object@system <- set_parameters(object@system, parameters)
-    quantities <- quantities(slot(object@system, equation))
-    result <- NULL
-    if (!is.null(object@time_column)) {
-      time_symbol <- rlang::sym(object@time_column)
-      aggregate_symbol <- rlang::sym(colnames(quantities))
-      result <- object@model_tibble[, object@time_column] %>%
-        dplyr::mutate(!!aggregate_symbol := quantities) %>%
-        dplyr::group_by(!!time_symbol) %>%
-        dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
-    } else {
-      result <- sum(quantities)
-    }
-    result
+aggregate_equation <- function(model, parameters, equation) {
+  model@system <- set_parameters(model@system, parameters)
+  quantities <- quantities(slot(model@system, equation))
+  result <- NULL
+  if (!is.null(model@time_column)) {
+    time_symbol <- rlang::sym(model@time_column)
+    aggregate_symbol <- rlang::sym(colnames(quantities))
+    result <- model@model_tibble[, model@time_column] %>%
+      dplyr::mutate(!!aggregate_symbol := quantities) %>%
+      dplyr::group_by(!!time_symbol) %>%
+      dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
+  } else {
+    result <- sum(quantities)
   }
-)
+  result
+}
 
 
 #' @describeIn market_aggregation Demand aggregation.
 #' @export
-setGeneric("aggregate_demand", function(object, parameters) {
+setGeneric("aggregate_demand", function(fit, model, parameters) {
   standardGeneric("aggregate_demand")
 })
 
 #' @rdname market_aggregation
 setMethod(
-  "aggregate_demand", signature(object = "market_model"),
-  function(object, parameters) {
-    aggregate_equation(object, parameters, "demand")
+  "aggregate_demand", signature(fit = "missing", model = "market_model"),
+  function(model, parameters) {
+    aggregate_equation(model, parameters, "demand")
   }
 )
 
@@ -992,7 +1100,8 @@ setMethod(
 #'
 #' @details Calculates and returns the estimated demanded or supplied quantities for
 #' each observation at the passed vector of parameters.
-#' @param object A model object.
+#' @param fit A fitted model object.
+#' @param model A model object.
 #' @param parameters A vector of model's parameters.
 #' @return A vector with the demanded quantities evaluated at the given parameter
 #' vector.
@@ -1013,8 +1122,14 @@ setMethod(
 #'
 #' # get estimated demanded and supplied quantities
 #' head(cbind(
-#'   demanded_quantities(model, coef(est)),
-#'   supplied_quantities(model, coef(est))
+#'   demanded_quantities(model = model, parameters = coef(est)),
+#'   supplied_quantities(model = model, parameters = coef(est))
+#' ))
+#'
+#' # or simpler
+#' head(cbind(
+#'   demanded_quantities(est),
+#'   supplied_quantities(est)
 #' ))
 #' }
 #' @name market_quantities
@@ -1022,44 +1137,44 @@ NULL
 
 #' @describeIn market_quantities Estimated demanded quantities.
 #' @export
-setGeneric("demanded_quantities", function(object, parameters) {
+setGeneric("demanded_quantities", function(fit, model, parameters) {
   standardGeneric("demanded_quantities")
 })
 
 #' @rdname market_quantities
 setMethod(
-  "demanded_quantities", signature(object = "market_model"),
-  function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    quantities(object@system@demand)
+  "demanded_quantities", signature(fit = "missing", model = "market_model"),
+  function(model, parameters) {
+    model@system <- set_parameters(model@system, parameters)
+    quantities(model@system@demand)
   }
 )
 
 #' @describeIn market_aggregation Supply aggregation.
 #' @export
-setGeneric("aggregate_supply", function(object, parameters) {
+setGeneric("aggregate_supply", function(fit, model, parameters) {
   standardGeneric("aggregate_supply")
 })
 
 #' @rdname market_aggregation
 setMethod(
-  "aggregate_supply", signature(object = "market_model"),
-  function(object, parameters) {
-    aggregate_equation(object, parameters, "supply")
+  "aggregate_supply", signature(fit = "missing", model = "market_model"),
+  function(model, parameters) {
+    aggregate_equation(model, parameters, "supply")
   }
 )
 
 #' @describeIn market_quantities Estimated supplied quantities.
 #' @export
-setGeneric("supplied_quantities", function(object, parameters) {
+setGeneric("supplied_quantities", function(fit, model, parameters) {
   standardGeneric("supplied_quantities")
 })
 
 #' @rdname market_quantities
 setMethod(
-  "supplied_quantities", signature(object = "market_model"),
-  function(object, parameters) {
-    object@system <- set_parameters(object@system, parameters)
-    quantities(object@system@supply)
+  "supplied_quantities", signature(fit = "missing", model = "market_model"),
+  function(model, parameters) {
+    model@system <- set_parameters(model@system, parameters)
+    quantities(model@system@supply)
   }
 )
