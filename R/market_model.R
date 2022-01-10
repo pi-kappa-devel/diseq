@@ -1,9 +1,12 @@
 #' @include model_logger.R
 #' @include system_base.R
 #' @importFrom bbmle mle2 parnames summary
+#' @import dplyr
+#' @importFrom graphics legend lines
+#' @importFrom magrittr %>%
 #' @importFrom rlang :=
 #' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
-#' @import dplyr magrittr tibble
+#' @import tibble
 
 setClassUnion("characterOrNULL", c("character", "NULL"))
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))

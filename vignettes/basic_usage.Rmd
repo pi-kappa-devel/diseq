@@ -1,10 +1,10 @@
 ---
-title: "Some examples of estimations using the market models of the package"
+title: "Some examples of use-cases using the market models of the package"
 output:
   rmarkdown::html_vignette:
     toc: false
 vignette: >
-  %\VignetteIndexEntry{Some examples of estimations using the market models of the package}
+  %\VignetteIndexEntry{Some examples of use-cases using the market models of the package}
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
@@ -206,7 +206,7 @@ names(rel_fitsep) <- c("total", "shortages_share", "surpluses_share")
 print(rel_fitsep)
 
 if (requireNamespace("ggplot2", quietly = TRUE)) {
-  ggplot2::ggplot(mdt, ggplot2::aes(normalized_shortages)) +
+  ggplot2::ggplot(mdt, ggplot2::aes(shortage_probabilities)) +
     ggplot2::geom_density() +
     ggplot2::ggtitle(paste0(
       "Normalized shortages density (",

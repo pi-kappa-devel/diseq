@@ -1,3 +1,21 @@
+# diseq 0.4.1
+
+* Cumulative update of CRAN version. 
+* Version 0.4 introduces user space changes.
+ - Model can be initialized using formulas
+ - Introduced functions for single call initialization and estimation of models. The old methods for constructing and estimating models are still exported.
+ - Introduced estimation output class `market_fit`. The class further unifies the user interface for accessing market models.
+ - Estimation output can be summarized by calling `summary` with `market_fit` objects.
+ - Added new plotting functionality on the estimation output.
+ - Added coefficient access method `coef`.
+ - Added variance-covariance access method `vcov`.
+ - Added `logLik` object access method.
+ - Added `formula` object access method.
+* Documentation changes.
+ - Examples and vignettes were adjusted to exemplify the new user interface.
+ - Documentation entry added for model initialization based on formulas.
+ - Added vignette `more_details.Rmd` with initialization and estimation details.
+
 # diseq 0.3.1.9005
 
 * Fixed equations (issue #24) in GitHub document.

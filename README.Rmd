@@ -175,21 +175,19 @@ verbose <- 0
 correlated_shocks <- TRUE
 ```
 
-```{r model.initialize}
-mdl <- new(
-  "diseq_basic",
-  subject = id, time = date, quantity = Q, price = P,
-  demand = P + Xd1 + Xd2 + X1 + X2, supply = P + Xs1 + X1 + X2,
-  model_tbl,
-  correlated_shocks = correlated_shocks, verbose = verbose
+The model is estimated with default options by a simple call. See the documentation of `estimate` for more details and options.
+
+```{r model.estimate}
+fit <- diseq_basic(
+  Q | P | id | date ~ P + Xd1 + Xd2 + X1 + X2 | P + Xs1 + X1 + X2,
+  model_tbl, correlated_shocks = correlated_shocks, verbose = verbose
 )
 ```
 
-The model is estimated with default options by a simple call. See the documentation of `estimate` for more 
-details and options.
-```{r model.estimation}
-est <- estimate(mdl)
-summary(est)
+The results can be inspected in the usual fashion via `summary`.
+
+```{r model.summary}
+summary(fit)
 ```
 # Design and functionality
 

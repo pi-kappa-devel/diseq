@@ -1,6 +1,6 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.4.0.9006
+Version: 0.4.1
 Date: 2022-01-10
 Authors@R: 
     person(given = "Pantelis",
