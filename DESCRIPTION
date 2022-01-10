@@ -1,7 +1,7 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.4.0.9005
-Date: 2022-01-08
+Version: 0.4.0.9006
+Date: 2022-01-10
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
@@ -30,7 +30,6 @@ Depends:
 Imports:
     bbmle (>= 1.0.20),
     dplyr (>= 0.7.6),
-    grid, 
     Formula,
     magrittr (>= 1.5),
     MASS (>= 7.3-50),
@@ -39,7 +38,6 @@ Imports:
     systemfit (>= 1.1),
     tibble (>= 1.4.2),
     tidyr (>= 1.0.2),
-    png,
     Rcpp,
     RcppGSL,
     RcppParallel

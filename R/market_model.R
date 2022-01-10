@@ -1,8 +1,6 @@
 #' @include model_logger.R
 #' @include system_base.R
 #' @importFrom bbmle mle2 parnames summary
-#' @importFrom grid grid.raster
-#' @importFrom png readPNG
 #' @importFrom rlang :=
 #' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
 #' @import dplyr magrittr tibble
@@ -165,13 +163,15 @@ make_specification <- function(data, quantity, price, demand, supply,
       found_parts <- found_parts + 1
     }
 
-    sprice_dynamics <- all.vars(substitute(
-      price_dynamics,
-      env = sys.frame(which = n)
-    ))
-    if (length(sprice_dynamics) > 0 & all(sprice_dynamics %in% dnames)) {
-      price_dynamics <- sprice_dynamics
-      found_parts <- found_parts + 1
+    if (!missing(price_dynamics)) {
+      sprice_dynamics <- all.vars(substitute(
+        price_dynamics,
+        env = sys.frame(which = n)
+      ))
+      if (all(sprice_dynamics %in% dnames)) {
+        price_dynamics <- paste0(sprice_dynamics, collapse = " + ")
+        found_parts <- found_parts + 1
+      }
     }
 
     if (found_parts == no_parts) {
@@ -281,30 +281,20 @@ setMethod(
         sum(drop_rows), " rows by generating '", lagged_price_column, "'."
       )
 
-      ## Do we need to use first differences?
-      if (.Object@model_type_string %in% c("Directional", "Deterministic Adjustment")) {
-        ## Generate first differences
-        diff_column <- paste0(price_column, "_DIFF")
-        diff_sym <- rlang::sym(diff_column)
+      ## Generate first differences
+      diff_column <- paste0(price_column, "_DIFF")
+      diff_sym <- rlang::sym(diff_column)
 
-        .Object@model_tibble <- .Object@model_tibble %>%
-          dplyr::group_by(!!!key_syms) %>%
-          dplyr::mutate(!!diff_sym := !!price_sym - !!lagged_price_sym) %>%
-          dplyr::ungroup()
-      }
+      .Object@model_tibble <- .Object@model_tibble %>%
+        dplyr::group_by(!!!key_syms) %>%
+        dplyr::mutate(!!diff_sym := !!price_sym - !!lagged_price_sym) %>%
+        dplyr::ungroup()
     }
 
-    if (.Object@model_type_string %in% c("Stochastic Adjustment")) {
-      .Object@system <- system_initializer(
-        specification,
-        .Object@model_tibble, correlated_shocks
-      )
-    } else {
-      .Object@system <- system_initializer(
-        specification,
-        .Object@model_tibble, correlated_shocks
-      )
-    }
+    .Object@system <- system_initializer(
+      specification,
+      .Object@model_tibble, correlated_shocks
+    )
 
     print_verbose(
       .Object@logger, "Using columns ",
@@ -517,38 +507,6 @@ setMethod("summary", signature(object = "market_model"), function(object) {
   }
 })
 
-#' Plots the model.
-#'
-#' Displays a graphical illustration of the passed model object.
-#' @param x A model object.
-#' @examples
-#' \donttest{
-#' model <- simulate_model(
-#'   "diseq_basic", list(
-#'     # observed entities, observed time points
-#'     nobs = 500, tobs = 3,
-#'     # demand coefficients
-#'     alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.3, -0.2), eta_d = c(-0.03, -0.01),
-#'     # supply coefficients
-#'     alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03), eta_s = c(0.05, 0.02)
-#'   ),
-#'   seed = 44
-#' )
-#'
-#' # show model's illustration plot
-#' plot(model)
-#' }
-#' @rdname plot
-#' @export
-setMethod("plot", signature(x = "market_model"), function(x) {
-  filename <- paste0(class(x)[1], ".png")
-  path <- system.file("help", "figures", filename, package = "diseq")
-  if (path == "") {
-    path <- system.file("man", "figures", filename, package = "diseq")
-  }
-  grid::grid.raster(png::readPNG(path))
-})
-
 #' Minus log-likelihood.
 #'
 #' Returns the opposite of the log-likelihood. The likelihood functions are based on
@@ -650,6 +608,7 @@ validate_standard_error_option <- function(object, option) {
 #' @param step Optimization step.
 #' @param objective_tolerance Objective optimization tolerance.
 #' @param gradient_tolerance Gradient optimization tolerance.
+#' @param max_it Maximum allowed number of iterations.
 #' @return A list with the optimization output.
 #' @rdname maximize_log_likelihood
 #' @seealso estimate
@@ -671,13 +630,13 @@ validate_standard_error_option <- function(object, option) {
 #' mll <- maximize_log_likelihood(
 #'   model,
 #'   start = NULL, step = 1e-5,
-#'   objective_tolerance = 1e-4, gradient_tolerance = 1e-3
+#'   objective_tolerance = 1e-4, gradient_tolerance = 1e-3, max_it = 1e+3
 #' )
 #' mll
 #' }
 #' @export
 setGeneric("maximize_log_likelihood", function(object, start, step, objective_tolerance,
-                                               gradient_tolerance) {
+                                               gradient_tolerance, max_it) {
   standardGeneric("maximize_log_likelihood")
 })
 
@@ -710,10 +669,10 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 #' )
 #'
 #' # estimate the model object (BFGS is used by default)
-#' est <- estimate(model)
+#' fit <- estimate(model)
 #'
 #' # Calculate the score matrix
-#' head(scores(model, coef(est)))
+#' head(scores(model, coef(fit)))
 #' }
 #' @export
 setGeneric("scores", function(object, parameters, fit = missing()) {
@@ -797,39 +756,39 @@ setGeneric("supply_descriptives", function(object) {
 
 setMethod(
   "set_heteroscedasticity_consistent_errors", signature(object = "market_model"),
-  function(object, est) {
-    est@details$original_hessian <- est@details$hessian
-    scores <- scores(object, coef(est))
+  function(object, fit) {
+    fit@details$original_hessian <- fit@details$hessian
+    scores <- scores(object, coef(fit))
     adjustment <- MASS::ginv(t(scores) %*% scores)
-    est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
-    est@vcov <- MASS::ginv(est@details$hessian)
-    est
+    fit@details$hessian <- fit@details$hessian %*% adjustment %*% fit@details$hessian
+    fit@vcov <- MASS::ginv(fit@details$hessian)
+    fit
   }
 )
 
 setMethod(
   "set_clustered_errors", signature(object = "market_model"),
-  function(object, est, cluster_errors_by) {
+  function(object, fit, cluster_errors_by) {
     if (!(cluster_errors_by %in% names(object@model_tibble))) {
       print_error(
         object@logger, "Cluster variable is not among model data variables."
       )
     }
-    est@details$original_hessian <- est@details$hessian
+    fit@details$original_hessian <- fit@details$hessian
     cluster_var <- rlang::syms(cluster_errors_by)
     clustered_scores <- tibble::tibble(
       object@model_tibble %>% dplyr::select(!!!cluster_var),
-      tibble::as_tibble(scores(object, coef(est)))
+      tibble::as_tibble(scores(object, coef(fit)))
     ) %>%
       dplyr::group_by(!!!cluster_var) %>%
       dplyr::group_map(~ t(as.matrix(.)) %*% (as.matrix(.)))
-    est@details$number_of_clusters <- length(clustered_scores)
+    fit@details$number_of_clusters <- length(clustered_scores)
     adjustment <- MASS::ginv(Reduce("+", clustered_scores))
-    est@details$hessian <- est@details$hessian %*% adjustment %*% est@details$hessian
-    est@vcov <- MASS::ginv(est@details$hessian) * (
-      est@details$number_of_clusters / (est@details$number_of_clusters - 1)
+    fit@details$hessian <- fit@details$hessian %*% adjustment %*% fit@details$hessian
+    fit@vcov <- MASS::ginv(fit@details$hessian) * (
+      fit@details$number_of_clusters / (fit@details$number_of_clusters - 1)
     )
-    est
+    fit
   }
 )
 
@@ -1018,25 +977,17 @@ setMethod(
 #' @name market_aggregation
 #' @examples
 #' \donttest{
-#' # initialize the basic model using the houses dataset
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
+#' fit <- diseq_basic(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'     RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),
+#'   correlated_shocks = FALSE
 #' )
 #'
-#' # estimate the model object (BFGS is used by default)
-#' est <- estimate(model)
-#'
 #' # get estimated aggregate demand
-#' aggregate_demand(model = model, parameters = coef(est))
+#' aggregate_demand(fit)
 #'
-#' # or simpler
-#' aggregate_demand(est)
-#' 
 #' # simulate the deterministic adjustment model
 #' model <- simulate_model(
 #'   "diseq_deterministic_adjustment", list(
@@ -1053,13 +1004,13 @@ setMethod(
 #' )
 #'
 #' # estimate the model object
-#' est <- estimate(model)
+#' fit <- estimate(model)
 #'
 #' # get estimated aggregate demand
-#' aggregate_demand(est)
+#' aggregate_demand(fit)
 #'
 #' # get estimated aggregate demand
-#' aggregate_supply(est)
+#' aggregate_supply(fit)
 #' }
 #' @seealso demanded_quantities, supplied_quantities
 NULL
@@ -1107,29 +1058,18 @@ setMethod(
 #' vector.
 #' @examples
 #' \donttest{
-#' # initialize the model using the houses dataset
-#' model <- new(
-#'   "diseq_basic", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
+#' fit <- diseq_basic(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'     RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),
+#'   correlated_shocks = FALSE
 #' )
-#'
-#' # estimate the model object (BFGS is used by default)
-#' est <- estimate(model)
 #'
 #' # get estimated demanded and supplied quantities
 #' head(cbind(
-#'   demanded_quantities(model = model, parameters = coef(est)),
-#'   supplied_quantities(model = model, parameters = coef(est))
-#' ))
-#'
-#' # or simpler
-#' head(cbind(
-#'   demanded_quantities(est),
-#'   supplied_quantities(est)
+#'   demanded_quantities(fit),
+#'   supplied_quantities(fit)
 #' ))
 #' }
 #' @name market_quantities

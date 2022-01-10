@@ -60,9 +60,9 @@ model <- simulate_model(
 )
 
 # estimate the model object (BFGS is used by default)
-est <- estimate(model)
+fit <- estimate(model)
 
 # Calculate the score matrix
-head(scores(model, coef(est)))
+head(scores(model, coef(fit)))
 }
 }

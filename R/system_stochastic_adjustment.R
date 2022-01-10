@@ -139,7 +139,7 @@ setMethod(
       price_differences_variable(.Object), " ~ (",
       prefixed_quantity_variable(.Object@demand), " - ",
       prefixed_quantity_variable(.Object@supply), ") + ",
-      terms(specification, lhs = 0, rhs = 3)[[2]]
+      deparse(terms(specification, lhs = 0, rhs = 3)[[2]])
     )))
 
     .Object@lagged_price_vector <- as.matrix(data[, lagged_price_variable(.Object)])

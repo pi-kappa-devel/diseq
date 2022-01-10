@@ -128,38 +128,30 @@ Returns the variance of excess demand.
 
 \examples{
 \donttest{
-# initialize the model using the houses dataset
-model <- new(
-  "diseq_deterministic_adjustment", # model type
-  subject = ID, time = TREND, quantity = HS, price = RM,
-  demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-  supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-  fair_houses(), # data
-  correlated_shocks = FALSE # allow shocks to be correlated
-)
-
-# estimate the model object (BFGS is used by default)
-est <- estimate(model, control = list(maxit = 1e+5))
+# estimate a model using the houses dataset
+fit <- diseq_deterministic_adjustment(
+  HS | RM | ID | TREND ~
+  RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+  RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+  fair_houses(),  correlated_shocks = FALSE,
+  estimation_options = list(control = list(maxit = 1e+5)))
 
 # get estimated normalized shortages
-head(normalized_shortages(model = model, parameters = coef(est)))
-
-# or simpler
-head(normalized_shortages(est))
+head(normalized_shortages(fit))
 
 # get estimated relative shortages
-head(relative_shortages(est))
+head(relative_shortages(fit))
 
 # get the estimated shortage probabilities
-head(shortage_probabilities(est))
+head(shortage_probabilities(fit))
 
 # get the estimated shortage indicators
-head(shortage_indicators(est))
+head(shortage_indicators(fit))
 
 # get the estimated shortages
-head(shortages(est))
+head(shortages(fit))
 
 # get the estimated shortage variance
-shortage_standard_deviation(est)
+shortage_standard_deviation(fit)
 }
 }

@@ -123,13 +123,14 @@ setMethod(
 #' @rdname maximize_log_likelihood
 setMethod(
   "maximize_log_likelihood", signature(object = "equilibrium_model"),
-  function(object, start, step, objective_tolerance, gradient_tolerance) {
+  function(object, start, step, objective_tolerance, gradient_tolerance,
+           max_it) {
     start <- prepare_initializing_values(object, NULL)
 
     cpp_model <- new(cpp_equilibrium_model, object@system)
     cpp_model$minimize(
       start, step, objective_tolerance,
-      gradient_tolerance
+      gradient_tolerance, max_it
     )
   }
 )

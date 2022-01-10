@@ -101,17 +101,17 @@ setMethod("summary", signature(object = "market_fit"), function(object) {
 #'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
 #'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
 #'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
+#'   correlated_shocks = FALSE # let shocks be independent
 #' )
 #'
 #' # estimate the model object (BFGS is used by default)
-#' est <- estimate(model)
+#' fit <- estimate(model)
 #'
 #' # estimate the model by specifying the optimization details passed to the optimizer.
-#' est <- estimate(model, control = list(maxit = 1e+6), method = "BFGS")
+#' fit <- estimate(model, control = list(maxit = 1e+6))
 #'
 #' # summarize results
-#' summary(est)
+#' summary(fit)
 #' }
 #' @export
 setGeneric("estimate", function(object, ...) {
@@ -166,29 +166,29 @@ setMethod(
       bbmle::parnames(va_args$gr) <- likelihood_variables(object@system)
     }
 
-    est <- do.call(bbmle::mle2, va_args)
-    est@call.orig <- call("bbmle::mle2", va_args)
+    fit <- do.call(bbmle::mle2, va_args)
+    fit@call.orig <- call("bbmle::mle2", va_args)
 
     if (hessian == "calculated") {
       print_verbose(object@logger, "Calculating hessian and variance-covariance matrix.")
-      est@details$hessian <- hessian(object, est@coef)
+      fit@details$hessian <- hessian(object, fit@coef)
       tryCatch(
-        est@vcov <- MASS::ginv(est@details$hessian),
+        fit@vcov <- MASS::ginv(fit@details$hessian),
         error = function(e) print_warning(object@logger, e$message)
       )
     }
 
     if (length(standard_errors) == 1) {
       if (standard_errors == "heteroscedastic") {
-        est <- set_heteroscedasticity_consistent_errors(object, est)
+        fit <- set_heteroscedasticity_consistent_errors(object, fit)
       } else if (standard_errors != "homoscedastic") {
-        est <- set_clustered_errors(object, est, standard_errors)
+        fit <- set_clustered_errors(object, fit, standard_errors)
       }
     } else {
-      est <- set_clustered_errors(object, est, standard_errors)
+      fit <- set_clustered_errors(object, fit, standard_errors)
     }
 
-    new("market_fit", object, est)
+    new("market_fit", object, fit)
   }
 )
 
@@ -266,21 +266,16 @@ setMethod(
 #' @rdname coef
 #' @examples
 #' \donttest{
-#' # initialize the model using the houses dataset
-#' model <- new(
-#'   "diseq_deterministic_adjustment", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model.
-#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+#' # estimate a model using the houses dataset
+#' fit <- diseq_deterministic_adjustment(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'   RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),  correlated_shocks = FALSE,
+#'   estimation_options = list(control = list(maxit = 1e+6)))
 #'
 #' # access the estimated coefficients
-#' coef(est)
+#' coef(fit)
 #' }
 #' @export
 setMethod(
@@ -304,21 +299,16 @@ setMethod(
 #' @rdname vcov
 #' @examples
 #' \donttest{
-#' # initialize the model using the houses dataset
-#' model <- new(
-#'   "diseq_deterministic_adjustment", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model.
-#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+#' # estimate a model using the houses dataset
+#' fit <- diseq_deterministic_adjustment(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'   RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),  correlated_shocks = FALSE,
+#'   estimation_options = list(control = list(maxit = 1e+6)))
 #'
 #' # access the variance-covariance matrix
-#' head(vcov(est))
+#' head(vcov(fit))
 #' }
 #' @export
 setMethod(
@@ -346,21 +336,16 @@ setMethod(
 #' @rdname logLik
 #' @examples
 #' \donttest{
-#' # initialize the model using the houses dataset
-#' model <- new(
-#'   "diseq_deterministic_adjustment", # model type
-#'   subject = ID, time = TREND, quantity = HS, price = RM,
-#'   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-#'   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-#'   fair_houses(), # data
-#'   correlated_shocks = FALSE # allow shocks to be correlated
-#' )
-#'
-#' # estimate the model.
-#' est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+#' # estimate a model using the houses dataset
+#' fit <- diseq_deterministic_adjustment(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'   RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),  correlated_shocks = FALSE,
+#'   estimation_options = list(control = list(maxit = 1e+6)))
 #'
 #' # get the log likelihood object
-#' logLik(est)
+#' logLik(fit)
 #' }
 #' @export
 setMethod(
@@ -557,3 +542,87 @@ setMethod(
     )
   }
 )
+
+#' Plots the fitted model.
+#'
+#' Displays a graphical illustration of the passed fitted model object. The
+#' function creates a scatter plot of quantity-price pairs for the records
+#' corresponding to the given subject and time identifiers. Then, it plots
+#' the average fitted demand and supply quantities for the same data subset
+#' letting prices vary between the minimum and maximum price
+#' points observed in the data subset.
+#'
+#' @param x A model object.
+#' @param subject A vector of subject identifiers to be used in the
+#' visualization.
+#' @param time A vector of time identifiers to be used in the visualization.
+#' @param ... Additional parameter to be used for styling the figure.
+#' Specifically \code{xlab}, \code{ylab}, and \code{main} are currently
+#' handled by the function.
+#' @examples
+#' \donttest{
+#' # estimate a model using the houses dataset
+#' fit <- diseq_deterministic_adjustment(
+#'   HS | RM | ID | TREND ~
+#'   RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+#'   RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+#'   fair_houses(),  correlated_shocks = FALSE,
+#'   estimation_options = list(control = list(maxit = 1e+6)))
+#'
+#' # show model's illustration plot
+#' plot(fit)
+#' }
+#' @rdname plot
+#' @export
+setMethod("plot", signature(x = "market_fit"), function(x, subject, time, ...) {
+  if (missing(subject)) {
+    subject <- x@model_tibble %>%
+      dplyr::distinct(!!as.symbol(x@key_columns[1])) %>%
+      dplyr::pull()
+  }
+  if (missing(time)) {
+    time <- x@model_tibble %>%
+      dplyr::distinct(!!as.symbol(x@key_columns[2])) %>%
+      dplyr::pull()
+  }
+  va_args <- list(...)
+  if (is.null(va_args$xlab)) {
+    xlab <- colnames(x@system@price_vector)[1]
+  }
+  if (is.null(va_args$ylab)) {
+    ylab <- quantity_variable(x@system@demand)
+  }
+  if (is.null(va_args$main)) {
+    main <- x@model_type_string
+  }
+  x@system <- set_parameters(x@system, coef(x))
+  indices <- x@model_tibble %>%
+    dplyr::mutate(row = row_number()) %>%
+    dplyr::filter(!!as.symbol(x@key_columns[1]) %in% subject &
+      !!as.symbol(x@key_columns[2]) %in% time) %>%
+    dplyr::pull(row)
+  a <- x@system@demand@control_matrix[indices, ] %*% x@system@demand@beta
+  d <- function(p) mean(c(a) + x@system@demand@alpha * p)
+  c <- x@system@supply@control_matrix[indices, ] %*% x@system@supply@beta
+  s <- function(p) mean(c(c) + x@system@supply@alpha * p)
+  prices <- x@system@price_vector[indices]
+  bandwidth <- 0.01
+  fprices <- min(prices) * (1 - bandwidth)
+  tprices <- max(prices) * (1 + bandwidth)
+  quantities <- x@system@quantity_vector[indices]
+  fquantities <- min(quantities) * (1 - bandwidth)
+  tquantities <- max(quantities) * (1 + bandwidth)
+  dom <- seq(from = min(fprices), to = max(tprices), length.out = 100)
+  plot(
+    prices, quantities, pch = "o", col = "red",
+    main = main, xlab = xlab, ylab = ylab,
+    xlim = c(fprices, tprices), ylim = c(fquantities, tquantities)
+  )
+  lines(dom, sapply(dom, d), type = "l", lwd = 2.0, lty = 3, col = "blue")
+  lines(dom, sapply(dom, s), type = "l", lwd = 2.0, lty = 2, col = "orange")
+  legend("topleft",
+    legend = c("avg demand", "avg supply", "data"),
+    col = c("blue", "orange", "red"), lty = c(3, 2, NA),
+    pch = c(NA, NA, "o")
+  )
+})

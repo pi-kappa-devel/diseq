@@ -40,11 +40,11 @@ Classes with data and functionality describing systems of models.
 
 \item{\code{supply}}{Supply equation.}
 
-\item{\code{correlated_shocks}}{Boolean indicating whether the shock of the equations of the
-system are correlated.}
+\item{\code{correlated_shocks}}{Boolean indicating whether the shock of the
+equations of the system are correlated.}
 
-\item{\code{sample_separation}}{Boolean indicating whether the sample of the system is
-separated.}
+\item{\code{sample_separation}}{Boolean indicating whether the sample of the
+system is separated.}
 
 \item{\code{quantity_vector}}{A vector with the system's observed quantities.}
 

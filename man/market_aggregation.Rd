@@ -55,24 +55,16 @@ and supplied quantities are automatically aggregated for each time point.
 
 \examples{
 \donttest{
-# initialize the basic model using the houses dataset
-model <- new(
-  "diseq_basic", # model type
-  subject = ID, time = TREND, quantity = HS, price = RM,
-  demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-  supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-  fair_houses(), # data
-  correlated_shocks = FALSE # allow shocks to be correlated
+fit <- diseq_basic(
+  HS | RM | ID | TREND ~
+  RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+    RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+  fair_houses(),
+  correlated_shocks = FALSE
 )
 
-# estimate the model object (BFGS is used by default)
-est <- estimate(model)
-
 # get estimated aggregate demand
-aggregate_demand(model = model, parameters = coef(est))
-
-# or simpler
-aggregate_demand(est)
+aggregate_demand(fit)
 
 # simulate the deterministic adjustment model
 model <- simulate_model(
@@ -90,13 +82,13 @@ model <- simulate_model(
 )
 
 # estimate the model object
-est <- estimate(model)
+fit <- estimate(model)
 
 # get estimated aggregate demand
-aggregate_demand(est)
+aggregate_demand(fit)
 
 # get estimated aggregate demand
-aggregate_supply(est)
+aggregate_supply(fit)
 }
 }
 \seealso{

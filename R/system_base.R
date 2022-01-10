@@ -9,10 +9,10 @@ NULL
 #' @describeIn system_classes System base class
 #' @slot demand Demand equation.
 #' @slot supply Supply equation.
-#' @slot correlated_shocks Boolean indicating whether the shock of the equations of the
-#' system are correlated.
-#' @slot sample_separation Boolean indicating whether the sample of the system is
-#' separated.
+#' @slot correlated_shocks Boolean indicating whether the shock of the
+#' equations of the system are correlated.
+#' @slot sample_separation Boolean indicating whether the sample of the
+#' system is separated.
 #' @slot quantity_vector A vector with the system's observed quantities.
 #' @slot price_vector A vector with the system's observed prices.
 #' @slot rho Correlation coefficient of demand and supply shocks.

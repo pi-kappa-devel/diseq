@@ -84,16 +84,16 @@ model <- new(
   demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
   supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
   fair_houses(), # data
-  correlated_shocks = FALSE # allow shocks to be correlated
+  correlated_shocks = FALSE # let shocks be independent
 )
 
 # estimate the model object (BFGS is used by default)
-est <- estimate(model)
+fit <- estimate(model)
 
 # estimate the model by specifying the optimization details passed to the optimizer.
-est <- estimate(model, control = list(maxit = 1e+6), method = "BFGS")
+fit <- estimate(model, control = list(maxit = 1e+6))
 
 # summarize results
-summary(est)
+summary(fit)
 }
 }

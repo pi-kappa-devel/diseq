@@ -17,20 +17,15 @@ Returns the coefficients of the fitted model.
 }
 \examples{
 \donttest{
-# initialize the model using the houses dataset
-model <- new(
-  "diseq_deterministic_adjustment", # model type
-  subject = ID, time = TREND, quantity = HS, price = RM,
-  demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-  supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-  fair_houses(), # data
-  correlated_shocks = FALSE # allow shocks to be correlated
-)
-
-# estimate the model.
-est <- estimate(model, control = list(maxit = 1e+5), method = "BFGS")
+# estimate a model using the houses dataset
+fit <- diseq_deterministic_adjustment(
+  HS | RM | ID | TREND ~
+  RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+  RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+  fair_houses(),  correlated_shocks = FALSE,
+  estimation_options = list(control = list(maxit = 1e+6)))
 
 # access the estimated coefficients
-coef(est)
+coef(fit)
 }
 }

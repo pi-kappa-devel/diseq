@@ -83,7 +83,8 @@ test_that(paste0("Optimization of '", model_name(mdl), "' using GSL succeeds"), 
   mll <<- maximize_log_likelihood(mdl,
     start = NULL, step = 1e-5,
     objective_tolerance = 1e-4,
-    gradient_tolerance = 1e-3
+    gradient_tolerance = 1e-3,
+    max_it = 1e+3
   )
   testthat::expect_length(mll, 8)
 })

@@ -110,7 +110,8 @@ damdl_fit <- diseq_deterministic_adjustment(
 )
 samdl_fit <- diseq_stochastic_adjustment(
     formula(update(Formula(market_spec), . ~ . | . | Xp1)),
-    stochastic_adjustment_data
+    stochastic_adjustment_data,
+    estimation_options = list(control = list(maxit = 1e+5))
 )
 ```
 

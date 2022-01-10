@@ -10,7 +10,8 @@ maximize_log_likelihood(
   start,
   step,
   objective_tolerance,
-  gradient_tolerance
+  gradient_tolerance,
+  max_it
 )
 
 \S4method{maximize_log_likelihood}{equilibrium_model}(
@@ -18,7 +19,8 @@ maximize_log_likelihood(
   start,
   step,
   objective_tolerance,
-  gradient_tolerance
+  gradient_tolerance,
+  max_it
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ maximize_log_likelihood(
 \item{objective_tolerance}{Objective optimization tolerance.}
 
 \item{gradient_tolerance}{Gradient optimization tolerance.}
+
+\item{max_it}{Maximum allowed number of iterations.}
 }
 \value{
 A list with the optimization output.
@@ -66,7 +70,7 @@ model <- simulate_model(
 mll <- maximize_log_likelihood(
   model,
   start = NULL, step = 1e-5,
-  objective_tolerance = 1e-4, gradient_tolerance = 1e-3
+  objective_tolerance = 1e-4, gradient_tolerance = 1e-3, max_it = 1e+3
 )
 mll
 }

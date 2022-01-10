@@ -99,8 +99,12 @@ setMethod(
   ),
   function(model, parameters) {
     model@system <- set_parameters(model@system, parameters)
-    sqrt(model@system@demand@var + model@system@supply@var -
-      2 * model@system@demand@sigma * model@system@supply@sigma * model@system@rho_ds)
+    result <- sqrt(
+      model@system@demand@var + model@system@supply@var -
+      2 * model@system@demand@sigma * model@system@supply@sigma * model@system@rho_ds
+    )
+    names(result) <- "shortage_standard_deviation"
+    result
   }
 )
 
@@ -109,21 +113,21 @@ setMethod(
   function(object) {
     start <- callNextMethod(object)
 
-    plm <- stats::lm(
-      object@system@price_equation@price_vector ~
-      object@system@price_equation@independent_matrix - 1
-    )
-    names(plm$coefficients) <- colnames(
+    lhs <- object@model_tibble[, price_differences_variable(object@system)] %>%
+      dplyr::pull()
+    rhs <- cbind(
+      object@system@quantity_vector,
+      object@system@price_equation@independent_matrix)
+    plm <- stats::lm(lhs ~ rhs - 1)
+    gamma <- 1 / abs(plm$coefficients[1])
+    coefficients <- plm$coefficients[-c(1)] / plm$coefficients[1]
+    names(coefficients) <- colnames(
       object@system@price_equation@independent_matrix
     )
 
     len <- length(start)
     pos <- len - ifelse(object@system@correlated_shocks, 3, 2)
-    start <- c(
-      start[1:pos],
-      plm$coefficients,
-      start[(pos + 1):len]
-    )
+    start <- c(start[1:(pos - 1)], gamma, coefficients, start[(pos + 1):len])
 
     len <- length(start)
     if (object@system@correlated_shocks) {

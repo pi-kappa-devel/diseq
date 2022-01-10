@@ -495,7 +495,8 @@ std::vector<double> secant_gradient_ratios(const gsl_vector *x, double step, voi
 #endif /* _DISEQ_HAS_GSL_ */
 
 Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double step,
-                    double objective_tolerance, double gradient_tolerance) {
+                    double objective_tolerance, double gradient_tolerance,
+		    size_t max_it) {
   size_t iter = 0;
   int status = -1;
   Rcpp::NumericVector optimizer(model->gradient_size);
@@ -534,7 +535,7 @@ Rcpp::List minimize(equilibrium_model *model, Rcpp::NumericVector &start, double
     }
 
     status = gsl_multimin_test_gradient(s->gradient, gradient_tolerance);
-  } while (status == GSL_CONTINUE && iter < 1e+5);
+  } while (status == GSL_CONTINUE && iter < max_it);
 
   std::for_each(
 #ifdef _DISEQ_HAS_EXECUTION_POLICIES_

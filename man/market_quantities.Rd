@@ -49,29 +49,18 @@ each observation at the passed vector of parameters.
 
 \examples{
 \donttest{
-# initialize the model using the houses dataset
-model <- new(
-  "diseq_basic", # model type
-  subject = ID, time = TREND, quantity = HS, price = RM,
-  demand = RM + TREND + W + CSHS + L1RM + L2RM + MONTH,
-  supply = RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
-  fair_houses(), # data
-  correlated_shocks = FALSE # allow shocks to be correlated
+fit <- diseq_basic(
+  HS | RM | ID | TREND ~
+  RM + TREND + W + CSHS + L1RM + L2RM + MONTH |
+    RM + TREND + W + L1RM + MA6DSF + MA3DHF + MONTH,
+  fair_houses(),
+  correlated_shocks = FALSE
 )
-
-# estimate the model object (BFGS is used by default)
-est <- estimate(model)
 
 # get estimated demanded and supplied quantities
 head(cbind(
-  demanded_quantities(model = model, parameters = coef(est)),
-  supplied_quantities(model = model, parameters = coef(est))
-))
-
-# or simpler
-head(cbind(
-  demanded_quantities(est),
-  supplied_quantities(est)
+  demanded_quantities(fit),
+  supplied_quantities(fit)
 ))
 }
 }
