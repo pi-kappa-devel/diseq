@@ -25,7 +25,7 @@ library(diseq)
 library(Formula)
 ```
 
-Prepare the data. Normally this step is long and it depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
+Prepare the data. Normally this step is long and depends on the nature of the data and the considered market. For this example, we will use simulated data. Although we could simulate data independently from the package, we will use the top-level simulation functionality of *diseq* to simplify the process. See the documentation of `simulate_data` for more information on the simulation functionality. Here, we simulate data using a data generating process for a market in disequilibrium with stochastic price dynamics.
 
 ```{r setup.data}
 nobs <- 2000
@@ -68,17 +68,17 @@ stochastic_adjustment_data <- simulate_data(
 ## Estimate the models
 
 
-Prepare the basic parameters for model initialization. The `simulate_data` call uses `Q` for the simulated traded quantity, `P` for the simulated prices, `id` for subject identification, and `date` for time identification. It automatically creates the demand specific variables `Xd1` and `Xd2`, the supply specific variable `Xs1`, the common (i.e. both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`. 
+Prepare the basic parameters for model initialization. The `simulate_data` call uses `Q` for the simulated traded quantity, `P` for the simulated prices, `id` for subject identification, and `date` for time identification. It automatically creates the demand-specific variables `Xd1` and `Xd2`, the supply-specific variable `Xs1`, the common (i.e., both demand and supply) variables `X1` and `X2`, and the price dynamics' variable `Xp1`. 
 
 ```{r model.parameters}
 market_spec <-   Q | P | id | date ~ P + Xd1 + Xd2 + X1 + X2 | P + Xs1 + X1 + X2
 ```
 
-The market specification has two be modified in two cases. For the `diseq_directional`, the price variable is removed from the supply equation because the separation rule of the model can only be used for markets with exclusively either inelastic demand or supply. For the `diseq_stochastic_adjustment`, the right hand side of the price dynamics equation is appended in the market specification.
+The market specification has to be modified in two cases. For the `diseq_directional`, the price variable is removed from the supply equation because the separation rule of the model can only be used for markets with exclusively either inelastic demand or supply. For the `diseq_stochastic_adjustment`, the right-hand side of the price dynamics equation is appended in the market specification.
 
-By default the models are estimated by allowing the demand, supply, and price equations to have correlated error shocks. The default verbosity behavior is to display  errors and warnings that might occur when estimating the models. 
+By default, the models are estimated by allowing the demand, supply, and price equations to have correlated error shocks. The default verbosity behavior is to display errors and warnings that might occur when estimating the models. 
 
-By default all models are estimated using full information maximum likelihood based on the `"BFGS"` optimization algorithm. The first `equilibrium_model` call modifies the estimation behavior and estimates the model using two stage least squares. The `diseq_basic` call modifies the default optimization behavior and estimates the model using the `"Nelder-Mead"` optimization methods. 
+By default, all models are estimated using full information maximum likelihood based on the `"BFGS"` optimization algorithm. The first `equilibrium_model` call modifies the estimation behavior and estimates the model using two stage least squares. The `diseq_basic` call modifies the default optimization behavior and estimates the model using the `"Nelder-Mead"` optimization methods. 
 
 Standard errors are by default assumed to be homoscedastic. The second `equilibrium_model` and `diseq_deterministic_adjustment` calls modify this behavior by calculating clustered standard errors based on the subject identifier, while the `diseq_basic` and `diseq_directional` calls modify it by calculating heteroscedastic standard errors via the sandwich estimator.
 
@@ -178,7 +178,7 @@ Copy the disequilibrium model `tibble` and augment it with post-estimation data.
 
  * Shortage probabilities. These are the probabilities that the disequilibrium models assign to observing a particular extent of excess demand.
  
- * Normalized shortages. The point estimates of the shortages are normalized by the variance of the difference of the shocks of demand and supply.
+ * Normalized shortages. The point estimates of the shortages are normalized by the variance of the difference of demand and supply shocks.
  
  * Relative shortages: The point estimates of the shortages are normalized by the estimated supplied quantity.
 
@@ -221,7 +221,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 
 ### Summaries
 
-All the model estimates support the `summary` function. The `eq_2sls` provides also the first stage estimation, but it is not included in the summary and has to be explicitly asked. 
+All the model estimates support the `summary` function. The `eq_2sls` also provides the first-stage estimation, but it is not included in the summary and has to be explicitly asked. 
 
 ```{r analysis.summaries}
 summary(eqmdl_reg@fit[[1]]$first_stage_model)
@@ -241,7 +241,7 @@ market <- cbind(
 summary(market)
 ```
 
-The package offers also basic aggregation functionality.
+The package also offers basic aggregation functionality.
 
 ```{r analysis.aggregation}
 aggregates <- c(

@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-This short tutorial gives an example of how one can statistically assess whether a market is in an equilibrium state. The tutorial assumes some familiarity with the concepts and the functionality of the package. The [basic_usage](basic_usage.html) vignette can be helpful in acquiring this familiarity.
+This short tutorial gives an example of statistically assessing whether a market is in an equilibrium state. The tutorial assumes some familiarity with the concepts and the functionality of the package. The [basic_usage](basic_usage.html) vignette can be helpful in acquiring this familiarity.
 
 ```{r, include = FALSE}
 if (requireNamespace("knitr", quietly = TRUE)) {
@@ -170,14 +170,14 @@ comp <- tibble::tibble(
 comp
 ```
 
-Since we have used simulated data, we can calculate the average absolute error of the parameter estimation for each of the models. In practice, the population values are unknown and this calculation is impossible. 
+Since we have used simulated data, we can calculate the average absolute error of the parameter estimation for each of the models. The population values are unknown in practice, and this calculation is impossible. 
 
 ```{r analysis.averages}
 comp_means <- colMeans(comp[, grep("err", colnames(comp))], na.rm = TRUE)
 comp_means
 ```
 
-Moreover, the average absolute error cannot provide an overall estimation assessment as the market models have different parameter spaces. To assess the overall model performance one can instead use an information criterion.
+Moreover, the average absolute error cannot provide an overall estimation assessment as the market models have different parameter spaces. To assess the overall model performance, one can instead use an information criterion.
 
 ```{r analysis.model.selection}
 model_names <- c(

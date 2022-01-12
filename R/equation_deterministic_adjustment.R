@@ -72,16 +72,3 @@ setMethod(
     object
   }
 )
-
-setMethod(
-  "calculate_initializing_values",
-  signature(object = "equation_deterministic_adjustment"),
-  function(object) {
-    reg <- stats::lm(
-      object@dependent_vector ~ object@independent_matrix - 1,
-      subset = object@separation_subset
-    )
-    names(reg$coefficients) <- colnames(object@independent_matrix)
-    reg
-  }
-)

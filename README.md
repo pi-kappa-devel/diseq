@@ -14,27 +14,27 @@ Models For Markets in Equilibrium and Disequilibrium
 The *diseq* package provides tools to estimate and analyze an
 equilibrium and four disequilibrium models. The equilibrium model can be
 estimated with either two-stage least squares or with full information
-maximum likelihood. The methods are asymptotically equivalent. The
+maximum likelihood. The two methods are asymptotically equivalent. The
 disequilibrium models are estimated using full information maximum
 likelihood. The likelihoods can be estimated both with independent and
-correlated demand and supply shocks and the optimization of the
-likelihoods can be performed either using analytic expressions or
-numerical approximations of their gradients.
+correlated demand and supply shocks. The optimization of the likelihoods
+can be performed either using analytic expressions or numerical
+approximations of their gradients.
 
 # A quick model tour
 
 The five models of the package are described by systems of simultaneous
-equations, with the equilibrium system being the only linear, while the
-disequilibrium systems being non-linear. All models specify the demand
-and the supply side of the market by a linear (in parameters) equation.
-The remaining equations of each model, if any, further specify the
-structure of the market.
+equations, with the equilibrium system being the only linear one, while
+the disequilibrium systems being non-linear. All models specify the
+demand and the supply side of the market by a linear (in parameters)
+equation. The remaining equations of each model, if any, further specify
+the market structure.
 
 ## The equilibrium model
 
 The equilibrium model adds the market-clearing condition to the demand
 and supply equations of the system. For the system to be identifiable,
-at least one variable in the demand side must not be present in the
+at least one variable in the demand side must not be present on the
 supply side and vice versa. This model assumes that the market
 observations always represent equilibrium points in which the demanded
 and supplied quantities are equal. The model can be estimated using
@@ -47,11 +47,11 @@ equivalent (Balestra and Varadharajan-Krishnakumar 1987).
 ## The basic disequilibrium model
 
 The basic model is the simplest disequilibrium model of the package as
-it basically imposes no assumption on the structure of the market
-regarding price movements (Fair and Jaffee 1972; Maddala and Nelson
-1974). In contrast with the equilibrium model, the market-clearing
-condition is replaced by the short-side rule, which stipulates that the
-minimum between the demanded and supplied quantities is observed. The
+it basically imposes no assumption on the market structure regarding
+price movements (Fair and Jaffee 1972; Maddala and Nelson 1974). In
+contrast with the equilibrium model, the market-clearing condition is
+replaced by the short-side rule, which stipulates that the minimum
+between the demanded and supplied quantities is observed. The
 econometrician does not need to specify whether an observation belongs
 to the demand or the supply side since the estimation of the model will
 allocate the observations on the demand or supply side so that the
@@ -66,7 +66,7 @@ the basic model. The added equation is a sample separation condition
 based on the direction of the price movements (Fair and Jaffee 1972;
 Maddala and Nelson 1974). When prices increase at a given date, an
 observation is assumed to belong on the supply side. When prices fall,
-an observation is assumed to belong in the demand side. In short, this
+an observation is assumed to belong on the demand side. In short, this
 condition separates the sample before the estimation and uses this
 separation as additional information in the estimation procedure.
 Although, when appropriate, more information improves estimations, it
@@ -98,14 +98,14 @@ equilibrium model can be obtained as a limiting case of this model.
 
 The last model of the package extends the price dynamics of the
 deterministic adjustment model by adding additional explanatory
-variables and a stochastic term. The latter term in particular makes the
-price adjustment mechanism stochastic and, deviating from the structural
-assumptions of models \((DA)\) and \((DM)\), abstains from imposing any
-separation assumption on the sample (Maddala and Nelson 1974; Quandt and
-Ramsey 1978). The estimation of this model offers the highest degree of
-freedom, accompanied, however, by a significant increase in estimation
-complexity, which can hinder the stability of the procedure and the
-numerical accuracy of the outcomes.
+variables and a stochastic term. The latter term, in particular, makes
+the price adjustment mechanism stochastic and, deviating from the
+structural assumptions of models \((DA)\) and \((DM)\), abstains from
+imposing any separation assumption on the sample (Maddala and Nelson
+1974; Quandt and Ramsey 1978). The estimation of this model offers the
+highest degree of freedom, accompanied, however, by a significant
+increase in estimation complexity, which can hinder the stability of the
+procedure and the numerical accuracy of the outcomes.
 
 <img src='https://render.githubusercontent.com/render/math?math=%5Cbegin%7Baligned%7D%0AD_%7Bn%20t%7D%20%26%3D%20X_%7Bd%2C%20n%20t%7D%27%5Cbeta_%7Bd%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bd%7D%20%2B%20u_%7Bd%2C%20n%20t%7D%20%5C%5C%0AS_%7Bn%20t%7D%20%26%3D%20X_%7Bs%2C%20n%20t%7D%27%5Cbeta_%7Bs%7D%20%2B%20P_%7Bn%20t%7D%5Calpha_%7Bs%7D%20%2B%20u_%7Bs%2C%20n%20t%7D%20%5C%5C%0AQ_%7Bn%20t%7D%20%26%3D%20%5Cmin%5C%7BD_%7Bn%20t%7D%2CS_%7Bn%20t%7D%5C%7D%20%5C%5C%0A%5CDelta%20P_%7Bn%20t%7D%20%26%3D%20%5Cfrac%7B1%7D%7B%5Cgamma%7D%20%5Cleft%28%20D_%7Bn%20t%7D%20-%20S_%7Bn%20t%7D%20%5Cright%29%20%2B%20%20X_%7Bp%2C%20n%20t%7D%27%5Cbeta_%7Bp%7D%20%2B%20u_%7Bp%2C%20n%20t%7D%0A%5Cend%7Baligned%7D%20'/> <img src='man/figures/diseq_stochastic_adjustment.png'/>
 
@@ -119,7 +119,7 @@ from [CRAN](https://CRAN.R-project.org) with:
 install.packages("diseq")
 ```
 
-The source code of the in-development version can be download from
+The source code of the in-development version can be downloaded from
 [GitHub](https://github.com/pi-kappa-devel/diseq).
 
 After installing it, there is a basic-usage example installed with it.
@@ -132,7 +132,7 @@ vignette('basic_usage')
 Online documentation is available for both the
 [released](https://www.diseq.pikappa.eu) and
 [in-development](https://www.diseq.pikappa.eu/dev/) versions of the
-package. The documentation files can also accessed in `R` by typing
+package. The documentation files can also be accessed in `R` by typing
 
 ``` r
 ?? diseq
@@ -188,12 +188,12 @@ parameterization.
 
   - The observable traded quantity variable (given by `Q` in this
     example’s simulated data). The demanded and supplied quantities are
-    not observable and they identified either based on the market
+    not observable, and they are identified either based on the market
     clearing condition or the short side rule.
 
   - The price variable, which is named after `P` in the simulated data.
 
-  - The right hand side specifications of the demand and supply
+  - The right-hand side specifications of the demand and supply
     equations. The expressions are specified similarly to the
     expressions of formulas of linear models. Indicator variables and
     interactions are created automatically by the constructor.
@@ -319,7 +319,7 @@ calculate
 
 The estimation of the basic model is also supported by the package
 [*Disequilibrium*](https://CRAN.R-project.org/package=Disequilibrium).
-By default the *Disequilibrium* package numerically approximates the
+By default, the *Disequilibrium* package numerically approximates the
 gradient when optimizing the likelihood. In contrast, *diseq* uses
 analytically calculated expressions for the likelihood, which can reduce
 the duration of estimating the model. In addition, it allows the user to
@@ -336,7 +336,7 @@ The package is planned to be expanded in the following ways:
 2.  Single-command functionality for the market-clearing tests
     (e.g. (Karapanagiotis, n.d.; Hwang 1980; Quandt 1978)) should be
     included in the package.
-3.  Alternative estimation methods (e.g (Zilinskas and Bogle 2006;
+3.  Alternative estimation methods (e.g. (Zilinskas and Bogle 2006;
     Quandt and Ramsey 1978)) could also be implemented.
 
 # Contributors
