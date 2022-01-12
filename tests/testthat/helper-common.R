@@ -12,14 +12,11 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
   act <- testthat::quasi_label(rlang::enquo(ng))
 
   for (row in seq_len(length(act$val))) {
-    scale <- max(abs(ng[row]), abs(cg[row]))
-    ad <- abs(act$val[row] - cg[row])
-    rd <- ifelse(scale, ad / scale, 0)
-    diff <- min(ad, rd)
+    diff <- abs(act$val[row] - cg[row])
     max_diff <- ifelse(max_diff < diff, diff, max_diff)
     testthat::expect(diff < tolerance, sprintf(
-      "%s (numerical = %g, calculated = %g) failed with differences (%f, %f).",
-      pnames[row], ng[row], cg[row], ad, rd
+      "%s (numerical = %g, calculated = %g) failed with differences %f.",
+      pnames[row], ng[row], cg[row], diff
     ))
   }
 
@@ -118,7 +115,7 @@ test_coef <- function(est) {
 test_vcov <- function(est) {
   vc <- vcov(est)
   testthat::expect(
-    class(vc) == "matrix" &
+    class(vc)[1] == "matrix" &
       all(dim(vc) == rep(length(likelihood_variables(est@system)), 2)),
     sprintf("Failed to access variance-covariance matrix via vcov")
   )

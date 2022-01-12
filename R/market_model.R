@@ -862,28 +862,11 @@ setMethod("supply_descriptives", signature(object = "market_model"), function(ob
   ))
 })
 
-setGeneric("calculate_initializing_values", function(object) {
-  standardGeneric("calculate_initializing_values")
-})
-
 setMethod(
   "calculate_initializing_values", signature(object = "market_model"),
   function(object) {
-    dlm <- stats::lm(
-      object@system@quantity_vector ~
-      object@system@demand@independent_matrix - 1
-    )
-    names(dlm$coefficients) <- colnames(
-      object@system@demand@independent_matrix
-    )
-
-    slm <- stats::lm(
-      object@system@quantity_vector ~
-      object@system@supply@independent_matrix - 1
-    )
-    names(slm$coefficients) <- colnames(
-      object@system@supply@independent_matrix
-    )
+    dlm <- calculate_initializing_values(object@system@demand)
+    slm <- calculate_initializing_values(object@system@supply)
 
     ## Set demand initializing values
     if (any(is.na(dlm$coefficients))) {

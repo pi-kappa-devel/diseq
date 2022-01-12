@@ -5,7 +5,7 @@ skip_on_cran()
 # Estimation setup
 parameters <- list(
   nobs = 3000, tobs = 4,
-  alpha_d = -0.2, beta_d0 = 4.3, beta_d = c(0.03, 0.02), eta_d = c(0.03, 0.01),
+  alpha_d = -0.2, beta_d0 = 4.1, beta_d = c(0.03, 0.02), eta_d = c(0.03, 0.01),
   alpha_s = 0.0, beta_s0 = 4.0, beta_s = c(0.03), eta_s = c(0.05, 0.02),
   sigma_d = 1.0, sigma_s = 1.0, rho_ds = 0.0
 )
@@ -68,7 +68,7 @@ test_that(paste0(
   "Calculated gradient of '",
   model_name(mdl), "' matches the numerical approximation"
 ), {
-  test_calculated_gradient(mdl, coef(est), 1e-5)
+  test_calculated_gradient(mdl, coef(est), 1e-4)
 })
 
 test_that(paste0(

@@ -67,7 +67,10 @@ setMethod(
       )
     }
 
-    .Object@formula <- Formula(formula(prefixed_specification, lhs = 1))
+    .Object@formula <- Formula(formula(
+      paste(prefixed_specification, collapse = ""),
+      lhs = 1
+    ))
     .Object@dependent_vector <- as.matrix(model.part(.Object@formula,
       lhs = 1, data
     ))
@@ -190,6 +193,10 @@ setGeneric("quantities", function(object) {
   standardGeneric("quantities")
 })
 
+setGeneric("calculate_initializing_values", function(object) {
+  standardGeneric("calculate_initializing_values")
+})
+
 #' @rdname variable_names
 setMethod(
   "prefixed_const_variable", signature(object = "equation_base"),
@@ -285,3 +292,12 @@ setMethod("quantities", signature(object = "equation_base"), function(object) {
   colnames(qs) <- prefixed_quantity_variable(object)
   qs
 })
+
+setMethod(
+  "calculate_initializing_values", signature(object = "equation_base"),
+  function(object) {
+    reg <- stats::lm(object@dependent_vector ~ object@independent_matrix - 1)
+    names(reg$coefficients) <- colnames(object@independent_matrix)
+    reg
+  }
+)
