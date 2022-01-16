@@ -50,8 +50,7 @@ setClass(
 #' show(model)
 setMethod(
   "initialize", "diseq_deterministic_adjustment",
-  function(
-           .Object,
+  function(.Object,
            quantity, price, demand, supply, subject, time,
            data,
            correlated_shocks = TRUE, verbose = 0) {
@@ -127,5 +126,51 @@ setMethod(
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     -calculate_system_scores(object@system)
+  }
+)
+
+setMethod(
+  "calculate_initializing_values",
+  signature(object = "diseq_deterministic_adjustment"),
+  function(object) {
+    demand <- stats::lm(
+      object@system@demand@dependent_vector ~
+      object@system@demand@independent_matrix - 1
+    )
+    names(demand$coefficients) <- colnames(
+      object@system@demand@independent_matrix
+    )
+    var_d <- var(demand$residuals)
+    names(var_d) <- prefixed_variance_variable(object@system@demand)
+
+    supply <- stats::lm(
+      object@system@supply@dependent_vector ~
+      object@system@supply@independent_matrix - 1
+    )
+    names(supply$coefficients) <- colnames(
+      object@system@supply@independent_matrix
+    )
+    var_s <- var(supply$residuals)
+    names(var_s) <- prefixed_variance_variable(object@system@supply)
+
+    dp <- object@model_tibble[, price_differences_variable(object@system)] %>%
+      dplyr::pull()
+    xd <- demand$fitted.values - supply$fitted.values
+    prices <- stats::lm(dp ~ xd - 1)
+    names(prices$coefficients) <- price_differences_variable(object@system)
+
+    start <- c(
+      demand$coefficients, supply$coefficients,
+      prices$coefficients, var_d, var_s
+    )
+
+    if (object@system@correlated_shocks) {
+      rho <- 0.0
+      names(rho) <- correlation_variable(object@system)
+
+      start <- c(start, rho)
+    }
+
+    start
   }
 )

@@ -34,7 +34,7 @@ setClass(
 #'   # demand coefficients
 #'   -0.1, 9.8, c(0.3, -0.2), c(0.6, 0.1),
 #'   # supply coefficients
-#'   0.1, 5.1, c(0.9), c(-0.5, 0.2),
+#'   0.1, 7.1, c(0.9), c(-0.5, 0.2),
 #'   # price adjustment coefficient
 #'   1.4, 3.1, c(0.8)
 #' )
@@ -101,7 +101,7 @@ setMethod(
     model@system <- set_parameters(model@system, parameters)
     result <- sqrt(
       model@system@demand@var + model@system@supply@var -
-      2 * model@system@demand@sigma * model@system@supply@sigma * model@system@rho_ds
+        2 * model@system@demand@sigma * model@system@supply@sigma * model@system@rho_ds
     )
     names(result) <- "shortage_standard_deviation"
     result
@@ -117,7 +117,8 @@ setMethod(
       dplyr::pull()
     rhs <- cbind(
       object@system@quantity_vector,
-      object@system@price_equation@independent_matrix)
+      object@system@price_equation@independent_matrix
+    )
     plm <- stats::lm(lhs ~ rhs - 1)
     gamma <- 1 / abs(plm$coefficients[1])
     coefficients <- plm$coefficients[-c(1)] / plm$coefficients[1]
@@ -169,5 +170,61 @@ setMethod(
   function(object, parameters) {
     object@system <- set_parameters(object@system, parameters)
     -calculate_system_scores(object@system)
+  }
+)
+
+setMethod(
+  "calculate_initializing_values",
+  signature(object = "diseq_stochastic_adjustment"),
+  function(object) {
+    demand <- stats::lm(
+      object@system@demand@dependent_vector ~
+      object@system@demand@independent_matrix - 1
+    )
+    names(demand$coefficients) <- colnames(
+      object@system@demand@independent_matrix
+    )
+    var_d <- var(demand$residuals)
+    names(var_d) <- prefixed_variance_variable(object@system@demand)
+
+    supply <- stats::lm(
+      object@system@supply@dependent_vector ~
+      object@system@supply@independent_matrix - 1
+    )
+    names(supply$coefficients) <- colnames(
+      object@system@supply@independent_matrix
+    )
+    var_s <- var(supply$residuals)
+    names(var_s) <- prefixed_variance_variable(object@system@supply)
+
+    dp <- object@model_tibble[, price_differences_variable(object@system)] %>%
+      dplyr::pull()
+    xd <- demand$fitted.values - supply$fitted.values
+    rhs <- cbind(xd, object@system@price_equation@independent_matrix)
+    prices <- stats::lm(dp ~ rhs - 1)
+    names(prices$coefficients) <- c(
+      price_differences_variable(object@system),
+      colnames(object@system@price_equation@independent_matrix)
+    )
+    var_p <- var(prices$residuals)
+    names(var_p) <- prefixed_variance_variable(object@system@price_equation)
+
+    start <- c(
+      demand$coefficients, supply$coefficients,
+      prices$coefficients, var_d, var_s, var_p
+    )
+
+    if (object@system@correlated_shocks) {
+      rho_ds <- 0.0
+      names(rho_ds) <- paste0(correlation_variable(object@system), "_DS")
+      rho_dp <- 0.0
+      names(rho_dp) <- paste0(correlation_variable(object@system), "_DP")
+      rho_sp <- 0.0
+      names(rho_sp) <- paste0(correlation_variable(object@system), "_SP")
+
+      start <- c(start, rho_ds, rho_dp, rho_sp)
+    }
+
+    start
   }
 )

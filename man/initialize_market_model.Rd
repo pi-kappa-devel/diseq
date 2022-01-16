@@ -175,7 +175,7 @@ adjustment constructor
 simulated_data <- simulate_data(
   "diseq_basic", 500, 3, # model type, observed entities, observed time points
   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-  0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+  0.9, 6.2, c(0.03), c(-0.05, 0.02) # supply coefficients
 )
 
 # initialize the model
@@ -233,7 +233,7 @@ simulated_data <- simulate_data(
   # demand coefficients
   -0.1, 9.8, c(0.3, -0.2), c(0.6, 0.1),
   # supply coefficients
-  0.1, 5.1, c(0.9), c(-0.5, 0.2),
+  0.1, 7.1, c(0.9), c(-0.5, 0.2),
   # price adjustment coefficient
   1.4, 3.1, c(0.8)
 )

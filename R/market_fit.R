@@ -284,7 +284,31 @@ setMethod(
     if (class(object@fit[[1]]) == "mle2") {
       object@fit[[1]]@coef
     } else {
-      object@fit[[1]]$system_model$coefficients
+      demand <- object@fit[[1]]$system_model$coefficients[
+        grep("demand_", names(object@fit[[1]]$system_model$coefficients))]
+      demand <- c(demand[2], demand[1], demand[-c(1, 2)])
+      names(demand) <- gsub("demand_", "D_", names(demand))
+
+      supply <- object@fit[[1]]$system_model$coefficients[
+        grep("supply_", names(object@fit[[1]]$system_model$coefficients))]
+      supply <- c(supply[2], supply[1], supply[-c(1, 2)])
+      names(supply) <- gsub("supply_", "S_", names(supply))
+
+      var_d <- object@fit[[1]]$system_model$residCov[[1, 1]]
+      names(var_d) <- prefixed_variance_variable(object@system@demand)
+
+      var_s <- object@fit[[1]]$system_model$residCov[[2, 2]]
+      names(var_s) <- prefixed_variance_variable(object@system@supply)
+
+      coefs <- c(demand, supply, var_d, var_s)
+      if (object@system@correlated_shocks) {
+        rho <- object@fit[[1]]$system_model$residCov[1, 2] / sqrt(var_d * var_s)
+        names(rho) <- correlation_variable(object@system)
+        coefs <- c(coefs, rho)
+      }
+      names(coefs) <- gsub("\\(Intercept\\)", "CONST", names(coefs))
+ 
+      coefs
     }
   }
 )

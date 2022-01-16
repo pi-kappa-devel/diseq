@@ -28,7 +28,7 @@ setClass(
 #' simulated_data <- simulate_data(
 #'   "diseq_basic", 500, 3, # model type, observed entities, observed time points
 #'   -0.9, 8.9, c(0.3, -0.2), c(-0.03, -0.01), # demand coefficients
-#'   0.9, 4.2, c(0.03), c(-0.05, 0.02) # supply coefficients
+#'   0.9, 6.2, c(0.03), c(-0.05, 0.02) # supply coefficients
 #' )
 #'
 #' # initialize the model
@@ -104,3 +104,39 @@ setMethod("scores", signature(object = "diseq_basic"), function(object, paramete
   object@system <- set_parameters(object@system, parameters)
   -calculate_system_scores(object@system)
 })
+
+setMethod(
+  "calculate_initializing_values", signature(object = "diseq_basic"),
+  function(object) {
+    demand <- stats::lm(
+      object@system@demand@dependent_vector ~
+      object@system@demand@independent_matrix - 1
+    )
+    names(demand$coefficients) <- colnames(
+      object@system@demand@independent_matrix
+    )
+    var_d <- var(demand$residuals)
+    names(var_d) <- prefixed_variance_variable(object@system@demand)
+
+    supply <- stats::lm(
+      object@system@supply@dependent_vector ~
+      object@system@supply@independent_matrix - 1
+    )
+    names(supply$coefficients) <- colnames(
+      object@system@supply@independent_matrix
+    )
+    var_s <- var(supply$residuals)
+    names(var_s) <- prefixed_variance_variable(object@system@supply)
+
+    start <- c(demand$coefficients, supply$coefficients, var_d, var_s)
+
+    if (object@system@correlated_shocks) {
+      rho <- 0.0
+      names(rho) <- correlation_variable(object@system)
+
+      start <- c(start, rho)
+    }
+
+    start
+  }
+)

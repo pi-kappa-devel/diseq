@@ -293,11 +293,3 @@ setMethod("quantities", signature(object = "equation_base"), function(object) {
   qs
 })
 
-setMethod(
-  "calculate_initializing_values", signature(object = "equation_base"),
-  function(object) {
-    reg <- stats::lm(object@dependent_vector ~ object@independent_matrix - 1)
-    names(reg$coefficients) <- colnames(object@independent_matrix)
-    reg
-  }
-)

@@ -3,13 +3,13 @@ context("Basic Model's Tests\n")
 # Estimation setup
 parameters <- list(
   nobs = 1000, tobs = 3,
-  alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.03, -0.02), eta_d = c(-0.03, -0.01),
-  alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03), eta_s = c(0.05, 0.02),
-  sigma_d = 0.9, sigma_s = 1.2, rho_ds = 0.5
+  alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.3, -0.2), eta_d = c(-0.3, -0.1),
+  alpha_s = 0.9, beta_s0 = 8.2, beta_s = c(0.3), eta_s = c(0.5, 0.2),
+  sigma_d = 0.9, sigma_s = 1.2, rho_ds = 0.2
 )
 
 # Optimization setup
-reltol <- 1e-6
+reltol <- 1e-4
 optimization_method <- "BFGS"
 optimization_options <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 

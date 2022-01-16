@@ -134,3 +134,10 @@ setMethod(
     )
   }
 )
+
+setMethod(
+  "calculate_initializing_values", signature(object = "equilibrium_model"),
+  function(object) {
+    coef(estimate(object, method = "2SLS"))
+  }
+)

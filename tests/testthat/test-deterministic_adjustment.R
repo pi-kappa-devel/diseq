@@ -4,7 +4,7 @@ context("Deterministic Adjustment Model's Tests\n")
 parameters <- list(
   nobs = 2000, tobs = 3,
   alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.03, -0.02), eta_d = c(-0.03, -0.01),
-  alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03), eta_s = c(0.05, 0.02),
+  alpha_s = 0.9, beta_s0 = 7.8, beta_s = c(0.03), eta_s = c(0.05, 0.02),
   gamma = 1.4,
   sigma_d = 0.9, sigma_s = 1.2, rho_ds = 0.5
 )

@@ -404,7 +404,7 @@ NULL
 #'     # demand coefficients
 #'     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
 #'     # supply coefficients
-#'     alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     alpha_s = 0.1, beta_s0 = 6.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
 #'     # price equation coefficients
 #'     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
 #'   ),
@@ -434,7 +434,7 @@ setMethod(
 #'     # demand coefficients
 #'     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
 #'     # supply coefficients
-#'     alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+#'     alpha_s = 0.1, beta_s0 = 7.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
 #'     # price equation coefficients
 #'     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
 #'   ),
@@ -666,7 +666,7 @@ setGeneric("maximize_log_likelihood", function(object, start, step, objective_to
 #'     # demand coefficients
 #'     alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.6), eta_d = c(-0.2),
 #'     # supply coefficients
-#'     alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03, 1.2), eta_s = c(0.1)
+#'     alpha_s = 0.9, beta_s0 = 7.9, beta_s = c(0.03, 1.2), eta_s = c(0.1)
 #'   ),
 #'   seed = 7523
 #' )
@@ -861,65 +861,6 @@ setMethod("supply_descriptives", signature(object = "market_model"), function(ob
     all.vars(object@system@supply@formula[[3]])
   ))
 })
-
-setMethod(
-  "calculate_initializing_values", signature(object = "market_model"),
-  function(object) {
-    dlm <- calculate_initializing_values(object@system@demand)
-    slm <- calculate_initializing_values(object@system@supply)
-
-    ## Set demand initializing values
-    if (any(is.na(dlm$coefficients))) {
-      print_warning(
-        object@logger,
-        "Setting demand side NA initial values to zero: ",
-        paste0(names(dlm$coefficients[is.na(dlm$coefficients)]), collapse = ", "), "."
-      )
-      dlm$coefficients[is.na(dlm$coefficients)] <- 0
-    }
-    start_names <- c(
-      prefixed_price_variable(object@system@demand),
-      prefixed_control_variables(object@system@demand)
-    )
-    start <- c(dlm$coefficients[start_names])
-
-    ## Set supply initializing values
-    if (any(is.na(slm$coefficients))) {
-      print_warning(
-        object@logger,
-        "Setting supply side NA initial values to zero: ",
-        paste0(names(slm$coefficients[is.na(slm$coefficients)]), collapse = ", ")
-      )
-      slm$coefficients[is.na(slm$coefficients)] <- 0
-    }
-    start_names <- c(
-      prefixed_price_variable(object@system@supply),
-      prefixed_control_variables(object@system@supply)
-    )
-    start <- c(start, slm$coefficients[start_names])
-
-    if (object@model_type_string %in% c(
-      "Deterministic Adjustment",
-      "Stochastic Adjustment"
-    )) {
-      start <- c(start, gamma = 1)
-      names(start)[length(start)] <- price_differences_variable(object@system)
-    }
-
-    start <- c(start, 1, 1)
-    names(start)[(length(start) - 1):length(start)] <- c(
-      prefixed_variance_variable(object@system@demand),
-      prefixed_variance_variable(object@system@supply)
-    )
-
-    if (object@system@correlated_shocks) {
-      start <- c(start, rho = 0)
-      names(start)[length(start)] <- correlation_variable(object@system)
-    }
-
-    start
-  }
-)
 
 setGeneric("prepare_initializing_values", function(object, initializing_vector) {
   standardGeneric("prepare_initializing_values")

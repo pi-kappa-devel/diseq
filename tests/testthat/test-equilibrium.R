@@ -70,13 +70,7 @@ test_that(paste0(
   "Two-stage least squares estimates of '", model_name(mdl),
   "' are accurate"
 ), {
-  order <- c(
-    "beta_d0", "alpha_d", "beta_d", "eta_d",
-    "beta_s0", "alpha_s", "beta_s", "eta_s"
-  )
-  test_estimation_accuracy(
-    coef(reg), unlist(parameters[order]), 1e-0
-  )
+  test_estimation_accuracy(coef(reg), unlist(parameters[-c(1, 2)]), 1e-0)
 })
 
 test_that(paste0("Optimization of '", model_name(mdl), "' using GSL succeeds"), {

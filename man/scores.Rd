@@ -54,7 +54,7 @@ model <- simulate_model(
     # demand coefficients
     alpha_d = -0.9, beta_d0 = 8.9, beta_d = c(0.6), eta_d = c(-0.2),
     # supply coefficients
-    alpha_s = 0.9, beta_s0 = 4.2, beta_s = c(0.03, 1.2), eta_s = c(0.1)
+    alpha_s = 0.9, beta_s0 = 7.9, beta_s = c(0.03, 1.2), eta_s = c(0.1)
   ),
   seed = 7523
 )

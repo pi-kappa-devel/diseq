@@ -162,7 +162,7 @@ load_or_simulate_data <- function(model_string, parameters) {
   } else {
     model_tibble <- do.call(
       diseq::simulate_data,
-      c(model_string, parameters, seed = seed)
+      c(model_string, parameters, verbose = verbose, seed = seed)
     )
     if (file.exists("devel-environment")) {
       save(model_tibble, file = stored_data_filename)

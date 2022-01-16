@@ -11,6 +11,8 @@ setMethod("calculate_system_scores", signature(object = "system_directional"),
   xs <- object@supply@independent_matrix
   Id <- object@demand@separation_subset
   Is <- object@supply@separation_subset
+  xd[!Id,] <- 0.0
+  xs[!Is,] <- 0.0
   r <- object@rho
   r1 <- object@rho1
   hD <- object@demand@h

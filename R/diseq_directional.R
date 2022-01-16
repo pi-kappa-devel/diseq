@@ -142,3 +142,41 @@ setMethod(
     -calculate_system_scores(object@system)
   }
 )
+
+setMethod(
+  "calculate_initializing_values", signature(object = "diseq_directional"),
+  function(object) {
+    demand <- stats::lm(
+      object@system@demand@dependent_vector ~
+      object@system@demand@independent_matrix - 1,
+      subset = object@system@demand@separation_subset
+    )
+    names(demand$coefficients) <- colnames(
+      object@system@demand@independent_matrix
+    )
+    var_d <- var(demand$residuals)
+    names(var_d) <- prefixed_variance_variable(object@system@demand)
+
+    supply <- stats::lm(
+      object@system@supply@dependent_vector ~
+      object@system@supply@independent_matrix - 1,
+      subset = object@system@supply@separation_subset
+    )
+    names(supply$coefficients) <- colnames(
+      object@system@supply@independent_matrix
+    )
+    var_s <- var(supply$residuals)
+    names(var_s) <- prefixed_variance_variable(object@system@supply)
+
+    start <- c(demand$coefficients, supply$coefficients, var_d, var_s)
+
+    if (object@system@correlated_shocks) {
+      rho <- 0.0
+      names(rho) <- correlation_variable(object@system)
+
+      start <- c(start, rho)
+    }
+
+    start
+  }
+)

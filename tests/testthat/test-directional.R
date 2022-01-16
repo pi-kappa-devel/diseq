@@ -4,14 +4,14 @@ skip_on_cran()
 
 # Estimation setup
 parameters <- list(
-  nobs = 3000, tobs = 4,
-  alpha_d = -0.2, beta_d0 = 4.1, beta_d = c(0.03, 0.02), eta_d = c(0.03, 0.01),
-  alpha_s = 0.0, beta_s0 = 4.0, beta_s = c(0.03), eta_s = c(0.05, 0.02),
+  nobs = 1000, tobs = 4,
+  alpha_d = -1.3, beta_d0 = 9.1, beta_d = c(0.3, -0.2), eta_d = c(0.3, 0.7),
+  alpha_s = 0.0, beta_s0 = 9.0, beta_s = c(1.3), eta_s = c(0.5, 0.2),
   sigma_d = 1.0, sigma_s = 1.0, rho_ds = 0.0
 )
 
 # Optimization setup
-reltol <- 1e-4
+reltol <- 1e-6
 optimization_method <- "BFGS"
 optimization_options <- list(REPORT = 10, maxit = 50000, reltol = reltol)
 

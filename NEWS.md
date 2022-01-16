@@ -1,3 +1,15 @@
+# diseq 0.4.1.9003
+
+* Harmonized `coef` output.
+* Simplified `diseq_directional` calculations to improve numerical stability.
+* Model specific initializing values for maximum likelihood estimation
+ - `diseq_basic`: Demand and supply regression estimates using the whole sample.
+ - `diseq_deterministic_adjustment`: Demand and supply regression estimates using the whole sample. Price differences are regressed on estimated excess demand for the price equation.
+ - `diseq_directional`: Demand and supply regression estimates using the sample separation. 
+ - `diseq_deterministic_adjustment`: Demand, supply, and price dynamics regression estimates using the whole sample. 
+ - `equilibrium_model`: Two stage least square estimates. 
+* Simplified simulation of prices and controls.
+
 # diseq 0.4.1
 
 * Cumulative update of CRAN version. 

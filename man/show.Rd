@@ -21,7 +21,7 @@ model <- simulate_model(
     # demand coefficients
     alpha_d = -0.1, beta_d0 = 9.8, beta_d = c(0.3, -0.2), eta_d = c(0.6, -0.1),
     # supply coefficients
-    alpha_s = 0.1, beta_s0 = 5.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
+    alpha_s = 0.1, beta_s0 = 7.1, beta_s = c(0.9), eta_s = c(-0.5, 0.2),
     # price equation coefficients
     gamma = 1.2, beta_p0 = 3.1, beta_p = c(0.8)
   ),

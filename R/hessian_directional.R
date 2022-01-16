@@ -15,6 +15,8 @@ setMethod("hessian", signature(object = "diseq_directional"),
   xs <- object@supply@independent_matrix
   Id <- object@demand@separation_subset
   Is <- object@supply@separation_subset
+  xd[!Id, ] <- 0.0
+  xs[!Is, ] <- 0.0
   r <- object@rho
   r1 <- object@rho1
   hD <- object@demand@h
@@ -26,10 +28,10 @@ setMethod("hessian", signature(object = "diseq_directional"),
   PsiD <- object@demand@Psi
   PsiS <- object@supply@Psi
 
-  pbeta_d1 <- sweep(xd, MARGIN = 1,PsiD**Id*PsiS**Is* sd**(-Id)*ss**(-Is)*(Id*PsiD*PsiS*hD - Id*PsiS*psiD*r*r1 + Is*PsiD*psiS*r1)/(PsiD*PsiS*sd)/object@lh, `*`)
-  pbeta_s1 <- sweep(xs, MARGIN = 1,PsiD**Id*PsiS**Is* sd**(-Id)*ss**(-Is)*(Id*PsiS*psiD*r1 + Is*PsiD*PsiS*hS - Is*PsiD*psiS*r*r1)/(PsiD*PsiS*ss)/object@lh, `*`)
-  pvar_d <- PsiD**(Id - 1)*PsiS**(Is - 1)*sd**(-Id - 2)*ss**(-Is)*(Id*PsiD*PsiS*hD**2 - Id*PsiD*PsiS - Id*PsiS*hD*psiD*r*r1 + Is*PsiD*hD*psiS*r1)/2/object@lh
-  pvar_s <- PsiD**(Id - 1)*PsiS**(Is - 1)*sd**(-Id)*ss**(-Is - 2)*(Id*PsiS*hS*psiD*r1 + Is*PsiD*PsiS*hS**2 - Is*PsiD*PsiS - Is*PsiD*hS*psiS*r*r1)/2/object@lh
+  pbeta_d1 <- sweep(xd, MARGIN = 1,PsiD**Id*PsiS**Is* (Id*PsiD*PsiS*hD - Id*PsiS*psiD*r*r1 + Is*PsiD*psiS*r1)/(PsiD*PsiS*sd*sd**Id*ss**Is)/object@lh, `*`)
+  pbeta_s1 <- sweep(xs, MARGIN = 1,PsiD**Id*PsiS**Is* (Id*PsiS*psiD*r1 + Is*PsiD*PsiS*hS - Is*PsiD*psiS*r*r1)/(PsiD*PsiS*sd**Id*ss*ss**Is)/object@lh, `*`)
+  pvar_d <- PsiD**(Id - 1)*PsiS**(Is - 1)*sd**(-Id - 2)*(Id*PsiD*PsiS*hD**2 - Id*PsiD*PsiS - Id*PsiS*hD*psiD*r*r1 + Is*PsiD*hD*psiS*r1)/(2*ss**Is)/object@lh
+  pvar_s <- PsiD**(Id - 1)*PsiS**(Is - 1)*ss**(-Is - 2)*(Id*PsiS*hS*psiD*r1 + Is*PsiD*PsiS*hS**2 - Is*PsiD*PsiS - Is*PsiD*hS*psiS*r*r1)/(2*sd**Id)/object@lh
   pbeta_d1beta_d1 <- t(xd)%*%sweep(xd, MARGIN = 1, (sd**(-29*Id - 47)*sd**(28*Id + 45)*ss**(-29*Is - 18)*ss**(28*Is + 18)*(-2*Id*Is*PsiD**(Id + 3)*PsiS**(Is + 3)*psiD*psiS*r*r1**2 + Id*PsiD**(Id + 2)*PsiS**(Is + 4)*psiD**2*r**2*r1**2*(Id - 1) + Id*PsiD**(Id + 3)*PsiS**(Is + 4)*psiD*r*r1*(-2*Id*hD + r*r1*zSD) + Id*PsiD**(Id + 4)*PsiS**(Is + 4)*(Id*hD**2 - 1) + Is*PsiD**(Id + 4)*PsiS**(Is + 2)*psiS**2*r1**2*(Is - 1) + Is*PsiD**(Id + 4)*PsiS**(Is + 3)*psiS*r1*(2*Id*hD + r1*zDS))/(PsiD**4*PsiS**4)/object@lh), `*`)
   pbeta_d1beta_s1 <- t(xd)%*%sweep(xs, MARGIN = 1, (sd**(-29*Id - 47)*sd**(28*Id + 46)*ss**(-29*Is - 18)*ss**(28*Is + 17)*(Id*Is*PsiD**(Id + 3)*PsiS**(Is + 3)*psiD*psiS*r1**2*(r**2 + 1) + Id*Is*PsiD**(Id + 4)*PsiS**(Is + 4)*hD*hS + Id*PsiD**(Id + 2)*PsiS**(Is + 4)*psiD**2*r*r1**2*(1 - Id) + Id*PsiD**(Id + 3)*PsiS**(Is + 4)*psiD*r1*(Id*hD - Is*hS*r - r*r1*zSD) + Is*PsiD**(Id + 4)*PsiS**(Is + 2)*psiS**2*r*r1**2*(1 - Is) + Is*PsiD**(Id + 4)*PsiS**(Is + 3)*psiS*r1*(-Id*hD*r + Is*hS - r*r1*zDS))/(PsiD**4*PsiS**4)/object@lh), `*`)
   pbeta_d1var_d <- colSums(sweep(xd, MARGIN = 1, sd**(-29*Id - 47)*sd**(28*Id + 44)*ss**(-29*Is - 18)*ss**(28*Is + 18)*(-2*Id*Is*PsiD**(Id + 3)*PsiS**(Is + 3)*hD*psiD*psiS*r*r1**2 + Id*PsiD**(Id + 2)*PsiS**(Is + 4)*hD*psiD**2*r**2*r1**2*(Id - 1) + Id*PsiD**(Id + 3)*PsiS**(Is + 4)*psiD*r*r1*(-2*Id*hD**2 + Id + hD*r*r1*zSD + 1) + Id*PsiD**(Id + 4)*PsiS**(Is + 4)*hD*(Id*hD**2 - Id - 2) + Is*PsiD**(Id + 4)*PsiS**(Is + 2)*hD*psiS**2*r1**2*(Is - 1) + Is*PsiD**(Id + 4)*PsiS**(Is + 3)*psiS*r1*(2*Id*hD**2 - Id + hD*r1*zDS - 1))/(2*PsiD**4*PsiS**4)/object@lh, `*`))
@@ -59,7 +61,7 @@ setMethod("hessian", signature(object = "diseq_directional"),
   )
 
   if (object@correlated_shocks) {
-    prho <- PsiD**(Id - 1)*PsiS**(Is - 1)*r1*sd**(-Id)*ss**(-Is)*(Id*PsiS*hD*psiD - Id*PsiS*psiD*r*r1*zSD + Is*PsiD*hS*psiS - Is*PsiD*psiS*r*r1*zDS)/object@lh
+    prho <- PsiD**(Id - 1)*PsiS**(Is - 1)*r1*(Id*PsiS*hD*psiD - Id*PsiS*psiD*r*r1*zSD + Is*PsiD*hS*psiS - Is*PsiD*psiS*r*r1*zDS)/(sd**Id*ss**Is)/object@lh
     pbeta_d1rho <- colSums(-sweep(xd, MARGIN = 1,PsiD**(Id + 2)*PsiS**(Is + 2)* r1*sd**(-29*Id - 47)*sd**(28*Id + 46)*ss**(-29*Is - 18)*ss**(28*Is + 18)*(Id*Is*PsiD*PsiS*psiD*psiS*r1*(-hD + hS*r - r**2*r1*zDS + r*r1*zSD) + Id*PsiD*PsiS**2*psiD*(-Id*hD**2 + Id*hD*r*r1*zSD + hD*r*r1*zSD - r**2*r1**2*zSD**2 + r**2*r1**2 + 1) + Id*PsiS**2*psiD**2*r*r1*(Id*hD - Id*r*r1*zSD - hD + r*r1*zSD) + Is*PsiD**2*PsiS*psiS*(-Id*hD*hS + Id*hD*r*r1*zDS - hS*r1*zDS + r*r1**2*zDS**2 - r*r1**2) + Is*PsiD**2*psiS**2*r1*(-Is*hS + Is*r*r1*zDS + hS - r*r1*zDS))/(PsiD**4*PsiS**4)/object@lh, `*`))
     pbeta_s1rho <- colSums(-sweep(xs, MARGIN = 1,PsiD**(Id + 2)*PsiS**(Is + 2)* r1*sd**(-29*Id - 18)*sd**(28*Id + 18)*ss**(-29*Is - 47)*ss**(28*Is + 46)*(Id*Is*PsiD*PsiS*psiD*psiS*r1*(hD*r - hS - r**2*r1*zSD + r*r1*zDS) + Id*PsiD*PsiS**2*psiD*(-Is*hD*hS + Is*hS*r*r1*zSD - hD*r1*zSD + r*r1**2*zSD**2 - r*r1**2) + Id*PsiS**2*psiD**2*r1*(-Id*hD + Id*r*r1*zSD + hD - r*r1*zSD) + Is*PsiD**2*PsiS*psiS*(-Is*hS**2 + Is*hS*r*r1*zDS + hS*r*r1*zDS - r**2*r1**2*zDS**2 + r**2*r1**2 + 1) + Is*PsiD**2*psiS**2*r*r1*(Is*hS - Is*r*r1*zDS - hS + r*r1*zDS))/(PsiD**4*PsiS**4)/object@lh, `*`))
     pvar_drho <- colSums(-PsiD**(Id + 2)*PsiS**(Is + 2)*r1*sd**(-29*Id - 76)*sd**(28*Id + 74)*ss**(-29*Is - 18)*ss**(28*Is + 18)*(Id*Is*PsiD*PsiS*hD*psiD*psiS*r1*(-hD + hS*r - r**2*r1*zDS + r*r1*zSD) + Id*PsiD*PsiS**2*psiD*(-Id*hD**3 + Id*hD**2*r*r1*zSD + Id*hD - Id*r*r1*zSD + hD**2*r*r1*zSD - hD*r**2*r1**2*zSD**2 + hD*r**2*r1**2 + hD) + Id*PsiS**2*hD*psiD**2*r*r1*(Id*hD - Id*r*r1*zSD - hD + r*r1*zSD) + Is*PsiD**2*PsiS*psiS*(-Id*hD**2*hS + Id*hD**2*r*r1*zDS + Id*hS - Id*r*r1*zDS - hD*hS*r1*zDS + hD*r*r1**2*zDS**2 - hD*r*r1**2) + Is*PsiD**2*hD*psiS**2*r1*(-Is*hS + Is*r*r1*zDS + hS - r*r1*zDS))/(2*PsiD**4*PsiS**4)/object@lh)

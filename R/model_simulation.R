@@ -211,12 +211,6 @@ setGeneric(
 setMethod(
   "simulate_quantities_and_prices", signature(object = "simulated_model"),
   function(object, demanded_quantities, supplied_quantities, prices, starting_prices) {
-    if (any(prices < 0)) {
-      print_error(
-        object@logger, "Simulation produced negative prices. ",
-        "Change either the parameterization of the model or the seed."
-      )
-    }
     if (any(demanded_quantities < 0)) {
       print_error(
         object@logger, "Simulation produced negative demanded quantities. ",
@@ -317,9 +311,10 @@ setMethod(
     demanded_quantities <- simulated_demanded_quantities(object, prices)
     supplied_quantities <- simulated_supplied_quantities(object, prices)
 
+    const <- sqrt(.Machine$double.eps)
     xdi <- price_differences[-spi] >= 0
-    demanded_quantities[xdi] <- supplied_quantities[xdi] + 1
-    supplied_quantities[!xdi] <- demanded_quantities[!xdi] + 1
+    demanded_quantities[xdi] <- supplied_quantities[xdi] + const
+    supplied_quantities[!xdi] <- demanded_quantities[!xdi] + const
 
     callNextMethod(
       object, demanded_quantities, supplied_quantities, prices,
@@ -561,8 +556,8 @@ setGeneric(
            sigma_d = 1.0, sigma_s = 1.0, sigma_p = 1.0,
            rho_ds = 0.0, rho_dp = 0.0, rho_sp = 0.0,
            seed = NA_integer_,
-           price_generator = function(n) stats::rnorm(n = n, mean = 2.5, sd = 0.5),
-           control_generator = function(n) stats::rnorm(n = n, mean = 2.5, sd = 0.5),
+           price_generator = function(n) stats::rnorm(n = n),
+           control_generator = function(n) stats::rnorm(n = n),
            verbose = 0) {
     standardGeneric("simulate_data")
   }
@@ -662,6 +657,12 @@ setMethod(
           "The share of observations in excess demand is ", xd_share, "."
         )
       }
+
+      print_info(
+        sim_mdl@logger,
+        "Model simulated with ", xd_share, "% excess demand and ",
+        1 - xd_share, "% excess supply observations' shares."
+      )
     }
 
     sim_mdl@simulation_tbl
