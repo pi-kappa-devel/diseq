@@ -8,16 +8,14 @@
 #' @importFrom stats formula lm model.matrix na.omit median qnorm sd var
 #' @import tibble
 
-setClassUnion("characterOrNULL", c("character", "NULL"))
 setOldClass(c("spec_tbl_df", "tbl_df", "tbl", "data.frame"))
 utils::globalVariables("where")
 
 #' @title Market model classes
 #'
 #' @slot logger Logger object.
-#' @slot key_columns Vector of column names that uniquely identify data records. For
-#' panel data this vector should contain an entity and a time point identifier.
-#' @slot time_column Column name for the time point data.
+#' @slot subject_columns Column name for the subject identifier.
+#' @slot time_column Column name for the time point identifier.
 #' @slot explanatory_columns Vector of explanatory column names for all model's
 #' equations.
 #' @slot data_columns Vector of model's data column names. This is the union of the
@@ -38,8 +36,8 @@ setClass(
     logger = "model_logger",
 
     ## Column fields
-    key_columns = "vector",
-    time_column = "characterOrNULL",
+    subject_column = "character",
+    time_column = "character",
     explanatory_columns = "vector",
     data_columns = "vector",
     columns = "vector",
@@ -209,13 +207,14 @@ setMethod(
     .Object@system@correlated_shocks <- correlated_shocks
     print_info(.Object@logger, "This is '", model_name(.Object), "' model")
 
-    .Object@key_columns <- all.vars(formula(specification, lhs = 3:4, rhs = 0))
+    .Object@subject_column <- all.vars(formula(specification, lhs = 3, rhs = 0))
     .Object@time_column <- all.vars(formula(specification, lhs = 4, rhs = 0))
 
     .Object@explanatory_columns <- all.vars(specification[[3]])
 
     .Object@data_columns <- all.vars(specification)
-    .Object@columns <- unique(c(.Object@key_columns, .Object@data_columns))
+    .Object@columns <- unique(c(.Object@subject_column, .Object@time_column,
+                                .Object@data_columns))
 
     ## Data assignment
     .Object@model_tibble <- data
@@ -250,7 +249,7 @@ setMethod(
       ))
 
     ## Create primary key column
-    key_columns_syms <- rlang::syms(.Object@key_columns)
+    key_columns_syms <- rlang::syms(c(.Object@subject_column, .Object@time_column))
     .Object@model_tibble <- .Object@model_tibble %>%
       dplyr::mutate(pk = as.integer(paste0(!!!key_columns_syms)))
 
@@ -259,8 +258,7 @@ setMethod(
       "Directional", "Deterministic Adjustment", "Stochastic Adjustment"
     )) {
       ## Generate lags
-      key_syms <- rlang::syms(.Object@key_columns[.Object@key_columns !=
-        .Object@time_column])
+      subject_sym <- rlang::syms(.Object@subject_column)
       price_column <- all.vars(formula(specification, lhs = 2, rhs = 0))
       price_sym <- rlang::sym(price_column)
       time_sym <- rlang::sym(.Object@time_column)
@@ -268,7 +266,7 @@ setMethod(
       lagged_price_sym <- rlang::sym(lagged_price_column)
 
       .Object@model_tibble <- .Object@model_tibble %>%
-        dplyr::group_by(!!!key_syms) %>%
+        dplyr::group_by(!!!subject_sym) %>%
         dplyr::mutate(
           !!lagged_price_sym := dplyr::lag(!!price_sym, order_by = !!time_sym)
         ) %>%
@@ -289,7 +287,7 @@ setMethod(
       diff_sym <- rlang::sym(diff_column)
 
       .Object@model_tibble <- .Object@model_tibble %>%
-        dplyr::group_by(!!!key_syms) %>%
+        dplyr::group_by(!!!subject_sym) %>%
         dplyr::mutate(!!diff_sym := !!price_sym - !!lagged_price_sym) %>%
         dplyr::ungroup()
     }
@@ -500,7 +498,7 @@ setMethod("summary", signature(object = "market_model"), function(object) {
   summary_implementation(object@system)
   cat(sprintf(
     "  %-18s: %s\n", "Key Var(s)",
-    paste0(object@key_columns, collapse = ", ")
+    paste0(c(object@subject_column, object@time_column), collapse = ", ")
   ))
   if (!is.null(object@time_column)) {
     cat(sprintf(
@@ -888,14 +886,13 @@ setMethod(
 
 #' @title Market side aggregation.
 #'
-#' @details Calculates the sample's aggregate demand or supply at the passed set of
-#' parameters. If the model is static, as is for example the case of
-#' \code{\linkS4class{equilibrium_model}}, then all observations are aggregated. If the
-#' used data have a time dimension and aggregation per date is required, it can be
-#' manually performed using the \code{\link{demanded_quantities}} and
-#' \code{\link{supplied_quantities}} functions. If the model has a dynamic component,
-#' such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
-#' and supplied quantities are automatically aggregated for each time point.
+#' @details Calculates the sample's aggregate demand or supply using the
+#' estimated coefficients of a fitted model. Alternatively, the function
+#' calculates aggregates using a model and a set of parameters passed
+#' separately. If the model's data have multiple distinct subjects at each
+#' date, aggregation is calculated over subjects per unique date. If the model
+#' has time series data, namely a single subject per time point, aggregation
+#' is ululated over all time pints.
 #' @param fit A fitted market model object.
 #' @param model A model object.
 #' @param parameters A vector of model's parameters.
@@ -946,7 +943,7 @@ aggregate_equation <- function(model, parameters, equation) {
   model@system <- set_parameters(model@system, parameters)
   quantities <- quantities(slot(model@system, equation))
   result <- NULL
-  if (!is.null(model@time_column)) {
+  if (nrow(unique(model@model_tibble[, model@subject_column])) > 1) {
     time_symbol <- rlang::sym(model@time_column)
     aggregate_symbol <- rlang::sym(colnames(quantities))
     result <- model@model_tibble[, model@time_column] %>%

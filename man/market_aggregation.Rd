@@ -37,14 +37,13 @@ given parameters.
 Market side aggregation.
 }
 \details{
-Calculates the sample's aggregate demand or supply at the passed set of
-parameters. If the model is static, as is for example the case of
-\code{\linkS4class{equilibrium_model}}, then all observations are aggregated. If the
-used data have a time dimension and aggregation per date is required, it can be
-manually performed using the \code{\link{demanded_quantities}} and
-\code{\link{supplied_quantities}} functions. If the model has a dynamic component,
-such as the \code{\linkS4class{diseq_deterministic_adjustment}}, then demanded
-and supplied quantities are automatically aggregated for each time point.
+Calculates the sample's aggregate demand or supply using the
+estimated coefficients of a fitted model. Alternatively, the function
+calculates aggregates using a model and a set of parameters passed
+separately. If the model's data have multiple distinct subjects at each
+date, aggregation is calculated over subjects per unique date. If the model
+has time series data, namely a single subject per time point, aggregation
+is ululated over all time pints.
 }
 \section{Functions}{
 \itemize{

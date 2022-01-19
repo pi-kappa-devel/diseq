@@ -1,3 +1,8 @@
+# diseq 0.4.1.9004
+
+* Separated identifier variables  in `market_model` class.
+* Changes in aggregation functionality. Updated its documentation.
+
 # diseq 0.4.1.9003
 
 * Harmonized `coef` output.

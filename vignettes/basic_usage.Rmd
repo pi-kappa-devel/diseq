@@ -242,12 +242,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
   pdt <- tibble::tibble(
     Date = c(aggregates$date, aggregates$date),
     Quantity = c(aggregates$demand, aggregates$supply),
-    Side = c(rep("Demand", nrow(aggregates)), rep("Supply", nrow(aggregates))),
-    xpos = c(rep(-1.0, nrow(aggregates)), rep(1.0, nrow(aggregates))),
-    ypos = c(
-      rep(0.8 * max(aggregates$demand), nrow(aggregates)),
-      rep(0.8 * max(aggregates$supply), nrow(aggregates))
-    )
+    Side = c(rep("Demand", nrow(aggregates)), rep("Supply", nrow(aggregates)))
   )
   ggplot2::ggplot(pdt, ggplot2::aes(x = Date)) +
     ggplot2::geom_line(ggplot2::aes(y = Quantity, linetype = Side, color = Side)) +
@@ -266,6 +261,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
       legend.position = c(0.8, 0.5)
     )
 } else {
-  aggregates
+
+    aggregates
 }
 ```

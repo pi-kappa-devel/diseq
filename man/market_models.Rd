@@ -110,10 +110,9 @@ separation.
 \describe{
 \item{\code{logger}}{Logger object.}
 
-\item{\code{key_columns}}{Vector of column names that uniquely identify data records. For
-panel data this vector should contain an entity and a time point identifier.}
+\item{\code{subject_columns}}{Column name for the subject identifier.}
 
-\item{\code{time_column}}{Column name for the time point data.}
+\item{\code{time_column}}{Column name for the time point identifier.}
 
 \item{\code{explanatory_columns}}{Vector of explanatory column names for all model's
 equations.}
