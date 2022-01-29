@@ -941,17 +941,17 @@ NULL
 
 aggregate_equation <- function(model, parameters, equation) {
   model@system <- set_parameters(model@system, parameters)
-  quantities <- quantities(slot(model@system, equation))
+  qs <- quantities(slot(model@system, equation))
   result <- NULL
   if (nrow(unique(model@model_tibble[, model@subject_column])) > 1) {
     time_symbol <- rlang::sym(model@time_column)
-    aggregate_symbol <- rlang::sym(colnames(quantities))
+    aggregate_symbol <- rlang::sym(colnames(qs))
     result <- model@model_tibble[, model@time_column] %>%
-      dplyr::mutate(!!aggregate_symbol := quantities) %>%
+      dplyr::mutate(!!aggregate_symbol := qs) %>%
       dplyr::group_by(!!time_symbol) %>%
       dplyr::summarise(!!aggregate_symbol := sum(!!aggregate_symbol))
   } else {
-    result <- sum(quantities)
+    result <- sum(qs)
   }
   result
 }

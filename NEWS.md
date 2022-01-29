@@ -2,6 +2,7 @@
 
 * Separated identifier variables  in `market_model` class.
 * Changes in aggregation functionality. Updated its documentation.
+* Added aggregation plot in 'basic usage' vignette.
 
 # diseq 0.4.1.9003
 
