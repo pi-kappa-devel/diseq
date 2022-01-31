@@ -242,8 +242,7 @@ setMethod(
     inst <- formula(paste0(" ~ ", paste0(first_stage_controls, collapse = " + ")))
     system_model <- systemfit::systemfit(
       list(demand = demand_formula, supply = supply_formula),
-      method = "2SLS", inst = inst, data = object@model_tibble,
-      ...
+      method = "2SLS", inst = inst, data = object@model_tibble
     )
 
     new(

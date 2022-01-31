@@ -1,3 +1,7 @@
+# diseq 0.4.1.9005
+
+* Extended the shortage and marginal effect analyses to the cover the equilibrium model.
+
 # diseq 0.4.1.9004
 
 * Separated identifier variables  in `market_model` class.
