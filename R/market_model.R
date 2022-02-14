@@ -1226,8 +1226,8 @@ NULL
 #' system variable \eqn{x} with demand coefficient \eqn{\beta_{d, x}} and supply
 #' coefficient \eqn{\beta_{s, x}}, the marginal effect on the market system  is
 #' given by
-#' \deqn{M_{x} = \frac{\beta_{d, x} - \beta_{s, x}}{\sqrt{\sigma_{d, x}^{2} +
-#' \sigma_{s, x}^{2} - 2 \rho_{ds} \sigma_{d, x} \sigma_{s, x}}}.}
+#' \deqn{M_{x} = \frac{\beta_{d, x} - \beta_{s, x}}{\sqrt{\sigma_{d}^{2} +
+#' \sigma_{s}^{2} - 2 \rho_{ds} \sigma_{d} \sigma_{s}}}.}
 #' @export
 setGeneric("shortage_marginal", function(fit, variable, model, parameters) {
   standardGeneric("shortage_marginal")
@@ -1238,9 +1238,9 @@ setGeneric("shortage_marginal", function(fit, variable, model, parameters) {
 #' Returns the estimated marginal effect of a variable on the probability of
 #' observing a shortage state. The mean marginal effect on the shortage probability
 #' is given by
-#' \deqn{M_{x} \mathrm{E}\phi(D - S)}
+#' \deqn{M_{x} \mathrm{E} \phi\left(\frac{D - S}{\sqrt{\sigma_{d}^2 + \sigma_{s}^2 - 2 rho \sigma_{d} \sigma_{s}}}\right)}
 #' and the marginal effect at the mean by
-#' \deqn{M_{x} \phi(\mathrm{E}(D - S)),}
+#' \deqn{M_{x} \phi\left(\mathrm{E}\frac{D - S}{\sqrt{\sigma_{d}^2 + \sigma_{s}^2 - 2 rho \sigma_{d} \sigma_{s}}}\right)}
 #' where \eqn{M_{x}} is the marginal effect on the system, \eqn{D} is the demanded
 #' quantity, \eqn{S} the supplied quantity, and \eqn{\phi} is the standard normal
 #' density.
