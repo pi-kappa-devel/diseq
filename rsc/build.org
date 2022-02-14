@@ -85,3 +85,22 @@ devtools::check_rhub(
 devtools::check_rhub(platforms = c('debian-gcc-devel-nold'))
 #+end_src
 
+*** All
+#+begin_src R :dir .. :results output :async
+devtools::check_rhub(
+  platforms = c(
+    # Windows platforms
+    'windows-x86_64-devel',
+    # Platforms using gcc
+    'ubuntu-gcc-release', 'debian-gcc-devel', 'debian-gcc-devel-nold', 'linux-x86_64-rocker-gcc-san',
+    # Platforms using clang
+    'debian-clang-devel', 'fedora-clang-devel',
+    # Solaris platforms
+    'solaris-x86-patched', 'solaris-x86-patched-ods',
+    # Mac platforms
+    'macos-highsierra-release', 'macos-highsierra-release-cran',
+    # Platforms without long double
+    'debian-gcc-devel-nold'
+  ), env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
+#+end_src
+

@@ -1,3 +1,10 @@
+# diseq 0.4.2
+
+* Cumulative update of CRAN version. 
+* Specialized calculation of initializing values at a model level. Initializing values are now calculated based on the models' assumptions.
+* Better `coef` behavior with common output format for all models.
+* Extended shortage analysis functionality to the equilibrium model.
+
 # diseq 0.4.1.9005
 
 * Extended the shortage and marginal effect analyses to the cover the equilibrium model.
