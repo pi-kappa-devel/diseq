@@ -15,7 +15,7 @@ test_calculated_gradient <- function(mdl, params, tolerance) {
     diff <- abs(act$val[row] - cg[row])
     max_diff <- ifelse(max_diff < diff, diff, max_diff)
     testthat::expect(diff < tolerance, sprintf(
-      "%s (numerical = %g, calculated = %g) failed with differences %f.",
+      "%s (numerical = %g, calculated = %g) failed with difference %f.",
       pnames[row], ng[row], cg[row], diff
     ))
   }
@@ -53,7 +53,7 @@ test_calculated_hessian <- function(mdl, params, tolerance) {
       diff <- min(ad, rd)
       max_diff <- ifelse(max_diff < diff, diff, max_diff)
       testthat::expect(diff < tolerance, sprintf(
-        "[%s, %s] (numerical = %g, calculated = %g) failed with differences (%f, %f).",
+        "[%s, %s] (numerical = %g, calculated = %g) failed with difference (%f, %f).",
         pnames[row], pnames[col], nh[row, col], ch[row, col], ad, rd
       ))
     }
