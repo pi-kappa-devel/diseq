@@ -1,3 +1,8 @@
+# diseq 0.4.3
+
+* Adjusted unit test gradient tolerance for m1 machines.
+* Replaced omitted with missing in warning messages.
+
 # diseq 0.4.2
 
 * Cumulative update of CRAN version. 

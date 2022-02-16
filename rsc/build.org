@@ -54,41 +54,38 @@ devtools::check_win_devel()
 devtools::check_win_release()
 #+end_src
 
-*** Preconfigured devtools platforms
-#+begin_src R :dir .. :results output :async
-devtools::check_rhub(env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
-#+end_src
-
 *** Platforms using clang
 #+begin_src R :dir .. :async
-devtools::check_rhub(
-  platforms = c('debian-clang-devel', 'fedora-clang-devel'), 
+rhub::check(
+  platform = c('debian-clang-devel', 'fedora-clang-devel'), 
   env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
 #+end_src
 
 *** Solaris platforms
 #+begin_src R :dir .. :async
-devtools::check_rhub(
-  platforms = c('solaris-x86-patched', 'solaris-x86-patched-ods'), 
+rhub::check(
+  platform = c('solaris-x86-patched', 'solaris-x86-patched-ods'), 
   env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
 #+end_src
 
 *** Mac platforms
 #+begin_src R :dir .. :async
-devtools::check_rhub(
-  platforms = c('macos-highsierra-release', 'macos-highsierra-release-cran'), 
+rhub::check(
+  platform = c('macos-highsierra-release', 'macos-highsierra-release-cran'), 
   env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
+# There is a testing service for the CRAN M1mac setup at
+# https://mac.r-project.org/macbuilder/submit.html
 #+end_src
 
 *** Platforms without long double
 #+begin_src R :dir .. :async
-devtools::check_rhub(platforms = c('debian-gcc-devel-nold'))
+rhub::check(platform = c('debian-gcc-devel-nold'))
 #+end_src
 
 *** All
 #+begin_src R :dir .. :results output :async
-devtools::check_rhub(
-  platforms = c(
+rhub::check(
+  platform = c(
     # Windows platforms
     'windows-x86_64-devel',
     # Platforms using gcc
@@ -98,9 +95,7 @@ devtools::check_rhub(
     # Solaris platforms
     'solaris-x86-patched', 'solaris-x86-patched-ods',
     # Mac platforms
-    'macos-highsierra-release', 'macos-highsierra-release-cran',
-    # Platforms without long double
-    'debian-gcc-devel-nold'
+    'macos-highsierra-release', 'macos-highsierra-release-cran'
   ), env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = 'always'))
 #+end_src
 

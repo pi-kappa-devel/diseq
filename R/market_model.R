@@ -262,7 +262,7 @@ setMethod(
       na.omit()
     drops <- len - nrow(.Object@model_tibble)
     if (drops) {
-      print_warning(.Object@logger, "Dropping ", drops, " rows due to omitted values.")
+      print_warning(.Object@logger, "Dropping ", drops, " rows due to missing values.")
     }
 
     remove_unused_levels <- function(x) {
@@ -315,7 +315,7 @@ setMethod(
       .Object@model_tibble <- .Object@model_tibble[!drop_rows, ]
       print_info(
         .Object@logger, "Dropping ",
-        sum(drop_rows), " rows by generating '", lagged_price_column, "'."
+        sum(drop_rows), " rows to generate '", lagged_price_column, "'."
       )
 
       ## Generate first differences
