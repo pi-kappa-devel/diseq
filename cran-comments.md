@@ -1,6 +1,6 @@
 # Changes in version 0.4.4
 
-* Added deprecation warning in documentation and on package loading.
+* Added deprecation warnings in documentation and on package loading.
 
 # Test Environments and Results (version 1.0.1)
 ## Windows

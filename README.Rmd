@@ -2,13 +2,14 @@
 title: "Models For Markets in Equilibrium and Disequilibrium"
 output:
   html_document:
-    mathjax: default
+    math_method: mathjax
     theme: readable
     highlight: breezedark
     keep_md: false
     self_contained: true
   github_document:
     html_preview: true
+    math_method: webtex
   md_document:
     variant: markdown_github+tex_math_dollars
 bibliography: bibliography.bib
@@ -37,13 +38,13 @@ The five models of the package are described by systems of simultaneous equation
 The equilibrium model adds the market-clearing condition to the demand and supply equations of the system. For the system to be identifiable, at least one variable in the demand side must not be present on the supply side and vice versa. This model assumes that the market observations always represent equilibrium points in which the demanded and supplied quantities are equal. The model can be estimated using two-stage least squares [@theil1953] or full information maximum likelihood [@karapanagiotis2020invisible]. Asymptotically, these methods are equivalent [@balestra1987].
 
 $$
-\begin{equation}
+\begin{align}
 \begin{aligned}
 D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
 S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
 Q_{n t} &= D_{n t} = S_{n t}
-\end{aligned} \tag{EM} \label{equilibrium}
-\end{equation}
+\end{aligned}\tag{EM}\label{equilibrium}
+\end{align}
 $$
 <img src='man/figures/equilibrium_model.png'/>
 
@@ -52,14 +53,15 @@ $$
 The basic model is the simplest disequilibrium model of the package as it basically imposes no assumption on the market structure regarding price movements [@fair1972; @maddala1974]. In contrast with the equilibrium model, the market-clearing condition is replaced by the short-side rule, which stipulates that the minimum between the demanded and supplied quantities is observed. The econometrician does not need to specify whether an observation belongs to the demand or the supply side since the estimation of the model will allocate the observations on the demand or supply side so that the likelihood is maximized.
 
 $$
-\begin{equation}
+\begin{align}
 \begin{aligned}
 D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
 S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
 Q_{n t} &= \min\{D_{n t},S_{n t}\}
 \end{aligned} \tag{BM} \label{basic}
-\end{equation}
+\end{align}
 $$
+
 <img src='man/figures/diseq_basic.png'/>
 
 ## The directional disequilibrium model
@@ -67,14 +69,14 @@ $$
 The directional model attaches an additional equation to the system of the basic model. The added equation is a sample separation condition based on the direction of the price movements [@fair1972; @maddala1974]. When prices increase at a given date, an observation is assumed to belong on the supply side. When prices fall, an observation is assumed to belong on the demand side. In short, this condition separates the sample before the estimation and uses this separation as additional information in the estimation procedure. Although, when appropriate, more information improves estimations, it also, when inaccurate, intensifies misspecification problems. Therefore, the additional structure of the directional model does not guarantee better estimates in comparison with the basic model.
 
 $$
-\begin{equation}
+\begin{align}
 \begin{aligned}
 D_{n t} &= X_{d, n t}'\beta_{d} + u_{d, n t} \\
 S_{n t} &= X_{s, n t}'\beta_{s} + u_{s, n t} \\
 Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &\ge 0 \implies D_{n t} \ge S_{n t}
 \end{aligned} \tag{DM} \label{directional}
-\end{equation}
+\end{align}
 $$
 <img src='man/figures/diseq_directional.png'/>
 
@@ -83,14 +85,14 @@ $$
 The separation rule of the directional model classifies observations on the demand or supply-side based in a binary fashion, which is not always flexible, as observations that correspond to large shortages/surpluses are treated the same with observations that correspond to small shortages/ surpluses. The deterministic adjustment model of the package replaces this binary separation rule with a quantitative one [@fair1972; @maddala1974]. The magnitude of the price movements is analogous to the magnitude of deviations from the market-clearing condition. This model offers a flexible estimation alternative, with one extra degree of freedom in the estimation of price dynamics, that accounts for market forces that are in alignment with standard economic reasoning. By letting $\gamma$ approach zero, the equilibrium model can be obtained as a limiting case of this model.
 
 $$
-\begin{equation}
+\begin{align}
 \begin{aligned}
 D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
 S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
 Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right)
 \end{aligned} \tag{DA} \label{deterministic_adjustment}
-\end{equation}
+\end{align}
 $$
 <img src='man/figures/diseq_deterministic_adjustment.png'/>
 
@@ -99,14 +101,14 @@ $$
 The last model of the package extends the price dynamics of the deterministic adjustment model by adding additional explanatory variables and a stochastic term. The latter term, in particular, makes the price adjustment mechanism stochastic and, deviating from the structural assumptions of models $(DA)$ and $(DM)$, abstains from imposing any separation assumption on the sample [@maddala1974; @quandt1978estimating]. The estimation of this model offers the highest degree of freedom, accompanied, however, by a significant increase in estimation complexity, which can hinder the stability of the procedure and the numerical accuracy of the outcomes. 
 
 $$
-\begin{equation}
+\begin{align}
 \begin{aligned}
 D_{n t} &= X_{d, n t}'\beta_{d} + P_{n t}\alpha_{d} + u_{d, n t} \\
 S_{n t} &= X_{s, n t}'\beta_{s} + P_{n t}\alpha_{s} + u_{s, n t} \\
 Q_{n t} &= \min\{D_{n t},S_{n t}\} \\
 \Delta P_{n t} &= \frac{1}{\gamma} \left( D_{n t} - S_{n t} \right) +  X_{p, n t}'\beta_{p} + u_{p, n t}
 \end{aligned} \tag{SA} \label{stochastic_adjustment}
-\end{equation}
+\end{align}
 $$
 <img src='man/figures/diseq_stochastic_adjustment.png'/>
 
@@ -242,3 +244,4 @@ Feel free to join, share, contribute, distribute.
 The code is distributed under the MIT License. 
 
 # References
+
