@@ -1,6 +1,8 @@
 Models For Markets in Equilibrium and Disequilibrium
 ================
 
+<img src='man/figures/logo.png' align="right" height="48"/>
+
 <img src="man/figures/logo.png" align="right" height="48"/>
 <!-- badges: start -->
 

@@ -1,6 +1,10 @@
+# diseq 0.4.5
+
+* Switched from warning to message to inform about deprecation during package loading.
+
 # diseq 0.4.4
 
-* Added deprecation message when loading package.
+* Added deprecation warning when loading package.
 * Added deprecation messages in documentation.
 
 # diseq 0.4.3
