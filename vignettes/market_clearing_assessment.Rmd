@@ -8,6 +8,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+## Package *diseq* is deprecated. Please use package *markets* instead.
+
 This short tutorial gives an example of statistically assessing whether a market is in an equilibrium state. The tutorial assumes some familiarity with the concepts and the functionality of the package. The [basic_usage](basic_usage.html) vignette can be helpful in acquiring this familiarity.
 
 ```{r, include = FALSE}

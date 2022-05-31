@@ -8,6 +8,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+## Package *diseq* is deprecated. Please use package *markets* instead.
+
 <iframe src="diseq.pdf" style="width:100%;height:80vmin;"/>
 
 

@@ -1,3 +1,8 @@
+# diseq 0.4.4
+
+* Added deprecation message when loading package.
+* Added deprecation messages in documentation.
+
 # diseq 0.4.3
 
 * Adjusted unit test gradient tolerance for m1 machines.

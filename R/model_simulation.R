@@ -340,7 +340,7 @@ setMethod(
     r_s <- simulated_supplied_quantities(object, 0)
     dr <- r_d - r_s
 
-    if (class(object) == "simulated_stochastic_adjustment_model") {
+    if (is(object, "simulated_stochastic_adjustment_model")) {
       dr <- dr + object@gamma * (
         object@beta_p0 + price_controls(object) %*% object@beta_p +
           object@simulation_tbl$u_p

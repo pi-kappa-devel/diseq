@@ -8,6 +8,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+## Package *diseq* is deprecated. Please use package *markets* instead.
+
 This tutorial examines model initialization and estimation in some detail. Models can be initialized and estimated with a single function call (see [basic_usage](basic_usage.html)), which is the recommended approach for most usage cases. However, it is convenient to separate model estimation and initialization on some occasions. This is particularly relevant when estimating the same model using different methods and/or options without re-initializing.
 
 The operations of this vignette cover the many but not all use initialization cases. More usage details can be found in the documentation of the package.

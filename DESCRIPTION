@@ -1,20 +1,20 @@
 Package: diseq
 Title: Estimation Methods for Markets in Equilibrium and Disequilibrium
-Version: 0.4.3
-Date: 2022-02-16
+Version: 0.4.4
+Date: 2022-05-30
 Authors@R: 
     person(given = "Pantelis",
            family = "Karapanagiotis",
            role = c("aut", "cre"),
            email = "pikappa.devel@gmail.com",
            comment = c(ORCID = "0000-0001-9871-1908"))
-Description: Provides estimation methods for markets in equilibrium and
-    disequilibrium. Supports the estimation of an equilibrium and
-    four disequilibrium models with both correlated and independent shocks.
-    Also provides post-estimation analysis tools, such as aggregation,
-    marginal effect, and shortage calculations. The estimation methods are
-    based on full information maximum likelihood techniques given in
-    Maddala and Nelson (1974) <doi:10.2307/1914215>. They are implemented
+Description: Superseded by package markets. Provides estimation methods for
+    markets in equilibrium and disequilibrium. Supports the estimation of an
+    equilibrium and four disequilibrium models with both correlated and
+    independent shocks. Also provides post-estimation analysis tools, such
+    as aggregation, marginal effect, and shortage calculations. The estimation
+    methods are based on full information maximum likelihood techniques given
+    in Maddala and Nelson (1974) <doi:10.2307/1914215>. They are implemented
     using the analytic derivative expressions calculated in
     Karapanagiotis (2020) <doi:10.2139/ssrn.3525622>. Standard
     errors can be estimated by adjusting for heteroscedasticity or clustering.
@@ -44,7 +44,7 @@ Imports:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Suggests:
     ggplot2 (>= 3.0.0),
     knitr (>= 1.20),
@@ -88,6 +88,7 @@ Collate:
     'likelihood_stochastic_adjustment.R'
     'market_fit.R'
     'model_simulation.R'
+    'zzz.R'
 LinkingTo: 
     Rcpp,
     RcppGSL

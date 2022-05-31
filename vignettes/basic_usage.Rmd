@@ -8,6 +8,8 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+## Package *diseq* is deprecated. Please use package *markets* instead.
+
 This short tutorial covers the very basic use cases to get you started with *diseq*. More usage details can be found in the documentation of the package.
 
 ```{r, include = FALSE}

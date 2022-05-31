@@ -1,47 +1,61 @@
-# Changes in version 0.4.3
+# Changes in version 0.4.4
 
-* Version 0.4.3 patches 0.4.2 unit test failure in M1 machines.
- - All platforms were checked once more.
- - Added an m1 build platform. The new results are in (15).
+* Added deprecation warning in documentation and on package loading.
 
-# Test environments 
+# Test Environments and Results (version 1.0.1)
 ## Windows
-1. (R-devel win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R Under development (unstable) (2022-02-13 r81727 ucrt)
-2. (R-oldrelease win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R version 4.0.5 (2021-03-31)
-3. (R-release win-builder.r-project.org) x86_64-w64-mingw32 (64-bit), R version 4.1.2 (2021-11-01)
-4. (rhub windows-x86_64-devel) Windows Server 2022, R-devel, 64 bit, R Under development (unstable) (2022-02-07 r81667 ucrt)
-
-## Linux
-
-### GCC
-5. (rhub ubuntu-gcc-release) Ubuntu Linux 20.04.1 LTS, R-release, GCC, R version 4.1.2 (2021-11-01)
-6. (rhub debian-gcc-devel) Debian Linux, R-devel, GCC, R Under development (unstable) (2022-02-06 r81658)
-7. (rhub debian-gcc-devel-nold) Debian Linux, R-devel, GCC, no long double, R Under development (unstable) (2022-02-06 r81658)
-8. (rhub rocker-gcc-san) Debian Linux, R-devel, GCC ASAN/UBSAN 
-9. (local) Ubuntu 20.04.3 LTS (in WSL2 under Windows 11), GCC 9.3.0, R version 3.6.3 (2020-02-29) -- "Holding the Windsock"
-
-### LLVM
-10. (rhub debian-clang-devel) Debian Linux, R-devel, clang, ISO-8859-15 locale, R Under development (unstable) (2022-02-06 r81658)
-11. (rhub fedora-clang-devel) Fedora Linux, R-devel, clang, gfortran, R Under development (unstable) (2022-02-06 r81658)
-
-## Solaris
-12. (rhub solaris-x86-patched) Oracle Solaris 10, x86, 32 bit, R-release
-
-## Macos
-13. (rhub macos-highsierra-release-cran) macOS 10.13.6 High Sierra, R-release, CRAN's setup, R version 4.1.1 (2021-08-10)
-14. (rhub macos-highsierra-release) macOS 10.13.6 High Sierra, R-release, brew, R version 4.1.1 (2021-08-10)
-15. (https://mac.r-project.org/macbuilder/submit.html) r-release-macosx-arm64|4.1.1|macosx|macOS 11.5.2 (20G95)|Mac mini|Apple M1||en_US.UTF-8
-
-# Check results
-## R CMD check results in (1) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Installation time in seconds: 131
-Check time in seconds: 517
-Status: 1 NOTE
+### (1) R-devel win-builder.r-project.org -- 1 WARNING, 2 NOTES
+Installation time in seconds: 61
+Check time in seconds: 275
+Status: 1 WARNING, 2 NOTEs
+R Under development (unstable) (2022-05-30 r82436 ucrt)
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
-Days since last update: 2
+Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.2307/1913181
+    From: README.md
+    Status: 403
+    Message: Forbidden
+  URL: https://doi.org/10.2307/1914215
+    From: README.md
+    Status: 403
+    Message: Forbidden
+  URL: https://doi.org/10.2307/2526311
+    From: README.md
+    Status: 403
+    Message: Forbidden
+
+Found the following (possibly) invalid DOIs:
+  DOI: 10.2307/1914215
+    From: DESCRIPTION
+    Status: Forbidden
+    Message: 403
+* checking whether package 'diseq' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See 'd:/RCompile/CRANguest/R-devel/diseq.Rcheck/00install.out' for details.
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
+
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+Results: https://win-builder.r-project.org/X27u3OoMMC4U/
+
+### (2) R-oldrelease win-builder.r-project.org -- 1 WARNING, 3 NOTES
+Installation time in seconds: 151
+Check time in seconds: 568
+Status: 1 WARNING, 3 NOTEs
+R version 4.1.3 (2022-03-10)
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.2307/1913181
@@ -66,159 +80,369 @@ Found the following (possibly) invalid DOIs:
     From: DESCRIPTION
     Status: Forbidden
     Message: 403
+* checking whether package 'diseq' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See 'd:/RCompile/CRANguest/R-oldrelease/diseq.Rcheck/00install.out' for details.
+** checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-Artifacts: https://win-builder.r-project.org/At12xfhZMkIn/
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
-## R CMD check results in (2) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Installation time in seconds: 152
-Check time in seconds: 581
-Status: 1 NOTE
+Probably some imports need to be declared in the NAMESPACE file.
+** checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
+
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+Results: https://win-builder.r-project.org/qB9n2I3fOerB/00check.log
+
+### (3) R-release win-builder.r-project.org -- 1 WARNING, 2 NOTES
+Installation time in seconds: 56
+Check time in seconds: 281
+Status: 1 WARNING, 2 NOTEs
+R version 4.2.0 (2022-04-22 ucrt)
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
 
-Days since last update: 2
+Found the following (possibly) invalid URLs:
+  URL: https://doi.org/10.2307/1913181
+    From: README.md
+    Status: 403
+    Message: Forbidden
+  URL: https://doi.org/10.2307/1914215
+    From: README.md
+    Status: 403
+    Message: Forbidden
+  URL: https://doi.org/10.2307/2526311
+    From: README.md
+    Status: 403
+    Message: Forbidden
 
-Artifacts: https://win-builder.r-project.org/ehWjs5gl2G6W/
+Found the following (possibly) invalid DOIs:
+  DOI: 10.2307/1914215
+    From: DESCRIPTION
+    Status: Forbidden
+    Message: 403
+* checking whether package 'diseq' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See 'd:/RCompile/CRANguest/R-release/diseq.Rcheck/00install.out' for details.
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
-## R CMD check results in (3) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Installation time in seconds: 154
-Check time in seconds: 576
-Status: 1 NOTE
+Probably some imports need to be declared in the NAMESPACE file.
 
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
+Results: https://win-builder.r-project.org/98eu7i4bDHW2/
 
-Days since last update: 2
+### (4) rhub windows-x86_64-devel -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-a9b2152c7d784844a29923ea52f08287
+Platform:	Windows Server 2022, R-devel, 64 bit
+Submitted:	9 minutes 37.8 seconds ago
+Build time:	9 minutes 31.9 seconds
 
-Output: https://win-builder.r-project.org/2O3khlQsZtqR/
+WARNINGS:
+* checking whether package 'diseq' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See 'C:/Users/USERwndEgJHckb/diseq.Rcheck/00install.out' for details.
+NOTES:
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
+session will be unable to start.
 
-## R CMD check results in (4) -- std=gnu++11, with GSL, no execution header -- OK
-Build time: 12 minutes 36.7 seconds
-Status: OK
+loaded: otherwise if the namespace gets loaded by a saved object, the
+A namespace must be able to be loaded with just the base namespace
+Probably some imports need to be declared in the NAMESPACE file.
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-1cfd5a641ebf4d48a264e2abede981db/
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-a9b2152c7d784844a29923ea52f08287/
 
-## R CMD check results in (5) -- std=gnu++11, with GSL, no execution header -- 1 Note
-Build time: 27 minutes 59.9 seconds
-Status: 1 NOTE
+## Linux, GCC
+### (5) rhub ubuntu-gcc-release -- 1 WARNING, 2 NOTES
+Build ID:	diseq_0.4.4.tar.gz-83c180aef28649c1979ab1b650c03367
+Platform:	Ubuntu Linux 20.04.1 LTS, R-release, GCC
+Submitted:	29 minutes 16 seconds ago
+Build time:	28 minutes 59.4 seconds
 
+* checking whether package â€˜diseqâ€™ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See â€˜/home/docker/diseq.Rcheck/00install.outâ€™ for details.
 * checking installed package size ... NOTE
   installed size is  6.1Mb
   sub-directories of 1Mb or more:
     doc    1.0Mb
     libs   3.4Mb
-	
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-2c533eeb07474a1faa50984733673d08/diseq.Rcheck/
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-## R CMD check results in (6) -- std=c++17, with GSL, with execution header -- OK
-Build time:	32 minutes 45.3 seconds
-Status: OK
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-5fd25822a0e84d369082452e187a886a/
+Probably some imports need to be declared in the NAMESPACE file.
 
-## R CMD check results in (7) -- std=c++17, with GSL, with execution header -- OK
-Build time:	32 minutes 28.1 seconds
-Status: OK
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-83c180aef28649c1979ab1b650c03367/diseq.Rcheck/
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-6dbf31312b4e4e489d51dcff505fd09d/diseq.Rcheck/
 
-## R CMD check results in (8) -- std=c++17, with GSL, with execution header -- Preperror
-Build time: 36 minutes 42 seconds
+### (6) rhub debian-gcc-devel -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-a3099650d8e44b4cac7bf95c3e889adc
+Platform:	Debian Linux, R-devel, GCC
+Submitted:	32 minutes 49.5 seconds ago
+Build time:	32 minutes 42.3 seconds
 
-There might be an issue with the gcc version. The first error is 
-"""
-* installing *source* package ‘Rcpp’ ...
-** package ‘Rcpp’ successfully unpacked and MD5 sums checked
-** using staged installation
-** libs
-g++ -fsanitize=undefined,bounds-strict -fno-omit-frame-pointer -std=gnu++98 -I"/usr/local/lib/R/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -g -O2 -Wall -pedantic -mtune=native  -c api.cpp -o api.o
-g++ -fsanitize=undefined,bounds-strict -fno-omit-frame-pointer -std=gnu++98 -I"/usr/local/lib/R/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -g -O2 -Wall -pedantic -mtune=native  -c attributes.cpp -o attributes.o
-attributes.cpp: In member function ‘std::string Rcpp::attributes::Attribute::customRSignature() const’:
-attributes.cpp:404:20: error: ‘std::string’ {aka ‘class std::__cxx11::basic_string<char>’} has no member named ‘back’
-  404 |             if(sig.back() == '}')
-      |                    ^~~~
-attributes.cpp:408:20: error: ‘std::string’ {aka ‘class std::__cxx11::basic_string<char>’} has no member named ‘front’
-  408 |             if(sig.front() == '{')
-      |                    ^~~~~
-attributes.cpp: In function ‘bool Rcpp::attributes::checkRSignature(const Rcpp::attributes::Function&, std::string)’:
-attributes.cpp:2813:45: error: ‘>>’ should be ‘> >’ within a nested template argument list
- 2813 |             Rcpp::as<std::vector<std::string>>(pargs_cv);
-      |                                             ^~
-      |                                             > >
-make: *** [/usr/local/lib/R/etc/Makeconf:177: attributes.o] Error 1
-ERROR: compilation failed for package ‘Rcpp’
-"""
+* checking whether package â€˜diseqâ€™ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-Then, there is a chain of package installation failures up to diseq.
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
-Output: https://builder.r-hub.io/status/original/diseq_0.4.3.tar.gz-91faef586ec24491be4ae220bce43418
+Probably some imports need to be declared in the NAMESPACE file.
 
-## R CMD check results in (9) -- std=c++17, with GSL, with execution header -- 1 Note
-── R CMD check results ──────────────────────────────────────────────────────────────────────────────────── diseq 0.4.2 ────
-Duration: 2m 35.7s
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-a3099650d8e44b4cac7bf95c3e889adc/
+
+### (7) rhub debian-gcc-devel-nold -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-331b9e8a55f145acb4d37e9d85ba3dbf
+Platform:	Debian Linux, R-devel, GCC, no long double
+Submitted:	32 minutes 51.5 seconds ago
+Build time:	32 minutes 26.3 seconds
+
+* checking whether package â€˜diseqâ€™ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See â€˜/home/docker/diseq.Rcheck/00install.outâ€™ for details
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
+
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-331b9e8a55f145acb4d37e9d85ba3dbf/diseq.Rcheck/
+
+### (8) rhub rocker-gcc-san -- PREPERROR
+Build ID:	diseq_0.4.4.tar.gz-a1d14d7bf323440b9138dd81cd7da739
+Platform:	Debian Linux, R-devel, GCC ASAN/UBSAN
+Submitted:	46 minutes 45.3 seconds ago
+Build time:	46 minutes 26.5 seconds
+
+Error : Bioconductor does not yet build and check packages for R version 4.3; see
+  https://bioconductor.org/install
+ERROR: dependency ‘systemfit’ is not available for package ‘diseq’
+* removing ‘/home/docker/R/diseq’
+Warning messages:
+1: In i.p(...) : installation of package ‘lme4’ had non-zero exit status
+2: In i.p(...) :
+  installation of package ‘pbkrtest’ had non-zero exit status
+3: In i.p(...) : installation of package ‘car’ had non-zero exit status
+4: In i.p(...) :
+  installation of package ‘systemfit’ had non-zero exit status
+5: In i.p(...) :
+  installation of package ‘/tmp/Rtmp03F3vy/file1337e17e1eb/diseq_0.4.4.tar.gz’ had non-zero exit status
+> 
+> 
+Error : Bioconductor does not yet build and check packages for R version 4.3; see
+  https://bioconductor.org/install
+  
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.4.tar.gz-a1d14d7bf323440b9138dd81cd7da739
+
+### (9) Local (Ubuntu 20.04.3 LTS in WSL2 under Windows 11) -- 1 WARNING, 2 NOTES
+── R CMD check results ──────────────────────────────────────────────────────────────────────── diseq 0.4.4 ────
+Duration: 2m 9.5s
+
+❯ checking whether package ‘diseq’ can be installed ... WARNING
+  See below...
 
 ❯ checking installed package size ... NOTE
-    installed size is  6.6Mb
+    installed size is  6.7Mb
     sub-directories of 1Mb or more:
       doc    1.0Mb
       libs   4.0Mb
 
-0 errors ✔ | 0 warnings ✔ | 1 note ✖
+❯ checking whether the namespace can be loaded with stated dependencies ... NOTE
+  Warning: Package diseq is deprecated. Please use package markets instead.
+  This warning is displayed once every 8 hours.
+  
+  A namespace must be able to be loaded with just the base namespace
+  loaded: otherwise if the namespace gets loaded by a saved object, the
+  session will be unable to start.
+  
+  Probably some imports need to be declared in the NAMESPACE file.
 
-## R CMD check results in (10) -- std=c++17, with GSL, with execution header -- OK
-Build time:	37 minutes 51.4 seconds
-Status: OK
+0 errors ✔ | 1 warning ✖ | 2 notes ✖
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.2.tar.gz-d019ef5b50744495b8cc1dc3213afb50/diseq.Rcheck/
+## Linux, LLVM
+### (10) rhub debian-clang-devel -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-40c287a8b0944a72b870c2b4e4b9c0a1
+Platform:	Debian Linux, R-devel, clang, ISO-8859-15 locale
+Submitted:	37 minutes 37.5 seconds ago
+Build time:	37 minutes 1.1 seconds
 
-## R CMD check results in (11) -- std=c++17, with GSL, with execution header -- OK
-Build time:	28 minutes 39.7 seconds
-Status: OK
-	
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-a8fa07f9fd324fd9850766f1155bd0b5/diseq.Rcheck/
+WARNINGS:
+* checking whether package 'diseq' can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See '/home/docker/diseq.Rcheck/00install.out' for details.
+NOTES:
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
+
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-40c287a8b0944a72b870c2b4e4b9c0a1/diseq.Rcheck/
+
+### (11) rhub fedora-clang-devel -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-ff19ed3a914c4efdb0aaa346bbf77b18
+Platform:	Fedora Linux, R-devel, clang, gfortran
+Submitted:	30 minutes 0.4 seconds ago
+Build time:	29 minutes 37.8 seconds
+
+WARNINGS:
+* checking whether package ‘diseq’ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See ‘/home/docker/diseq.Rcheck/00install.out’ for details.
+NOTES:
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
+
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-ff19ed3a914c4efdb0aaa346bbf77b18/
 
 
-## R CMD check results in (12) -- std=gnu++11, with GSL, no execution header -- Preperror
-Build time:	16 minutes 8.1 seconds
+## Solaris
+### (12) rhub solaris-x86-patched -- PREPERROR
+Build ID:	diseq_0.4.4.tar.gz-9172cbe42d504021b882d1813381a979
+Platform:	Oracle Solaris 10, x86, 32 bit, R-release
+Submitted:	30 minutes 58.5 seconds ago
+Build time:	30 minutes 28.1 seconds
 
-Point of failure most probably is:
-ERROR: compilation failed for package ‘nloptr’
+ERROR: package installation failed
+STDERR:
 
-This error message might be relevant:
-"
-using NLopt via local cmake build on i86pc 
-tools/cmake_call.sh: syntax error at line 3: `(' unexpected
-"
+Error: Failed to install 'diseq' from local:
+  Failed to `R CMD build` package, try `build = FALSE`.
+In addition: Warning messages:
+1: In i.p(...) : installation of package ‘ps’ had non-zero exit status
+2: In i.p(...) :
+  installation of package ‘processx’ had non-zero exit status
+3: In i.p(...) : installation of package ‘callr’ had non-zero exit status
+4: In i.p(...) :
+  installation of package ‘testthat’ had non-zero exit status
+5: In i.p(...) : installation of package ‘nloptr’ had non-zero exit status
+6: In i.p(...) : installation of package ‘lme4’ had non-zero exit status
+7: In i.p(...) :
+  installation of package ‘pbkrtest’ had non-zero exit status
+8: In i.p(...) : installation of package ‘car’ had non-zero exit status
+9: In i.p(...) :
+  installation of package ‘systemfit’ had non-zero exit status
 
-Then, there is a chain of package installation failures up to diseq.
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.4.tar.gz-9172cbe42d504021b882d1813381a979
 
-Artifacts: https://builder.r-hub.io/status/original/diseq_0.4.3.tar.gz-b481aca53dcd48a49f5945718a150a47
+## Macos
+### (13) rhub macos-highsierra-release-cran -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-566d87ac14d24afdb0fdde8e8ebfc7fd
+Platform:	macOS 10.13.6 High Sierra, R-release, brew
+Submitted:	8 minutes 39.8 seconds ago
+Build time:	8 minutes 16.2 seconds
 
-## R CMD check results in (13) -- std=gnu++11, with GSL, no execution header -- OK
-Build time: 8 minutes 9.7 seconds
-Status: OK
+WARNINGS:
+* checking whether package ‘diseq’ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See ‘/Users/useramAiCww6/diseq.Rcheck/00install.out’ for details.
+NOTES:
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-e8ccbecae28149338c8ceadec3b1ba7f/
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
+Probably some imports need to be declared in the NAMESPACE file.
 
-## R CMD check results in (14) -- std=gnu++11, with GSL, no execution header -- OK
-Build time: 9 minutes 15.4 seconds
-Status: OK
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-566d87ac14d24afdb0fdde8e8ebfc7fd/
 
+### (14) rhub macos-highsierra-release -- 1 WARNING, 1 NOTE
+Build ID:	diseq_0.4.4.tar.gz-2bc3fd5c5d6149699e1b2fb6e48e5c2f
+Platform:	macOS 10.13.6 High Sierra, R-release, CRAN's setup
+Submitted:	8 minutes 38.4 seconds ago
+Build time:	8 minutes 6.2 seconds
 
-Artifacts: https://artifacts.r-hub.io/diseq_0.4.3.tar.gz-6a2f9af870aa47f5b9fc6b512721b71a/
+WARNINGS:
+* checking whether package ‘diseq’ can be installed ... WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See ‘/Users/userWFWpEODk/diseq.Rcheck/00install.out’ for details.
+NOTES:
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-## R CMD check results in (15) -- std=gnu++11, with GSL, no execution header -- 1 Note
-elapsed time (check, wall clock): 1:29
-Status: 1 NOTE
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
 
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.4.tar.gz-2bc3fd5c5d6149699e1b2fb6e48e5c2f/
+
+### (15) Mac mini at https://mac.r-project.org/macbuilder/submit.html -- 1 WARNING, 2 NOTES
+Build system: r-devel-macosx-arm64|4.2.0|macosx|macOS 11.5.2 (20G95)|Mac mini|Apple M1||en_US.UTF-8
+
+* checking whether package ‘diseq’ can be installed ... [16s/18s] WARNING
+Found the following significant warnings:
+  Warning: Package diseq is deprecated. Please use package markets instead.
+See ‘/Volumes/PkgBuild/work/1653985522-8003ce744f219e3a/packages/big-sur-arm64/results/4.2/diseq.Rcheck/00install.out’ for details.
 * checking installed package size ... NOTE
   installed size is  6.4Mb
   sub-directories of 1Mb or more:
     doc    1.0Mb
     libs   3.8Mb
+* checking whether the namespace can be loaded with stated dependencies ... NOTE
+Warning: Package diseq is deprecated. Please use package markets instead.
+This warning is displayed once every 8 hours.
 
-Artifacts: https://mac.r-project.org/macbuilder/results/1645003132-f2208e53f4dd83a2/
+A namespace must be able to be loaded with just the base namespace
+loaded: otherwise if the namespace gets loaded by a saved object, the
+session will be unable to start.
+
+Probably some imports need to be declared in the NAMESPACE file.
+
+Results: https://mac.r-project.org/macbuilder/results/1653985522-8003ce744f219e3a/
+

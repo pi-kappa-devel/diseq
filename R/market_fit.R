@@ -45,7 +45,7 @@ setMethod(
 #' @export
 setMethod("summary", signature(object = "market_fit"), function(object) {
   (selectMethod("summary", "market_model"))(object)
-  if (class(object@fit[[1]]) == "mle2") {
+  if (is(object@fit[[1]], "mle2")) {
     summary <- (selectMethod("summary", "mle2"))(object@fit[[1]])
     args <- summary@call[[2]]
 
@@ -276,7 +276,7 @@ setMethod(
 setMethod(
   "coef", signature(object = "market_fit"),
   function(object) {
-    if (class(object@fit[[1]]) == "mle2") {
+    if (is(object@fit[[1]], "mle2")) {
       object@fit[[1]]@coef
     } else {
       demand <- object@fit[[1]]$system_model$coefficients[
@@ -333,7 +333,7 @@ setMethod(
 setMethod(
   "vcov", signature(object = "market_fit"),
   function(object) {
-    if (class(object@fit[[1]]) == "mle2") {
+    if (is(object@fit[[1]], "mle2")) {
       colnames(object@fit[[1]]@vcov) <- names(coef(object))
       rownames(object@fit[[1]]@vcov) <- names(coef(object))
       object@fit[[1]]@vcov
@@ -371,7 +371,7 @@ setMethod(
   "logLik", signature(object = "market_fit"),
   function(object) {
     ll <- NULL
-    if (class(object@fit[[1]]) == "mle2") {
+    if (is(object@fit[[1]], "mle2")) {
       ll <- structure(-object@fit[[1]]@min,
         df = length(object@fit[[1]]@coef), class = "logLik"
       )
