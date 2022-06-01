@@ -24,7 +24,6 @@ pkgdown::build_site(lazy = FALSE)
 
 rmarkdown::render('README.Rmd', output_format = 'github_document')
 document <- paste(readLines('README.md'), collapse = "\n")
-document <- gsub("<!-- badges: start -->", '<img src="man/figures/logo.png" align="right" height="48"/>\n<!-- badges: start -->', document)
 document <- gsub("<iframe.+?iframe>", '<a style="display:block;margin:auto" href="https://www.youtube.com/watch?v=Kkjkny94dgU" target="_blank"><img src="http://img.youtube.com/vi/Kkjkny94dgU/0.jpg"  alt="Session Recording" width="560" height="315" border="10" /></a>', document)
 writeLines(document, 'README.md')
 
@@ -65,6 +64,8 @@ rhub::check(
 # There is a testing service for the CRAN M1mac setup at
 # https://mac.r-project.org/macbuilder/submit.html
 #+end_src
+
+#+RESULTS:
 
 *** Platforms without long double
 #+begin_src R :dir .. :async

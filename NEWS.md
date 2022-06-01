@@ -1,3 +1,7 @@
+# diseq 0.4.6
+
+* Moved deprecation warning emission from `.onLoad` to `.onAttach`.
+
 # diseq 0.4.5
 
 * Switched from warning to message to inform about deprecation during package loading.

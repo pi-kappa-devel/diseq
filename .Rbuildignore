@@ -25,3 +25,4 @@
 ^.github$
 ^\.github$
 ^bibliography\.bib$
+^CRAN-SUBMISSION$

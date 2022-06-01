@@ -1,14 +1,14 @@
-# Changes in version 0.4.5
+# Changes in version 0.4.6
 
-* Added deprecation messages in documentation and on package loading.
+* Added deprecation messages in documentation and on package attaching.
 
 # Test Environments and Results (version 1.0.1)
 ## Windows
-### (1) R-devel win-builder.r-project.org -- 2 NOTES
-Installation time in seconds: 66
-Check time in seconds: 278
-Status: 2 NOTEs
-R Under development (unstable) (2022-05-30 r82436 ucrt)
+### (1) R-devel win-builder.r-project.org -- 1 NOTE
+Installation time in seconds: 56
+Check time in seconds: 277
+Status: 1 NOTE
+R Under development (unstable) (2022-05-31 r82437 ucrt)
 
 * checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Pantelis Karapanagiotis <pikappa.devel@gmail.com>'
@@ -36,19 +36,13 @@ Found the following (possibly) invalid DOIs:
     From: DESCRIPTION
     Status: Forbidden
     Message: 403
-* checking R code for possible problems ... [58s] NOTE
-File 'diseq/R/zzz.R':
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
 
-See section 'Good practice' in '?.onAttach'.
+Results: https://win-builder.r-project.org/T9XfoCLFpQMP/
 
-Results: https://win-builder.r-project.org/U4lFkZq51gZP/
-
-### (2) R-oldrelease win-builder.r-project.org -- 2 NOTES
-Installation time in seconds: 152
-Check time in seconds: 579
-Status: 2 NOTEs
+### (2) R-oldrelease win-builder.r-project.org -- 1 NOTE
+Installation time in seconds: 159
+Check time in seconds: 602
+Status: 1 NOTE
 R version 4.1.3 (2022-03-10)
 
 * checking CRAN incoming feasibility ... NOTE
@@ -77,19 +71,13 @@ Found the following (possibly) invalid DOIs:
     From: DESCRIPTION
     Status: Forbidden
     Message: 403
-* checking R code for possible problems ... [58s] NOTE
-File 'diseq/R/zzz.R':
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
 
-See section 'Good practice' in '?.onAttach'.
+Results: https://win-builder.r-project.org/eD93qKX5o3TP/
 
-Results: https://win-builder.r-project.org/7ZJhOcndZXYK/
-
-### (3) R-release win-builder.r-project.org -- 2 NOTES
-Installation time in seconds: 60
-Check time in seconds: 277
-Status: 2 NOTEs
+### (3) R-release win-builder.r-project.org -- 1 NOTE
+Installation time in seconds: 62
+Check time in seconds: 281
+Status: 1 NOTE
 R version 4.2.0 (2022-04-22 ucrt)
 
 * checking CRAN incoming feasibility ... NOTE
@@ -110,88 +98,54 @@ Found the following (possibly) invalid DOIs:
     From: DESCRIPTION
     Status: Forbidden
     Message: 403
-* checking R code for possible problems ... [26s] NOTE
-File 'diseq/R/zzz.R':
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
-
-See section 'Good practice' in '?.onAttach'.
 	
-Results: https://win-builder.r-project.org/m337T3wMXqUi/
+Results: https://win-builder.r-project.org/DLf5wY0Mmkv4/
 
-### (4) rhub windows-x86_64-devel -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-bd2ceb46cbd44a4899203dc18cec6c7d
+### (4) rhub windows-x86_64-devel -- OK
+Build ID:	diseq_0.4.6.tar.gz-dba7cbab20234dbbad900e5a89f216ee
 Platform:	Windows Server 2022, R-devel, 64 bit
-Submitted:	9 minutes 38.5 seconds ago
-Build time:	9 minutes 32.4 seconds
+Submitted:	9 minutes 44.4 seconds ago
+Build time:	9 minutes 39.6 seconds
 
-NOTES:
-* checking R code for possible problems ... NOTE
-File 'diseq/R/zzz.R':
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
-
-See section 'Good practice' in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-bd2ceb46cbd44a4899203dc18cec6c7d/
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-dba7cbab20234dbbad900e5a89f216ee/
 
 ## Linux, GCC
-### (5) rhub ubuntu-gcc-release -- 2 NOTES
-Build ID:	diseq_0.4.4.tar.gz-83c180aef28649c1979ab1b650c03367
+### (5) rhub ubuntu-gcc-release -- 1 NOTE
+Build ID:	diseq_0.4.6.tar.gz-2bb85047903c4d0ab5d1f329c44b8dc2
 Platform:	Ubuntu Linux 20.04.1 LTS, R-release, GCC
-Submitted:	29 minutes 16 seconds ago
-Build time:	28 minutes 59.4 seconds
+Submitted:	33 minutes 52.8 seconds ago
+Build time:	33 minutes 48.3 seconds
 
 * checking installed package size ... NOTE
   installed size is  6.1Mb
   sub-directories of 1Mb or more:
     doc    1.0Mb
     libs   3.4Mb
-* checking R code for possible problems ... NOTE
-File â€˜diseq/R/zzz.Râ€™:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
 
-See section â€˜Good practiceâ€™ in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-040c7671adfd4c13a2ab1517849ac8a7/diseq.Rcheck/
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-2bb85047903c4d0ab5d1f329c44b8dc2/diseq.Rcheck/00check.log
 
 
-### (6) rhub debian-gcc-devel -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-4bd6ff79f7c045dbba80cb9a8d4c9a4a
+### (6) rhub debian-gcc-devel -- OK
+Build ID:	diseq_0.4.6.tar.gz-7b670e8c7c2c488694d7f6ae8be6a679
 Platform:	Debian Linux, R-devel, GCC
-Submitted:	31 minutes 38.8 seconds ago
-Build time:	31 minutes 27.1 seconds
+Submitted:	37 minutes 48.1 seconds ago
+Build time:	37 minutes 42.9 seconds
 
-* checking R code for possible problems ... NOTE
-File â€˜diseq/R/zzz.Râ€™:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.6.tar.gz-7b670e8c7c2c488694d7f6ae8be6a679
 
-See section â€˜Good practiceâ€™ in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-4bd6ff79f7c045dbba80cb9a8d4c9a4a/diseq.Rcheck/
-
-### (7) rhub debian-gcc-devel-nold -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-04047f9230e1492b805c7fba08919aba
+### (7) rhub debian-gcc-devel-nold -- OK
+Build ID:	diseq_0.4.6.tar.gz-9cc8f6aef50643c38cf1b83c290fcd22
 Platform:	Debian Linux, R-devel, GCC, no long double
-Submitted:	32 minutes 3.3 seconds ago
-Build time:	31 minutes 26.8 seconds
+Submitted:	37 minutes 50.3 seconds ago
+Build time:	37 minutes 45.6 seconds
 
-* checking R code for possible problems ... NOTE
-File â€˜diseq/R/zzz.Râ€™:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
-
-See section â€˜Good practiceâ€™ in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-04047f9230e1492b805c7fba08919aba/
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.6.tar.gz-9cc8f6aef50643c38cf1b83c290fcd22
 
 ### (8) rhub rocker-gcc-san -- PREPERROR
-Build ID:	diseq_0.4.5.tar.gz-d4d5dc22914c43e7bf2bfa183cb270dd
+Build ID:	diseq_0.4.6.tar.gz-89ee68bbb670404facd1ce2f1f982bc3
 Platform:	Debian Linux, R-devel, GCC ASAN/UBSAN
-Submitted:	45 minutes 11.8 seconds ago
-Build time:	44 minutes 45.6 seconds
+Submitted:	53 minutes 38.8 seconds ago
+Build time:	53 minutes 34.7 seconds
 
 Error : Bioconductor does not yet build and check packages for R version 4.3; see
   https://bioconductor.org/install
@@ -211,11 +165,11 @@ Warning messages:
 Error : Bioconductor does not yet build and check packages for R version 4.3; see
   https://bioconductor.org/install
   
-See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.5.tar.gz-d4d5dc22914c43e7bf2bfa183cb270dd
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.6.tar.gz-89ee68bbb670404facd1ce2f1f982bc3
 
-### (9) Local (Ubuntu 20.04.3 LTS in WSL2 under Windows 11) -- 2 NOTES
-── R CMD check results ──────────────────────────────────────────────────────────────────────── diseq 0.4.5 ────
-Duration: 2m 7.5s
+### (9) Local (Ubuntu 20.04.3 LTS in WSL2 under Windows 11) -- 1 NOTE
+── R CMD check results ──────────────────────────────────────────── diseq 0.4.6 ────
+Duration: 2m 28.1s
 
 ❯ checking installed package size ... NOTE
     installed size is  6.7Mb
@@ -223,47 +177,24 @@ Duration: 2m 7.5s
       doc    1.0Mb
       libs   4.0Mb
 
-❯ checking R code for possible problems ... NOTE
-  File ‘diseq/R/zzz.R’:
-    .onLoad calls:
-      packageStartupMessage(message, appendLF = TRUE)
-  
-  See section ‘Good practice’ in '?.onAttach'.
-
-0 errors ✔ | 0 warnings ✔ | 2 notes ✖
+0 errors ✔ | 0 warnings ✔ | 1 note ✖
 
 ## Linux, LLVM
-### (10) rhub debian-clang-devel -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-57249085617f46a49ed5b13f8b369eac
+### (10) rhub debian-clang-devel -- OK
+Build ID:	diseq_0.4.6.tar.gz-1074f7001f3b43dbb2522dc3d346c141
 Platform:	Debian Linux, R-devel, clang, ISO-8859-15 locale
-Submitted:	36 minutes 9.9 seconds ago
-Build time:	35 minutes 36.3 seconds
+Submitted:	42 minutes 4.8 seconds ago
+Build time:	42 minutes 3.2 seconds
 
-NOTES:
-* checking R code for possible problems ... NOTE
-File 'diseq/R/zzz.R':
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-1074f7001f3b43dbb2522dc3d346c141/
 
-See section 'Good practice' in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-57249085617f46a49ed5b13f8b369eac/
-
-### (11) rhub fedora-clang-devel -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-ef07c15a24cc462a9e83eeace3810800
+### (11) rhub fedora-clang-devel -- OK
+Build ID:	diseq_0.4.6.tar.gz-f03b2239065a4073a805ac741ace8ab6
 Platform:	Fedora Linux, R-devel, clang, gfortran
-Submitted:	28 minutes 58.1 seconds ago
-Build time:	28 minutes 37.4 seconds
+Submitted:	34 minutes 13.3 seconds ago
+Build time:	34 minutes 11.1 seconds
 
-NOTES:
-* checking R code for possible problems ... NOTE
-File ‘diseq/R/zzz.R’:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
-
-See section ‘Good practice’ in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-ef07c15a24cc462a9e83eeace3810800/
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-f03b2239065a4073a805ac741ace8ab6/
 
 
 ## Solaris
@@ -292,56 +223,36 @@ In addition: Warning messages:
 8: In i.p(...) : installation of package ‘car’ had non-zero exit status
 9: In i.p(...) :
   installation of package ‘systemfit’ had non-zero exit status
+Execution halted
 
-See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.5.tar.gz-837f52265dcb4589a4c89ac94bffe25c
+See the full build log: https://builder.r-hub.io/status/original/diseq_0.4.6.tar.gz-9b3b13c5e97f461e884afcf1ccd464ff
 
 ## Macos
-### (13) rhub macos-highsierra-release-cran -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-49e36c1c15084b24b60e1b11438186a9
+### (13) rhub macos-highsierra-release-cran -- OK
+Build ID:	diseq_0.4.6.tar.gz-7c0b578eaa4f42f9963098edff973ff9
 Platform:	macOS 10.13.6 High Sierra, R-release, brew
-Submitted:	8 minutes 51.9 seconds ago
-Build time:	8 minutes 17.3 seconds
+Submitted:	9 minutes 12.9 seconds ago
+Build time:	9 minutes 10.5 seconds
 
-NOTES:
-* checking R code for possible problems ... NOTE
-File ‘diseq/R/zzz.R’:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-7c0b578eaa4f42f9963098edff973ff9/
 
-See section ‘Good practice’ in '?.onAttach'.
-
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-49e36c1c15084b24b60e1b11438186a9/
-
-### (14) rhub macos-highsierra-release -- 1 NOTE
-Build ID:	diseq_0.4.5.tar.gz-3a2b3f161a5c4bd7a292c3035506b624
+### (14) rhub macos-highsierra-release -- OK
+Build ID:	diseq_0.4.6.tar.gz-1d6c17296f7c4e018833cdbff133c46a
 Platform:	macOS 10.13.6 High Sierra, R-release, CRAN's setup
-Submitted:	8 minutes 48.1 seconds ago
-Build time:	8 minutes 35.2 seconds
+Submitted:	8 minutes 56.8 seconds ago
+Build time:	8 minutes 53.2 seconds
 
-NOTES:
-* checking R code for possible problems ... NOTE
-File ‘diseq/R/zzz.R’:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
 
-See section ‘Good practice’ in '?.onAttach'.
+See the full build log: https://artifacts.r-hub.io/diseq_0.4.6.tar.gz-1d6c17296f7c4e018833cdbff133c46a/
 
-See the full build log: https://artifacts.r-hub.io/diseq_0.4.5.tar.gz-3a2b3f161a5c4bd7a292c3035506b624/
-
-### (15) Mac mini at https://mac.r-project.org/macbuilder/submit.html -- 2 NOTES
+### (15) Mac mini at https://mac.r-project.org/macbuilder/submit.html -- 1 NOTE
 Build system: r-devel-macosx-arm64|4.2.0|macosx|macOS 11.5.2 (20G95)|Mac mini|Apple M1||en_US.UTF-8
+
 
 * checking installed package size ... NOTE
   installed size is  6.4Mb
   sub-directories of 1Mb or more:
     doc    1.0Mb
     libs   3.8Mb
-* checking R code for possible problems ... [6s/6s] NOTE
-File ‘diseq/R/zzz.R’:
-  .onLoad calls:
-    packageStartupMessage(message, appendLF = TRUE)
 
-See section ‘Good practice’ in '?.onAttach'.
-
-Results: https://mac.r-project.org/macbuilder/results/1654025596-7e1cb2991911de6c/
-
+Results: https://mac.r-project.org/macbuilder/results/1654099213-e4124ab438dc9dcf/
